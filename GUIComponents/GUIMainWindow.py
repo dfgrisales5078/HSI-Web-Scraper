@@ -2,11 +2,18 @@ import sys
 from PyQt6 import QtWidgets, uic
 import qdarkstyle
 
-app = QtWidgets.QApplication(sys.argv)
 
-# dark mode
-app.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
+class MainWindow(QtWidgets.QMainWindow):
 
-window = uic.loadUi("MainWindow.ui")
-window.show()
-app.exec()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uic.loadUi("MainWindow.ui", self)
+        # dark mode
+        self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
+
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    app.exec()
