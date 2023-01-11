@@ -2,7 +2,7 @@ from ScraperPrototype import ScraperPrototype
 from selenium.webdriver.common.by import By
 
 
-class MegaPersonalScraper(ScraperPrototype):
+class MegaPersonalsScraper(ScraperPrototype):
 
     def __init__(self, driver, location, join, payment, url, text_search):
         super().__init__(driver, location, join, payment, url, text_search)
