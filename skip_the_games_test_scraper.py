@@ -3,6 +3,7 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+
 class TestScraper:
     def __init__(self):
         self.driver = webdriver.Firefox()
@@ -14,7 +15,11 @@ class TestScraper:
         self.text_search = ''
 
     def initialize(self):
-        pass
+        self.open_webpage()
+        time.sleep(5)
+        self.get_data()
+        self.capture_screenshot()
+        self.close_webpage()
 
     def open_webpage(self) -> None:
         self.driver.get(self.get_formatted_url())
@@ -38,14 +43,7 @@ class TestScraper:
     def read_keywords(self) -> str:
         return ' '.join(self.keywords)
 
-    def run_test_scraper(self):
-        self.open_webpage()
-        time.sleep(5)
-        self.get_data()
-        self.capture_screenshot()
-        self.close_webpage()
-
 
 if __name__ == "__main__":
     scraper = TestScraper()
-    scraper.run_test_scraper()
+    scraper.initialize()
