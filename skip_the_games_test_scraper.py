@@ -3,7 +3,7 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import logging
-
+from bs4 import BeautifulSoup, SoupStrainer
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
@@ -17,46 +17,58 @@ class TestScraper:
         self.keywords = ['cash', 'Exotic']
         self.join = ''
         self.payment = ['cash', 'cashapp', 'venmo']
-        self.url = 'https://skipthegames.com/posts/'
+        self.url = f'https://www.skipthegames.com/posts/{self.location}/'
         self.text_search = ''
 
     def initialize(self):
         self.open_webpage()
-        time.sleep(3)
-        self.check_post_for_keywords(self.get_data())
-        time.sleep(3)
-        self.capture_screenshot()
-        self.close_webpage()
+        time.sleep(2)
+        links = self.get_links()
+        time.sleep(5)
+
+        # self.check_post_for_keywords(self.get_data())
+        # time.sleep(3)
+        # self.capture_screenshot()
+        # self.close_webpage()
+        # time.sleep(2)
+        self.get_data(links)
 
     def open_webpage(self) -> None:
-        self.driver.get(self.get_formatted_url())
+        self.driver.implicitly_wait(10)
+        self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
     def close_webpage(self) -> None:
         self.driver.close()
 
-    def get_formatted_url(self) -> str:
-        return f'https://skipthegames.com/posts/{self.location}/"'
+    def get_links(self):
+        posts = self.driver.find_elements(
+            By.CSS_SELECTOR, '#gallery_view > div > div > div > div [href]')
+        links = [post.get_attribute('href') for post in posts]
+        return links[::3]
 
-    def get_data(self) -> list:
-        self.driver.find_element(
-            By.XPATH, '// *[ @ id = "radio_clsfd_display_mode_single"]').click()
-        time.sleep(2)
+    def get_data(self, links):
+        counter = 0
+        for link in links:
+            counter += 1
 
-        first_post = self.driver.find_element(
-            By.XPATH, '//*[@id="single_view"]/table/tbody/tr[1]/td[1]/a')
-        first_post.click()
-        time.sleep(2)
+            print(link)
+            self.driver.implicitly_wait(10)
+            self.driver.get(link)
+            assert "Page not found" not in self.driver.page_source
+            table = self.driver.find_element(
+                By.XPATH, '//*[@id="post-body"]/div/table')
+            print(table.text)
 
-        table_info = self.driver.find_element(
-            By.XPATH, '/html/body/div[7]/div/div[2]/div/table').text
-        description_div = self.driver.find_element(
-            By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div').text
-        time.sleep(2)
+            description = self.driver.find_element(
+                By.XPATH, '//*[@id="post-body"]')
+            print(description.text)
+            time.sleep(5)
 
-        print([table_info, description_div])
-        print(len([table_info, description_div]))
-        return [table_info, description_div]
+            print("\n")
+
+            if counter > 6:
+                break
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:
