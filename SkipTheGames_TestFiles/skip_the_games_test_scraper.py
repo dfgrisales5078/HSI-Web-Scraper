@@ -1,9 +1,10 @@
 import time
-from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import logging
-from bs4 import BeautifulSoup, SoupStrainer
+
+
+'''Website detects bot'''
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
@@ -64,11 +65,18 @@ class TestScraper:
                 By.XPATH, '//*[@id="post-body"]')
             print(description.text)
             time.sleep(5)
-
             print("\n")
 
-            if counter > 6:
-                break
+            info = table.text + description.text
+
+            for line in info:
+                if 'call' in line.lower():
+                    print(line)
+                    print('keyword found')
+
+            break
+            # if counter > 6:
+            #     break
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:

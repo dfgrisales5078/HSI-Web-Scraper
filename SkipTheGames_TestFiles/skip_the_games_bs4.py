@@ -1,13 +1,10 @@
-import time
-from datetime import datetime
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+
 import logging
 import requests
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
 
+'''Website detects bot'''
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
@@ -26,7 +23,6 @@ class TestScraper:
     def initialize(self):
         # self.check_post_for_keywords(self.get_data())
         # self.capture_screenshot()
-
 
         soup = BeautifulSoup(self.get_data(self.url), 'html.parser')
         print(soup)
