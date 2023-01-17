@@ -4,7 +4,7 @@ import requests
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
-'''Website detects bot'''
+'''DETECTS BOT & BLOCKS WEBSITE'''
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,

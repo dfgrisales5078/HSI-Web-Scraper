@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 import logging
 from selenium.webdriver.common.keys import Keys
 
-'''DETECTS BOT & BLOCKS WEBSITE'''
+"""REQUIRES ACCOUNT AFTER A FEW SEARCHES"""
 
 
 LOG_FILE = 'listings_results.log'
@@ -16,10 +16,10 @@ class TestScraper:
     def __init__(self):
         self.driver = webdriver.Chrome()
         self.location = 'fort-myers'
-        self.keywords = ['cash', 'Exotic']
+        self.keywords = ['cashapp']
         self.join = ''
         self.payment = ['cash', 'cashapp', 'venmo']
-        self.url = f'https://www.skipthegames.com/posts/{self.location}/'
+        self.url = 'https://www.facebook.com/marketplace/fort-myers-fl'
         self.text_search = ''
 
     def initialize(self):
@@ -34,9 +34,12 @@ class TestScraper:
         # self.close_webpage()
         # time.sleep(2)
 
+    def formatted_url(self):
+        return f'https://www.facebook.com/marketplace/fort-myers-fl/search?query={self.keywords[0]}'
+
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
-        self.driver.get(self.url)
+        self.driver.get(self.formatted_url())
         assert "Page not found" not in self.driver.page_source
 
     def close_webpage(self) -> None:
@@ -46,44 +49,36 @@ class TestScraper:
 
         # find & click on first post
         posts = self.driver.find_element(
-            By.XPATH, '//*[@id="gallery_view"]/div/div/div/div/a[1]/img')
+            By.XPATH, '//*[@id="mount_0_0_OX"]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[2]/div/div/div['
+                      '3]/div[1]/div[2]/div[1]/div/div/span/div/div/a/div/div[1]/div/div/div/div/div/img')
         posts.click()
 
-        # get first post table & description data
-        table_data = self.driver.find_element(
-            By.XPATH, '//*[@id="post-body"]/div/table_data')
-        print('table data: ', table_data.text)
-
-        description_data = self.driver.find_element(
-            By.XPATH, '//*[@id="post-body"]')
-        print('description data: ',description_data.text)
+        # get first post data
+        post_data = self.driver.find_element(
+            By.XPATH, '//*[@id="mount_0_0_OX"]/div/div[1]/div/div[5]/div/div/div[3]/div[2]/div/div[2]/div/div['
+                      '2]/div/div[1]')
+        print('description data: ', post_data.text)
 
         time.sleep(7)
 
-        # scroll down
-        html = self.driver.find_element('html')
-        html.send_keys(Keys.END)
+        # find and click button to go onto next post
+        next_btn = self.driver.find_element(
+            By.XPATH, '//*[@id="post-container"]/div/div[3]/div/div/ul/li[2]/a')
+        time.sleep(2)
 
-        # click next button and post table & description data from next listing
-        # for i in range(5):
-        #     # find & click on next post button
-        #     next_btn = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-container"]/div/div[3]/div/div/ul/li[2]/a')
-        #     next_btn.click()
-        #     time.sleep(2)
-        #
-        #     # get first post table & description data
-        #     table_data = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-body"]/div/table_data')
-        #     print('table data: ', table_data.text)
-        #
-        #     description_data = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-body"]')
-        #     print('description data: ', description_data.text)
-        #
-        #     time.sleep(5)
-        #
-        #     break
+        for i in range(5):
+            # find & click on next post button
+            next_btn.click()
+
+            # get data of next post
+            post_data = self.driver.find_element(
+                By.XPATH, '//*[@id="mount_0_0_OX"]/div/div[1]/div/div[5]/div/div/div[3]/div[2]/div/div[2]/div/div['
+                          '2]/div/div[1]')
+            print('description data: ', post_data.text)
+
+            time.sleep(5)
+
+            break
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:

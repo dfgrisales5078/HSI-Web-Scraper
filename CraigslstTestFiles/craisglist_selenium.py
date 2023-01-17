@@ -4,10 +4,8 @@ from selenium.webdriver.common.by import By
 import logging
 from selenium.webdriver.common.keys import Keys
 
-'''DETECTS BOT & BLOCKS WEBSITE'''
 
-
-LOG_FILE = 'listings_results.log'
+LOG_FILE = 'craigslist_listings_results.log'
 logging.basicConfig(level=logging.INFO,
                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
@@ -15,11 +13,11 @@ logging.basicConfig(level=logging.INFO,
 class TestScraper:
     def __init__(self):
         self.driver = webdriver.Chrome()
-        self.location = 'fort-myers'
-        self.keywords = ['cash', 'Exotic']
+        self.location = 'fortmyers'
+        self.keywords = ['travel', 'car rental', 'hotels']
         self.join = ''
         self.payment = ['cash', 'cashapp', 'venmo']
-        self.url = f'https://www.skipthegames.com/posts/{self.location}/'
+        self.url = f'https://{self.location}.craigslist.org/search/bbb?query='
         self.text_search = ''
 
     def initialize(self):
