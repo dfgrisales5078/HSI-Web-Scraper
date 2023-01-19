@@ -3,9 +3,9 @@ from selenium import webdriver
 import logging
 from selenium.webdriver.common.by import By
 
-LOG_FILE = 'listings_results.log'
-logging.basicConfig(level=logging.INFO,
-                    datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
+# LOG_FILE = 'listings_results.log'
+# logging.basicConfig(level=logging.INFO,
+#                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
 
 class TestScraper:
@@ -22,11 +22,12 @@ class TestScraper:
         self.open_webpage()
         links = self.get_links()
         self.get_data(links)
+        self.close_webpage()
 
         # self.check_post_for_keywords(self.get_data())
         # time.sleep(3)
         # self.capture_screenshot()
-        # self.close_webpage()
+
         # time.sleep(2)
 
     def get_links(self):
@@ -43,9 +44,9 @@ class TestScraper:
         assert "Page not found" not in self.driver.page_source
 
         # click on terms btn
-        btn1 = self.driver.find_element(
+        btn = self.driver.find_element(
             By.CLASS_NAME, 'button')
-        btn1.click()
+        btn.click()
 
         time.sleep(2)
         # click on terms btn
@@ -57,10 +58,9 @@ class TestScraper:
         self.driver.close()
 
     def get_data(self, links):
+        links = set(links)
         counter = 0
         for link in links:
-            counter += 1
-
             print(link)
             self.driver.implicitly_wait(10)
             time.sleep(4)
@@ -84,13 +84,14 @@ class TestScraper:
 
             info = description.text + phone_number.text + location_and_age.text
 
-            for line in info:
-                if 'call' in line.lower():
-                    print(line)
-                    print('keyword found')
+            # for line in info:
+            #     if 'call' in line.lower():
+            #         print(line)
+            #         print('keyword found')
 
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
+            counter += 1
 
             if counter > 5:
                 break
