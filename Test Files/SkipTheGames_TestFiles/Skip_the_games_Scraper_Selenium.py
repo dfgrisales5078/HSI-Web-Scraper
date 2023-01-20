@@ -130,7 +130,7 @@ class TestScraper:
 
     def format_data_to_csv(self):
         titled_columns = {
-            'Phone Number': self.phone_number,
+            'Phone-Number': self.phone_number,
             'Link': self.link,
             'Location': self.location,
             'Name': self.name,
