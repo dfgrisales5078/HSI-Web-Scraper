@@ -1,10 +1,11 @@
 import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import pandas as pd
+import undetected_chromedriver as uc
 
-'''DETECTS BOT & BLOCKS WEBSITE'''
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
@@ -13,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 
 class TestScraper:
     def __init__(self):
-        self.driver = webdriver.Chrome()
+        self.driver = None
         self.location = 'fort-myers'
         self.keywords = ['cash', 'Exotic']
         self.join = ''
@@ -21,17 +22,28 @@ class TestScraper:
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
         self.text_search = ''
 
+        # lists to store data and then send to csv file
+        self.phone_number = []
+        self.link = []
+        self.name = []
+        self.sex = []
+        self.email = []
+        self.location = []
+        self.description = []
+
     def initialize(self):
+        options = ChromeOptions()
+        options.headless = False
+        self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
-        time.sleep(6)
-        self.get_data()
-        time.sleep(5)
+
+        links = self.get_links()
+        # time.sleep(3)
+        # self.get_data(links)
+        # self.format_data_to_csv()
+        # self.close_webpage()
 
         # self.check_post_for_keywords(self.get_data())
-        # time.sleep(3)
-        # self.capture_screenshot()
-        # self.close_webpage()
-        # time.sleep(2)
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -41,48 +53,94 @@ class TestScraper:
     def close_webpage(self) -> None:
         self.driver.close()
 
-    def get_data(self):
+    def get_links(self):
+        posts = self.driver.find_elements(
+            By.CSS_SELECTOR, '#mainCellWrapper > div.mainBody > table [href]')
+        links = [post.get_attribute('href') for post in posts]
+        return links[2:]
 
-        # find & click on first post
-        posts = self.driver.find_element(
-            By.XPATH, '//*[@id="gallery_view"]/div/div/div/div/a[1]/img')
-        posts.click()
+    def get_data(self, links):
+        links = set(links)
+        counter = 0
 
-        # get first post table & description data
-        table_data = self.driver.find_element(
-            By.XPATH, '//*[@id="post-body"]/div/table_data')
-        print('table data: ', table_data.text)
+        for link in links:
+            # append link to list
+            self.link.append(link)
+            print(link)
 
-        description_data = self.driver.find_element(
-            By.XPATH, '//*[@id="post-body"]')
-        print('description data: ', description_data.text)
+            self.driver.implicitly_wait(10)
+            time.sleep(2)
+            self.driver.get(link)
+            assert "Page not found" not in self.driver.page_source
 
-        time.sleep(7)
+            name = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
+            print(name.text[2:])
 
-        # scroll down
-        html = self.driver.find_element('html')
-        html.send_keys(Keys.END)
+            # append name
+            self.name.append(name.text[2:])
 
-        # click next button and post table & description data from next listing
-        # for i in range(5):
-        #     # find & click on next post button
-        #     next_btn = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-container"]/div/div[3]/div/div/ul/li[2]/a')
-        #     next_btn.click()
-        #     time.sleep(2)
-        #
-        #     # get first post table & description data
-        #     table_data = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-body"]/div/table_data')
-        #     print('table data: ', table_data.text)
-        #
-        #     description_data = self.driver.find_element(
-        #         By.XPATH, '//*[@id="post-body"]')
-        #     print('description data: ', description_data.text)
-        #
-        #     time.sleep(5)
-        #
-        #     break
+            sex = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
+            print(sex.text[2:])
+
+            # append sex
+            self.sex.append(sex.text[2:])
+
+            phone_number = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
+            print(phone_number.text[2:])
+
+            # append phone number
+            self.phone_number.append(phone_number.text[2:])
+
+            email = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
+            print(email.text[2:])
+
+            # append email
+            self.email.append(email.text[2:])
+
+            location = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
+            print(location.text[2:])
+
+            # append location
+            self.location.append(location.text[2:])
+
+            description = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
+            print(description.text)
+            print("\n")
+
+            # append description
+            self.description.append(description.text)
+
+            # for line in info:
+            #     if 'call' in line.lower():
+            #         print(line)
+            #         print('keyword found')
+
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+            counter += 1
+
+            if counter > 10:
+                break
+
+    def format_data_to_csv(self):
+        titled_columns = {
+            'Phone Number': self.phone_number,
+            'Link': self.link,
+            'Location': self.location,
+            'Name': self.name,
+            'Sex': self.sex,
+            'E-mail': self.email,
+            'Description': self.description
+        }
+
+        data = pd.DataFrame(titled_columns)
+        data.to_csv('yesbackpage_01-20-23.csv', index=False, sep="\t")
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:
@@ -90,8 +148,8 @@ class TestScraper:
                 logging.info(data)
             break
 
-    def capture_screenshot(self):
-        self.driver.save_screenshot("test_search.png")
+    def capture_screenshot(self, screenshot_name):
+        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
 
     def read_keywords(self) -> str:
         return ' '.join(self.keywords)
