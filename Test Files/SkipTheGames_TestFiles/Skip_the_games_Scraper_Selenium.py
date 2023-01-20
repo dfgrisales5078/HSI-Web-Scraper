@@ -6,7 +6,6 @@ from selenium.webdriver.common.keys import Keys
 
 '''DETECTS BOT & BLOCKS WEBSITE'''
 
-
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
@@ -56,7 +55,7 @@ class TestScraper:
 
         description_data = self.driver.find_element(
             By.XPATH, '//*[@id="post-body"]')
-        print('description data: ',description_data.text)
+        print('description data: ', description_data.text)
 
         time.sleep(7)
 

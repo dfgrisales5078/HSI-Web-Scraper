@@ -22,6 +22,8 @@ if __name__ == '__main__':
     driver.get("https://megapersonals.eu")
     assert "Page not found" not in driver.page_source
 
+    driver.implicitly_wait(10)
+
     # To get the first five - a simple loop. You could add that threading here
     driver.find_element(By.CLASS_NAME, 'btn').click()
     driver.find_element(By.XPATH, '//*[@id="choseCityContainer"]/div[3]/label').click()

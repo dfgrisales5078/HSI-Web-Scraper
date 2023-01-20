@@ -1,15 +1,18 @@
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.webdriver.common.by import By
+import pandas as pd
 
 LOG_FILE = 'listings_results.log'
 logging.basicConfig(level=logging.INFO,
                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
+
 class TestScraper:
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        self.driver = None
         self.location = 'fortmyers'
         self.keywords = ['cash', 'Exotic']
         self.join = ''
@@ -17,11 +20,25 @@ class TestScraper:
         self.url = f'https://www.yesbackpage.com/68/posts/8-Adult/122-Female-Escorts'
         self.text_search = ''
 
+        # lists to store data and then send to csv file
+        self.phone_number = []
+        self.link = []
+        self.name = []
+        self.sex = []
+        self.email = []
+        self.location = []
+        self.description = []
+
     def initialize(self):
+        options = ChromeOptions()
+        options.headless = False
+        self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
+
         links = self.get_links()
         time.sleep(3)
         self.get_data(links)
+        self.format_data_to_csv()
         self.close_webpage()
 
         # self.check_post_for_keywords(self.get_data())
@@ -41,38 +58,87 @@ class TestScraper:
         return links[2:]
 
     def get_data(self, links):
+        links = set(links)
         counter = 0
-        for link in links:
-            counter += 1
 
+        for link in links:
+            # append link to list
+            self.link.append(link)
             print(link)
+
             self.driver.implicitly_wait(10)
-            time.sleep(4)
+            time.sleep(2)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
-            table = self.driver.find_element(
-                By.XPATH, '//*[@id="mainCellWrapper"]/div[1]/table/tbody/tr[1]/td/div[1]/div/table')
-            print(table.text)
+
+            name = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
+            print(name.text[2:])
+
+            # append name
+            self.name.append(name.text[2:])
+
+            sex = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
+            print(sex.text[2:])
+
+            # append sex
+            self.sex.append(sex.text[2:])
+
+            phone_number = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
+            print(phone_number.text[2:])
+
+            # append phone number
+            self.phone_number.append(phone_number.text[2:])
+
+            email = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
+            print(email.text[2:])
+
+            # append email
+            self.email.append(email.text[2:])
+
+            location = self.driver.find_element(
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
+            print(location.text[2:])
+
+            # append location
+            self.location.append(location.text[2:])
 
             description = self.driver.find_element(
-                By.XPATH, '//*[@id="mainCellWrapper"]/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div')
+                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
             print(description.text)
             print("\n")
 
-            info = table.text + description.text
+            # append description
+            self.description.append(description.text)
 
-            for line in info:
-                if 'call' in line.lower():
-                    print(line)
-                    print('keyword found')
+            # for line in info:
+            #     if 'call' in line.lower():
+            #         print(line)
+            #         print('keyword found')
 
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
+            counter += 1
 
-            # if counter > 15:
-            #     break
+            if counter > 10:
+                break
 
-            break
+    def format_data_to_csv(self):
+        titled_columns = {
+            'Phone Number': self.phone_number,
+            'Link': self.link,
+            'Location': self.location,
+            'Name': self.name,
+            'Sex': self.sex,
+            'E-mail': self.email,
+            'Description': self.description
+        }
+
+        data = pd.DataFrame(titled_columns)
+        data.to_csv('yesbackpage_01-20-23.csv', index=False, sep="\t")
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:

@@ -1,16 +1,18 @@
 import time
 from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.webdriver.common.by import By
+import pandas as pd
 
-LOG_FILE = 'listings_results.log'
-logging.basicConfig(level=logging.INFO,
-                    datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
+# LOG_FILE = 'listings_results.log'
+# logging.basicConfig(level=logging.INFO,
+#                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
 
 class TestScraper:
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        self.driver = None
         self.location = 'fortmyers'
         self.keywords = ['cash', 'Exotic']
         self.join = ''
@@ -18,15 +20,26 @@ class TestScraper:
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/{self.location}/1'
         self.text_search = ''
 
+        # lists to store data and then send to csv file
+        self.phone_number = []
+        self.description = []
+        self.location_and_age = []
+        self.links = []
+
     def initialize(self):
+        # options = ChromeOptions()
+        # options.headless = False
+        self.driver = webdriver.Firefox()
         self.open_webpage()
+
         links = self.get_links()
         self.get_data(links)
+        self.close_webpage()
+        self.format_data_to_csv()
 
         # self.check_post_for_keywords(self.get_data())
         # time.sleep(3)
         # self.capture_screenshot()
-        # self.close_webpage()
         # time.sleep(2)
 
     def get_links(self):
@@ -43,9 +56,9 @@ class TestScraper:
         assert "Page not found" not in self.driver.page_source
 
         # click on terms btn
-        btn1 = self.driver.find_element(
+        btn = self.driver.find_element(
             By.CLASS_NAME, 'button')
-        btn1.click()
+        btn.click()
 
         time.sleep(2)
         # click on terms btn
@@ -57,44 +70,64 @@ class TestScraper:
         self.driver.close()
 
     def get_data(self, links):
+        links = set(links)
         counter = 0
         for link in links:
-            counter += 1
-
             print(link)
+            # append link to list
+            self.links.append(link)
+
             self.driver.implicitly_wait(10)
-            time.sleep(4)
+            time.sleep(3)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             description = self.driver.find_element(
                 By.CLASS_NAME, 'viewpostbody')
             print(description.text)
-            print("\n")
+
+            # append description to list
+            self.description.append(description.text)
 
             phone_number = self.driver.find_element(
                 By.CLASS_NAME, 'userInfoContainer')
             print(phone_number.text)
-            print("\n")
+
+            # append phone number to list
+            self.phone_number.append(phone_number.text)
 
             location_and_age = self.driver.find_element(
                 By.CLASS_NAME, 'viewpostlocationIconBabylon')
             print(location_and_age.text)
-            print("\n")
 
-            info = description.text + phone_number.text + location_and_age.text
+            # append location and age to list
+            self.location_and_age.append(location_and_age.text)
 
-            for line in info:
-                if 'call' in line.lower():
-                    print(line)
-                    print('keyword found')
+            # info = description.text + phone_number.text + location_and_age.text
+
+            # for line in info:
+            #     if 'call' in line.lower():
+            #         print(line)
+            #         print('keyword found')
 
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
+            counter += 1
 
-            if counter > 5:
+            if counter > 2:
                 break
             time.sleep(3)
+
+    def format_data_to_csv(self):
+        titled_columns = {
+            'Phone-Number': self.phone_number,
+            'Link': self.links,
+            'Location/Age': self.location_and_age,
+            'Description': self.description
+        }
+
+        data = pd.DataFrame(titled_columns)
+        data.to_csv('escort_alligator_01-20-23.csv', index=False, sep="\t")
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:
