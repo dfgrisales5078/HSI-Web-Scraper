@@ -32,12 +32,13 @@ class TestScraper:
         self.description = []
 
     def initialize(self):
-        options = ChromeOptions()
+        options = uc.ChromeOptions()
         options.headless = False
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
         self.open_webpage()
 
         links = self.get_links()
+        self.get_data(links)
         # time.sleep(3)
         # self.get_data(links)
         # self.format_data_to_csv()
@@ -55,9 +56,10 @@ class TestScraper:
 
     def get_links(self):
         posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#mainCellWrapper > div.mainBody > table [href]')
+            By.CSS_SELECTOR, '#gallery_view > div > div > div > div [href]')
         links = [post.get_attribute('href') for post in posts]
-        return links[2:]
+        print(links)
+        return links
 
     def get_data(self, links):
         links = set(links)
@@ -73,48 +75,56 @@ class TestScraper:
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
-            name = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
-            print(name.text[2:])
-
-            # append name
-            self.name.append(name.text[2:])
-
-            sex = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
-            print(sex.text[2:])
-
-            # append sex
-            self.sex.append(sex.text[2:])
-
-            phone_number = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
-            print(phone_number.text[2:])
-
-            # append phone number
-            self.phone_number.append(phone_number.text[2:])
-
-            email = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
-            print(email.text[2:])
-
-            # append email
-            self.email.append(email.text[2:])
-
-            location = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
-            print(location.text[2:])
-
-            # append location
-            self.location.append(location.text[2:])
+            table = self.driver.find_element(
+                By.XPATH, '//*[@id="post-body"]/div/table')
+            print(table.text)
 
             description = self.driver.find_element(
-                By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
+                By.XPATH, '//*[@id="post-body"]/div')
             print(description.text)
-            print("\n")
 
-            # append description
-            self.description.append(description.text)
+            # name = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
+            # print(name.text[2:])
+            #
+            # # append name
+            # self.name.append(name.text[2:])
+            #
+            # sex = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
+            # print(sex.text[2:])
+            #
+            # # append sex
+            # self.sex.append(sex.text[2:])
+            #
+            # phone_number = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
+            # print(phone_number.text[2:])
+            #
+            # # append phone number
+            # self.phone_number.append(phone_number.text[2:])
+            #
+            # email = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
+            # print(email.text[2:])
+            #
+            # # append email
+            # self.email.append(email.text[2:])
+            #
+            # location = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
+            # print(location.text[2:])
+            #
+            # # append location
+            # self.location.append(location.text[2:])
+            #
+            # description = self.driver.find_element(
+            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
+            # print(description.text)
+            # print("\n")
+            #
+            # # append description
+            # self.description.append(description.text)
 
             # for line in info:
             #     if 'call' in line.lower():
@@ -125,7 +135,7 @@ class TestScraper:
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 10:
+            if counter > 5:
                 break
 
     def format_data_to_csv(self):
