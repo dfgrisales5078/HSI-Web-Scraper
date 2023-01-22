@@ -1,5 +1,6 @@
 import time
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.webdriver.common.by import By
@@ -22,14 +23,19 @@ class TestScraper:
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
         self.text_search = ''
 
+        # TODO these must be pulled from about_info, description, or activities
+        # self.phone_number = []
+        # self.name = []
+        # self.sex = []
+        # self.email = []
+        # self.payment_method = []
+        # self.location = []
+
         # lists to store data and then send to csv file
-        self.phone_number = []
         self.link = []
-        self.name = []
-        self.sex = []
-        self.email = []
-        self.location = []
+        self.about_info = []
         self.description = []
+        self.services = []
 
     def initialize(self):
         options = uc.ChromeOptions()
@@ -39,10 +45,8 @@ class TestScraper:
 
         links = self.get_links()
         self.get_data(links)
-        # time.sleep(3)
-        # self.get_data(links)
-        # self.format_data_to_csv()
-        # self.close_webpage()
+        self.format_data_to_csv()
+        self.close_webpage()
 
         # self.check_post_for_keywords(self.get_data())
 
@@ -54,11 +58,16 @@ class TestScraper:
     def close_webpage(self) -> None:
         self.driver.close()
 
+    # TODO fix bug to get thr correct links
     def get_links(self):
         posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#gallery_view > div > div > div > div [href]')
+            By.CSS_SELECTOR, 'html.no-js body div table.two-col-wrap tbody tr '
+                             'td#gallery_view.listings-with-sidebar.list-search-results.gallery div.full-width '
+                             'div.small-16.columns div.clsfds-display-mode.gallery div.day-gallery [href]')
         links = [post.get_attribute('href') for post in posts]
-        print(links)
+
+        print([link for link in set(links)])
+        print('# of links:', len(set(links)))
         return links
 
     def get_data(self, links):
@@ -70,61 +79,34 @@ class TestScraper:
             self.link.append(link)
             print(link)
 
-            self.driver.implicitly_wait(10)
-            time.sleep(2)
+            # self.driver.implicitly_wait(2)
+            # time.sleep(1)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
-            table = self.driver.find_element(
-                By.XPATH, '//*[@id="post-body"]/div/table')
-            print(table.text)
+            try:
+                about_info = self.driver.find_element(
+                    By.XPATH, '/html/body/div[7]/div/div[2]/div/table/tbody')
+                print(about_info.text)
+                self.about_info.append(about_info.text)
+            except NoSuchElementException:
+                self.about_info.append('N/A')
 
-            description = self.driver.find_element(
-                By.XPATH, '//*[@id="post-body"]/div')
-            print(description.text)
+            try:
+                services = self.driver.find_element(
+                    By.XPATH, '//*[@id="post-services"]')
+                print(services.text)
+                self.services.append(services.text)
+            except NoSuchElementException:
+                self.services.append('N/A')
 
-            # name = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
-            # print(name.text[2:])
-            #
-            # # append name
-            # self.name.append(name.text[2:])
-            #
-            # sex = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
-            # print(sex.text[2:])
-            #
-            # # append sex
-            # self.sex.append(sex.text[2:])
-            #
-            # phone_number = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
-            # print(phone_number.text[2:])
-            #
-            # # append phone number
-            # self.phone_number.append(phone_number.text[2:])
-            #
-            # email = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
-            # print(email.text[2:])
-            #
-            # # append email
-            # self.email.append(email.text[2:])
-            #
-            # location = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
-            # print(location.text[2:])
-            #
-            # # append location
-            # self.location.append(location.text[2:])
-            #
-            # description = self.driver.find_element(
-            #     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
-            # print(description.text)
-            # print("\n")
-            #
-            # # append description
-            # self.description.append(description.text)
+            try:
+                description = self.driver.find_element(
+                    By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div')
+                print(description.text)
+                self.description.append(description.text)
+            except NoSuchElementException:
+                self.description.append('N/A')
 
             # for line in info:
             #     if 'call' in line.lower():
@@ -135,23 +117,21 @@ class TestScraper:
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 5:
-                break
+            # if counter > 5:
+            #     break
 
     def format_data_to_csv(self):
         titled_columns = {
-            'Phone-Number': self.phone_number,
             'Link': self.link,
-            'Location': self.location,
-            'Name': self.name,
-            'Sex': self.sex,
-            'E-mail': self.email,
+            'about-info': self.about_info,
+            'services': self.services,
             'Description': self.description
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv('yesbackpage_01-20-23.csv', index=False, sep="\t")
+        data.to_csv('skipthegames_01-20-23.csv', index=False, sep="\t")
 
+    # TODO
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:
             if keyword in data[0] or keyword in data[1]:
