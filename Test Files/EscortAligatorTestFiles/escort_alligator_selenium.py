@@ -2,6 +2,8 @@ import time
 from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
+
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
 
@@ -82,29 +84,31 @@ class TestScraper:
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
-            description = self.driver.find_element(
-                By.CLASS_NAME, 'viewpostbody')
-            print(description.text)
+            try:
+                description = self.driver.find_element(
+                    By.CLASS_NAME, 'viewpostbody').text
+                print(description)
+                self.description.append(description)
+            except NoSuchElementException:
+                self.description.append('N/A')
 
-            # append description to list
-            self.description.append(description.text)
+            try:
+                phone_number = self.driver.find_element(
+                    By.CLASS_NAME, 'userInfoContainer').text
+                print(phone_number)
+                self.phone_number.append(phone_number)
+            except NoSuchElementException:
+                self.phone_number.append('N/A')
 
-            phone_number = self.driver.find_element(
-                By.CLASS_NAME, 'userInfoContainer')
-            print(phone_number.text)
-
-            # append phone number to list
-            self.phone_number.append(phone_number.text)
-
-            location_and_age = self.driver.find_element(
-                By.CLASS_NAME, 'viewpostlocationIconBabylon')
-            print(location_and_age.text)
-
-            # append location and age to list
-            self.location_and_age.append(location_and_age.text)
+            try:
+                location_and_age = self.driver.find_element(
+                    By.CLASS_NAME, 'viewpostlocationIconBabylon').text
+                print(location_and_age)
+                self.location_and_age.append(location_and_age)
+            except NoSuchElementException:
+                self.location_and_age.append('N/A')
 
             # info = description.text + phone_number.text + location_and_age.text
-
             # for line in info:
             #     if 'call' in line.lower():
             #         print(line)

@@ -126,8 +126,8 @@ class TestScraper:
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 15:
-                break
+            # if counter > 15:
+            #     break
 
             print('\n')
 
