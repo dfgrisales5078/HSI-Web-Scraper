@@ -1,15 +1,11 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
-
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
-
-# LOG_FILE = 'listings_results.log'
-# logging.basicConfig(level=logging.INFO,
-#                     datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
 
 class TestScraper:
@@ -118,7 +114,7 @@ class TestScraper:
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 2:
+            if counter > 5:
                 break
             time.sleep(3)
 
@@ -131,7 +127,7 @@ class TestScraper:
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv('escort_alligator_01-20-23.csv', index=False, sep="\t")
+        data.to_csv(f'escortalligator-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:

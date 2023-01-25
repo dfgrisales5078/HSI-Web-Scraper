@@ -1,14 +1,11 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
-
-LOG_FILE = 'listings_results.log'
-logging.basicConfig(level=logging.INFO,
-                    datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
 
 class TestScraper:
@@ -32,12 +29,12 @@ class TestScraper:
 
     def initialize(self):
         options = ChromeOptions()
-        options.headless = False
+        options.headless = True
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
         links = self.get_links()
-        time.sleep(3)
+        # time.sleep(3)
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
@@ -68,7 +65,7 @@ class TestScraper:
             print(link)
 
             self.driver.implicitly_wait(10)
-            time.sleep(2)
+            # time.sleep(2)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -131,8 +128,8 @@ class TestScraper:
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 10:
-                break
+            # if counter > 10:
+            #     break
 
     def format_data_to_csv(self):
         titled_columns = {
@@ -146,7 +143,7 @@ class TestScraper:
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv('yesbackpage_01-20-23.csv', index=False, sep="\t")
+        data.to_csv(f'yesbackpage-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
     def check_post_for_keywords(self, data):
         for keyword in self.keywords:

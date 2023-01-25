@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -6,11 +7,6 @@ import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
-
-
-LOG_FILE = 'listings_results.log'
-logging.basicConfig(level=logging.INFO,
-                    datefmt="%m/%d/%Y %H:%M:%S", filename=LOG_FILE)
 
 
 class TestScraper:
@@ -129,7 +125,7 @@ class TestScraper:
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv('skipthegames_01-20-23.csv', index=False, sep="\t")
+        data.to_csv(f'skipthegames-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
     # TODO
     def check_post_for_keywords(self, data):
