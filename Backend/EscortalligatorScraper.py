@@ -30,8 +30,6 @@ class EscortalligatorScraper(ScraperPrototype):
         self.close_webpage()
         self.format_data_to_csv()
 
-        # self.check_post_for_keywords(self.get_data())
-
     def open_webpage(self):
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
