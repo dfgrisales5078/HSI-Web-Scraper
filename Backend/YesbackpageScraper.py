@@ -1,3 +1,4 @@
+from ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver
@@ -8,15 +9,12 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 
 
-class TestScraper:
+class YesbackpageScraper(ScraperPrototype):
+
     def __init__(self):
+        super().__init__()
         self.driver = None
-        self.location = 'fortmyers'
-        self.keywords = ['cash', 'Exotic']
-        self.join = ''
-        self.payment = ['cash', 'cashapp', 'venmo']
         self.url = f'https://www.yesbackpage.com/68/posts/8-Adult/122-Female-Escorts'
-        self.text_search = ''
 
         # lists to store data and then send to csv file
         self.phone_number = []
@@ -29,7 +27,7 @@ class TestScraper:
 
     def initialize(self):
         options = ChromeOptions()
-        options.headless = True
+        options.headless = False
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
@@ -39,12 +37,12 @@ class TestScraper:
         self.format_data_to_csv()
         self.close_webpage()
 
-    def open_webpage(self) -> None:
+    def open_webpage(self):
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
-    def close_webpage(self) -> None:
+    def close_webpage(self):
         self.driver.close()
 
     def get_links(self):
@@ -52,6 +50,10 @@ class TestScraper:
             By.CSS_SELECTOR, '#mainCellWrapper > div.mainBody > table [href]')
         links = [post.get_attribute('href') for post in posts]
         return links[2:]
+
+    # TODO - change if location changes?
+    def get_formatted_url(self):
+        pass
 
     def get_data(self, links):
         links = set(links)
@@ -124,6 +126,7 @@ class TestScraper:
             if counter > 5:
                 break
 
+    # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
             'Phone Number': self.phone_number,
@@ -138,19 +141,9 @@ class TestScraper:
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'yesbackpage-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
-    def check_post_for_keywords(self, data):
-        for keyword in self.keywords:
-            if keyword in data[0] or keyword in data[1]:
-                logging.info(data)
-            break
-
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'screenshots/{screenshot_name}')
 
-    def read_keywords(self) -> str:
-        return ' '.join(self.keywords)
-
-
-if __name__ == "__main__":
-    scraper = TestScraper()
-    scraper.initialize()
+    # TODO - read keywords from keywords.txt
+    def read_keywords(self):
+        pass

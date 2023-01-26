@@ -1,3 +1,4 @@
+from ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver
@@ -8,30 +9,26 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
 
-
-class TestScraper:
+class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
+        super().__init__()
         self.driver = None
         self.location = 'fort-myers'
-        self.keywords = ['cash', 'Exotic']
-        self.join = ''
-        self.payment = ['cash', 'cashapp', 'venmo']
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
-        self.text_search = ''
-
-        # TODO these need to be pulled from about_info, description, or activities
-        # self.phone_number = []
-        # self.name = []
-        # self.sex = []
-        # self.email = []
-        # self.payment_method = []
-        # self.location = []
 
         # lists to store data and then send to csv file
         self.link = []
         self.about_info = []
         self.description = []
         self.services = []
+
+        # TODO these need to be pulled from about_info, description, or activities using regex?
+        # self.phone_number = []
+        # self.name = []
+        # self.sex = []
+        # self.email = []
+        # self.payment_method = []
+        # self.location = []
 
     def initialize(self):
         options = uc.ChromeOptions()
@@ -44,14 +41,12 @@ class TestScraper:
         self.format_data_to_csv()
         self.close_webpage()
 
-        # self.check_post_for_keywords(self.get_data())
-
-    def open_webpage(self) -> None:
+    def open_webpage(self):
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
-    def close_webpage(self) -> None:
+    def close_webpage(self):
         self.driver.close()
 
     # TODO fix bug to get the correct links
@@ -65,6 +60,10 @@ class TestScraper:
         print([link for link in set(links)])
         print('# of links:', len(set(links)))
         return links
+
+    # TODO - change if location changes?
+    def get_formatted_url(self):
+        pass
 
     def get_data(self, links):
         links = set(links)
@@ -104,11 +103,6 @@ class TestScraper:
             except NoSuchElementException:
                 self.description.append('N/A')
 
-            # for line in info:
-            #     if 'call' in line.lower():
-            #         print(line)
-            #         print('keyword found')
-
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -116,6 +110,7 @@ class TestScraper:
             if counter > 5:
                 break
 
+    # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
             'Link': self.link,
@@ -127,20 +122,9 @@ class TestScraper:
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'skipthegames-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
-    # TODO
-    def check_post_for_keywords(self, data):
-        for keyword in self.keywords:
-            if keyword in data[0] or keyword in data[1]:
-                logging.info(data)
-            break
-
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'screenshots/{screenshot_name}')
 
-    def read_keywords(self) -> str:
-        return ' '.join(self.keywords)
-
-
-if __name__ == "__main__":
-    scraper = TestScraper()
-    scraper.initialize()
+    # TODO - read keywords from keywords.txt
+    def read_keywords(self):
+        pass

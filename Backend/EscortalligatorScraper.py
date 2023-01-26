@@ -1,22 +1,18 @@
+from ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
 
-
-class TestScraper:
+class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
+        super().__init__()
         self.driver = None
         self.location = 'fortmyers'
-        self.keywords = ['cash', 'Exotic']
-        self.join = ''
-        self.payment = ['cash', 'cashapp', 'venmo']
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/{self.location}/1'
-        self.text_search = ''
 
         # lists to store data and then send to csv file
         self.phone_number = []
@@ -25,8 +21,8 @@ class TestScraper:
         self.links = []
 
     def initialize(self):
-        # options = ChromeOptions()
-        # options.headless = False
+        options = webdriver.FirefoxOptions()
+        options.headless = False
         self.driver = webdriver.Firefox()
         self.open_webpage()
         links = self.get_links()
@@ -36,15 +32,7 @@ class TestScraper:
 
         # self.check_post_for_keywords(self.get_data())
 
-    def get_links(self):
-        posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#list [href]')
-        links = [post.get_attribute('href') for post in posts]
-
-        print(links[::3])
-        return links[::3]
-
-    def open_webpage(self) -> None:
+    def open_webpage(self):
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
@@ -55,13 +43,23 @@ class TestScraper:
         btn.click()
 
         time.sleep(2)
-        # click on terms btn
+        # click on 2nd terms btn
         btn = self.driver.find_element(
             By.CLASS_NAME, 'footer')
         btn.click()
 
-    def close_webpage(self) -> None:
+    def close_webpage(self):
         self.driver.close()
+
+    def get_links(self):
+        posts = self.driver.find_elements(
+            By.CSS_SELECTOR, '#list [href]')
+        links = [post.get_attribute('href') for post in posts]
+        return links[::3]
+
+    # TODO - change if location changes?
+    def get_formatted_url(self):
+        pass
 
     def get_data(self, links):
         links = set(links)
@@ -100,20 +98,15 @@ class TestScraper:
             except NoSuchElementException:
                 self.location_and_age.append('N/A')
 
-            # info = description.text + phone_number.text + location_and_age.text
-            # for line in info:
-            #     if 'call' in line.lower():
-            #         print(line)
-            #         print('keyword found')
-
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
 
             if counter > 5:
                 break
-            time.sleep(3)
+            time.sleep(1)
 
+    # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
             'Phone-Number': self.phone_number,
@@ -125,19 +118,9 @@ class TestScraper:
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'escortalligator-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
 
-    def check_post_for_keywords(self, data):
-        for keyword in self.keywords:
-            if keyword in data[0] or keyword in data[1]:
-                logging.info(data)
-            break
-
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'screenshots/{screenshot_name}')
 
-    def read_keywords(self) -> str:
-        return ' '.join(self.keywords)
-
-
-if __name__ == "__main__":
-    scraper = TestScraper()
-    scraper.initialize()
+    # TODO - read keywords from keywords.txt
+    def read_keywords(self):
+        pass

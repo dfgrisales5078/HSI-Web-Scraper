@@ -3,14 +3,13 @@ from Backend.Keywords import Keywords
 
 
 class ScraperPrototype(ABC):
-    def __init__(self, driver, location, join, payment, url, text_search):
-        self.driver = driver
-        self.location = location
+    def __init__(self):
+        self.location = None
         self.keywords = Keywords()
-        self.join = join
-        self.payment = payment
-        self.url = url
-        self.text_search = text_search
+        self.join = None
+        self.payment = None
+        self.url = None
+        self.text_search = None
 
     @abstractmethod
     def initialize(self):
@@ -29,11 +28,11 @@ class ScraperPrototype(ABC):
         pass
 
     @abstractmethod
-    def get_data(self):
+    def get_data(self, links):
         pass
 
     @abstractmethod
-    def capture_screenshot(self):
+    def capture_screenshot(self, screenshot_name):
         pass
 
     @abstractmethod
