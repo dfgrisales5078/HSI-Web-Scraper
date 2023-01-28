@@ -1,4 +1,4 @@
-from ScraperPrototype import ScraperPrototype
+from Backend.ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver
@@ -19,6 +19,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.description = []
         self.location_and_age = []
         self.links = []
+
+        # TODO other info needs to be pulled using regex?
 
     def initialize(self):
         options = webdriver.FirefoxOptions()

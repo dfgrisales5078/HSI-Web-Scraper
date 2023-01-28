@@ -1,4 +1,4 @@
-from ScraperPrototype import ScraperPrototype
+from Backend.ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver
@@ -24,6 +24,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.email = []
         self.location = []
         self.description = []
+
+        # TODO other info needs to be pulled using regex?
 
     def initialize(self):
         options = ChromeOptions()

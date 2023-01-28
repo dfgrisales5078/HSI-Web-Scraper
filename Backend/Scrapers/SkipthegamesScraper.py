@@ -1,4 +1,4 @@
-from ScraperPrototype import ScraperPrototype
+from Backend.ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium import webdriver

@@ -1,4 +1,4 @@
-from ScraperPrototype import ScraperPrototype
+from Backend.ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
 from selenium.common import NoSuchElementException
@@ -22,6 +22,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = []
         self.location = []
         self.link = []
+
+        # TODO other info needs to be pulled using regex?
 
     def initialize(self):
         self.driver = webdriver.Firefox()

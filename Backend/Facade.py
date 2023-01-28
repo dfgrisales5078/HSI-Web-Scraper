@@ -1,9 +1,8 @@
-from Backend.DataPrototype import DataPrototype
-from Backend.EscortalligatorScraper import EscortalligatorScraper
-from Backend.MegapersonalsScraper import MegapersonalsScraper
-from Backend.SkipthegamesScraper import SkipthegamesScraper
-from Backend.YesbackpageScraper import YesbackpageScraper
-
+from Backend.Scrapers.EscortalligatorScraper import EscortalligatorScraper
+from Backend.Scrapers.MegapersonalsScraper import MegapersonalsScraper
+from Backend.Scrapers.SkipthegamesScraper import SkipthegamesScraper
+from Backend.Scrapers.YesbackpageScraper import YesbackpageScraper
+from Backend.Scrapers.ErosScraper import ErosScraper
 
 class Facade:
     def __init__(self):
@@ -29,6 +28,11 @@ class Facade:
     def initialize_yesbackpage_scraper():
         yesbackpage = YesbackpageScraper()
         yesbackpage.initialize()
+
+    @staticmethod
+    def initialize_eros_scraper():
+        eros = ErosScraper()
+        eros.initialize()
 
     def format_data(self, data):
         pass
