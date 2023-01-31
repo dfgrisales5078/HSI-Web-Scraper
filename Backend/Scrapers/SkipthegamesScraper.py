@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
 
+
 class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()

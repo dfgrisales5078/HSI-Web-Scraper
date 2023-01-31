@@ -18,7 +18,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.url = f'https://www.yesbackpage.com/68/posts/8-Adult/122-Female-Escorts'
 
         self.date_time = None
-        self.path = None
+        self.main_page_path = None
+        self.screenshot_directory = None
 
         # lists to store data and then send to csv file
         self.phone_number = []
@@ -36,11 +37,14 @@ class YesbackpageScraper(ScraperPrototype):
         self.date_time = str(datetime.today())[0:19]
         self.date_time = self.date_time.replace(' ', '_')
         self.date_time = self.date_time.replace(':', '-')
-        self.path = str(os.mkdir(f'yesbackpage_{self.date_time}'))
-        print(self.path)
+        self.main_page_path = f'yesbackpage_{self.date_time}'
+        os.mkdir(self.main_page_path)
+
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
 
         options = ChromeOptions()
-        options.headless = True
+        options.headless = False
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
@@ -154,11 +158,11 @@ class YesbackpageScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'yesbackpage-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.main_page_path}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        print(f'{self.path}/{screenshot_name}')
-        self.driver.save_screenshot(f'{self.path}/{screenshot_name}')
+        print(f'{self.main_page_path}/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):
