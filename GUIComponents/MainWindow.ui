@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1059</width>
-    <height>623</height>
+    <width>965</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QComboBox" name="websiteSelectionDropdown">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>150</y>
+      <x>120</x>
+      <y>120</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -50,8 +50,8 @@
    <widget class="QComboBox" name="setSelectionDropdown">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>330</y>
+      <x>120</x>
+      <y>300</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -90,11 +90,24 @@
      </property>
     </item>
    </widget>
+   <widget class="QPushButton" name="searchButton">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>480</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Search</string>
+    </property>
+   </widget>
    <widget class="QCheckBox" name="paymentMethodcheckBox">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>400</y>
+      <x>120</x>
+      <y>370</y>
       <width>181</width>
       <height>22</height>
      </rect>
@@ -106,8 +119,8 @@
    <widget class="QLineEdit" name="searchTextBox">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>240</y>
+      <x>120</x>
+      <y>210</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -119,8 +132,8 @@
    <widget class="QLabel" name="websiteSelectionLabel">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>130</y>
+      <x>120</x>
+      <y>100</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -132,8 +145,8 @@
    <widget class="QLabel" name="textSearchLabel">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>220</y>
+      <x>120</x>
+      <y>190</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -145,8 +158,8 @@
    <widget class="QLabel" name="setSelectionLabel">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>310</y>
+      <x>120</x>
+      <y>280</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -155,25 +168,25 @@
      <string>Select set to scrape (optional):</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="keywordInclusivecheckBox">
+   <widget class="QToolButton" name="toolButton">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>430</y>
-      <width>201</width>
-      <height>22</height>
+      <x>820</x>
+      <y>400</y>
+      <width>22</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Keyword inclusive (AND)</string>
+     <string>...</string>
     </property>
    </widget>
    <widget class="QLabel" name="keywordListLabel">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>159</y>
-      <width>83</width>
+      <x>540</x>
+      <y>100</y>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
@@ -181,39 +194,13 @@
      <string>List of keywords:</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="selectAllKeywordscheckBox">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>390</y>
-      <width>155</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Select all keywords from list</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="toolButton">
-    <property name="geometry">
-     <rect>
-      <x>900</x>
-      <y>390</y>
-      <width>23</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-   </widget>
    <widget class="QListWidget" name="keywordlistWidget">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>180</y>
-      <width>256</width>
-      <height>192</height>
+      <x>540</x>
+      <y>120</y>
+      <width>301</width>
+      <height>271</height>
      </rect>
     </property>
     <item>
@@ -302,32 +289,44 @@
      </property>
     </item>
    </widget>
-   <widget class="QPushButton" name="searchButton">
+   <widget class="QCheckBox" name="selectAllKeywordscheckBox">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>500</y>
-      <width>93</width>
-      <height>28</height>
+      <x>540</x>
+      <y>400</y>
+      <width>181</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>Search</string>
+     <string>Select all keywords from list</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="keywordInclusivecheckBox">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>400</y>
+      <width>201</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Keyword inclusive (AND)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>10</y>
-      <width>403</width>
-      <height>57</height>
+      <y>0</y>
+      <width>321</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <pointsize>28</pointsize>
-      <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
@@ -335,28 +334,14 @@
      <string>HSI Web Scraper</string>
     </property>
    </widget>
-   <zorder>websiteSelectionDropdown</zorder>
-   <zorder>setSelectionDropdown</zorder>
-   <zorder>searchButton</zorder>
-   <zorder>paymentMethodcheckBox</zorder>
-   <zorder>searchTextBox</zorder>
-   <zorder>websiteSelectionLabel</zorder>
-   <zorder>textSearchLabel</zorder>
-   <zorder>setSelectionLabel</zorder>
-   <zorder>toolButton</zorder>
-   <zorder>keywordListLabel</zorder>
-   <zorder>keywordlistWidget</zorder>
-   <zorder>selectAllKeywordscheckBox</zorder>
-   <zorder>keywordInclusivecheckBox</zorder>
-   <zorder>label</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1059</width>
-     <height>26</height>
+     <width>965</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
