@@ -11,7 +11,7 @@ class ErosScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
         self.location = 'naples'
-        self.url = f'https://www.eros.com/florida/{self.location}/eros.htm'
+        self.url = f'https://www.eros.com/florida/{self.location}/sections/{self.location}_escorts.htm'
 
         # lists to store data and then send to csv file
         self.link = []
@@ -41,16 +41,16 @@ class ErosScraper(ScraperPrototype):
     def close_webpage(self) -> None:
         self.driver.close()
 
-    # TODO - update code to get links from all posts instead
     def get_links(self):
         self.driver.find_element(
             By.XPATH, '//*[@id="agree_enter_website"]').click()
         self.driver.find_element(
             By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
 
+        # find all profile links
         posts = self.driver.find_elements(
-            By.CSS_SELECTOR, 'body > div.mainContentWrap > div.container.mainContent > '
-                             'div.grid.fourPerRow.mobile.switchable [href]')
+            By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+
         links = [post.get_attribute('href') for post in posts]
         print(set(links))
         return set(links)
