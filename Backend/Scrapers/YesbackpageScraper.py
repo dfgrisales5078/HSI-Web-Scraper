@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
+import os
 
 
 class YesbackpageScraper(ScraperPrototype):
@@ -16,6 +17,9 @@ class YesbackpageScraper(ScraperPrototype):
         self.driver = None
         self.url = f'https://www.yesbackpage.com/68/posts/8-Adult/122-Female-Escorts'
 
+        self.date_time = None
+        self.path = None
+
         # lists to store data and then send to csv file
         self.phone_number = []
         self.link = []
@@ -24,17 +28,23 @@ class YesbackpageScraper(ScraperPrototype):
         self.email = []
         self.location = []
         self.description = []
+        self.post_identifier = []
 
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
+        self.date_time = str(datetime.today())[0:19]
+        self.date_time = self.date_time.replace(' ', '_')
+        self.date_time = self.date_time.replace(':', '-')
+        self.path = str(os.mkdir(f'yesbackpage_{self.date_time}'))
+        print(self.path)
+
         options = ChromeOptions()
-        options.headless = False
+        options.headless = True
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
         links = self.get_links()
-        # time.sleep(3)
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
@@ -121,6 +131,8 @@ class YesbackpageScraper(ScraperPrototype):
 
             print("\n")
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -137,14 +149,16 @@ class YesbackpageScraper(ScraperPrototype):
             'Name': self.name,
             'Sex': self.sex,
             'E-mail': self.email,
-            'Description': self.description
+            'Description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'yesbackpage-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
+        data.to_csv(f'yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        print(f'{self.path}/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.path}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):
