@@ -8,6 +8,8 @@ import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
+import os
+
 
 class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
@@ -16,11 +18,16 @@ class SkipthegamesScraper(ScraperPrototype):
         self.location = 'fort-myers'
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
 
+        self.date_time = None
+        self.main_page_path = None
+        self.screenshot_directory = None
+
         # lists to store data and then send to csv file
         self.link = []
         self.about_info = []
         self.description = []
         self.services = []
+        self.post_identifier = []
 
         # TODO these need to be pulled from about_info, description, or activities using regex?
         # self.phone_number = []
@@ -31,6 +38,15 @@ class SkipthegamesScraper(ScraperPrototype):
         # self.location = []
 
     def initialize(self):
+        # set up directories to save screenshots and csv file.
+        self.date_time = str(datetime.today())[0:19]
+        self.date_time = self.date_time.replace(' ', '_')
+        self.date_time = self.date_time.replace(':', '-')
+        self.main_page_path = f'skipthegames_{self.date_time}'
+        os.mkdir(self.main_page_path)
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
@@ -103,6 +119,8 @@ class SkipthegamesScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.description.append('N/A')
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -116,14 +134,15 @@ class SkipthegamesScraper(ScraperPrototype):
             'Link': self.link,
             'about-info': self.about_info,
             'services': self.services,
-            'Description': self.description
+            'Description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'skipthegames-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):

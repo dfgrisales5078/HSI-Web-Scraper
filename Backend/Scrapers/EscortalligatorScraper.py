@@ -6,6 +6,7 @@ import logging
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
+import os
 
 class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
@@ -14,15 +15,29 @@ class EscortalligatorScraper(ScraperPrototype):
         self.location = 'fortmyers'
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/{self.location}/1'
 
+        self.date_time = None
+        self.main_page_path = None
+        self.screenshot_directory = None
+
         # lists to store data and then send to csv file
         self.phone_number = []
         self.description = []
         self.location_and_age = []
         self.links = []
+        self.post_identifier = []
 
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
+        # set up directories to save screenshots and csv file.
+        self.date_time = str(datetime.today())[0:19]
+        self.date_time = self.date_time.replace(' ', '_')
+        self.date_time = self.date_time.replace(':', '-')
+        self.main_page_path = f'escortalligator{self.date_time}'
+        os.mkdir(self.main_page_path)
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
         options = webdriver.FirefoxOptions()
         options.headless = False
         self.driver = webdriver.Firefox()
@@ -98,6 +113,8 @@ class EscortalligatorScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.location_and_age.append('N/A')
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -112,14 +129,15 @@ class EscortalligatorScraper(ScraperPrototype):
             'Phone-Number': self.phone_number,
             'Link': self.links,
             'Location/Age': self.location_and_age,
-            'Description': self.description
+            'Description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'escortalligator-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.main_page_path}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):
