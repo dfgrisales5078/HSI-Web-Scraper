@@ -8,6 +8,7 @@ import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
+import os
 
 
 class SkipthegamesScraper(ScraperPrototype):
@@ -16,6 +17,10 @@ class SkipthegamesScraper(ScraperPrototype):
         self.driver = None
         self.location = 'fort-myers'
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
+
+        self.date_time = None
+        self.main_page_path = None
+        self.screenshot_directory = None
 
         # lists to store data and then send to csv file
         self.link = []
@@ -32,6 +37,15 @@ class SkipthegamesScraper(ScraperPrototype):
         # self.location = []
 
     def initialize(self):
+        # set up directories to save screenshots and csv file.
+        self.date_time = str(datetime.today())[0:19]
+        self.date_time = self.date_time.replace(' ', '_')
+        self.date_time = self.date_time.replace(':', '-')
+        self.main_page_path = f'skipthegames_{self.date_time}'
+        os.mkdir(self.main_page_path)
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
@@ -121,10 +135,10 @@ class SkipthegamesScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'skipthegames-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):

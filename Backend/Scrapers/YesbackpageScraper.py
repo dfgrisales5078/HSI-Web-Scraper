@@ -34,12 +34,12 @@ class YesbackpageScraper(ScraperPrototype):
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
+        # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19]
         self.date_time = self.date_time.replace(' ', '_')
         self.date_time = self.date_time.replace(':', '-')
         self.main_page_path = f'yesbackpage_{self.date_time}'
         os.mkdir(self.main_page_path)
-
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
@@ -161,7 +161,6 @@ class YesbackpageScraper(ScraperPrototype):
         data.to_csv(f'{self.main_page_path}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        print(f'{self.main_page_path}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
