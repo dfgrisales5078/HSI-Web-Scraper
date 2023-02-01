@@ -27,6 +27,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = []
         self.location = []
         self.link = []
+        self.post_identifier = []
 
         # TODO other info needs to be pulled using regex?
 
@@ -37,7 +38,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.date_time = self.date_time.replace(':', '-')
 
         #create directories for screenshot and csv
-        self.main_page_path = f'yesbackpage_{self.date_time}'
+        self.main_page_path = f'megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
@@ -132,11 +133,13 @@ class MegapersonalsScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.location.append('N/A')
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 5:
+            if counter > 1:
                 break
 
             print('\n')
@@ -148,14 +151,15 @@ class MegapersonalsScraper(ScraperPrototype):
             'phone-number': self.phoneNumber,
             'city': self.city,
             'location': self.location,
-            'description': self.description
+            'description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'megapersonals-{str(datetime.today())[0:10]}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self):

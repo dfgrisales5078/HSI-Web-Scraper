@@ -27,6 +27,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.about_info = []
         self.description = []
         self.services = []
+        self.post_identifier = []
 
         # TODO these need to be pulled from about_info, description, or activities using regex?
         # self.phone_number = []
@@ -118,6 +119,8 @@ class SkipthegamesScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.description.append('N/A')
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -131,7 +134,8 @@ class SkipthegamesScraper(ScraperPrototype):
             'Link': self.link,
             'about-info': self.about_info,
             'services': self.services,
-            'Description': self.description
+            'Description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)

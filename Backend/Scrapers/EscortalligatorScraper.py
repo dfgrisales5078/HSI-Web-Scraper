@@ -24,6 +24,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.description = []
         self.location_and_age = []
         self.links = []
+        self.post_identifier = []
 
         # TODO other info needs to be pulled using regex?
 
@@ -112,6 +113,8 @@ class EscortalligatorScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.location_and_age.append('N/A')
 
+            self.post_identifier.append(counter)
+
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
@@ -126,7 +129,8 @@ class EscortalligatorScraper(ScraperPrototype):
             'Phone-Number': self.phone_number,
             'Link': self.links,
             'Location/Age': self.location_and_age,
-            'Description': self.description
+            'Description': self.description,
+            'Post_identifier': self.post_identifier
         }
 
         data = pd.DataFrame(titled_columns)
