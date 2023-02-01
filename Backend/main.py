@@ -1,15 +1,6 @@
 from Backend.Facade import Facade
-from datetime import datetime
-import os
 
 if __name__ == '__main__':
-
-    # date_time = str(datetime.today())[0:19]
-    # date_time = date_time.replace(' ', '_')
-    # date_time = date_time.replace(':', '-')
-    # path = f'yesbackpage_{date_time}'
-    # os.mkdir(path)
-    # print(path)
 
     while True:
         website_selection = input('Please make a website to search: '

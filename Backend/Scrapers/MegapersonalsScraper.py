@@ -6,7 +6,7 @@ import logging
 from selenium.webdriver.common.by import By
 import pandas as pd
 from selenium import webdriver
-
+import os
 
 class MegapersonalsScraper(ScraperPrototype):
 
@@ -14,6 +14,11 @@ class MegapersonalsScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
         self.url = "https://megapersonals.eu"
+
+        #set date variables and path
+        self.date_time = None
+        self.main_page_path = None
+        self.screenshot_directory = None
 
         # lists to store data and then send to csv file
         self.description = []
@@ -26,6 +31,17 @@ class MegapersonalsScraper(ScraperPrototype):
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
+        #format date
+        self.date_time = str(datetime.today())[0:19]
+        self.date_time = self.date_time.replace(' ', '_')
+        self.date_time = self.date_time.replace(':', '-')
+
+        #create directories for screenshot and csv
+        self.main_page_path = f'yesbackpage_{self.date_time}'
+        os.mkdir(self.main_page_path)
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
         self.driver = webdriver.Firefox()
         self.open_webpage()
 
