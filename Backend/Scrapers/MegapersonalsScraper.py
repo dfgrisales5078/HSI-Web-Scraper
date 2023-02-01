@@ -43,7 +43,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
         self.open_webpage()
 
         links = self.get_links()
