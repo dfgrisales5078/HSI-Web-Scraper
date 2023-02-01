@@ -5,6 +5,7 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
+import os
 
 class ErosScraper(ScraperPrototype):
     def __init__(self):
@@ -13,7 +14,12 @@ class ErosScraper(ScraperPrototype):
         self.location = 'naples'
         self.url = f'https://www.eros.com/florida/{self.location}/sections/{self.location}_escorts.htm'
 
+        self.date_time = None
+        self.main_page_path = None
+        self.screenshot_directory = None
+
         # lists to store data and then send to csv file
+        self.post_identifier = []
         self.link = []
         self.profile_header = []
         self.about_info = []
@@ -23,6 +29,17 @@ class ErosScraper(ScraperPrototype):
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
+        # Date and time of search
+        self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
+
+        # Create directory for search data
+        self.main_page_path = f'eros_{self.date_time}'
+        os.mkdir(self.main_page_path)
+
+        # Create directory for search screenshots
+        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
@@ -61,11 +78,12 @@ class ErosScraper(ScraperPrototype):
 
     def get_data(self, links):
 
-        self.link = list(links)
-
         counter = 0
         for link in links:
+            # append link to list
+            self.link.append(link)
             print(link)
+
             self.driver.implicitly_wait(10)
             time.sleep(2)
             self.driver.get(link)
@@ -103,16 +121,20 @@ class ErosScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.contact_details.append('none')
 
+            # Append post count as unique identifier
+            self.post_identifier.append(counter)
+            # Capture screenshot with unique identifier
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            # if counter > 1:
+            # if counter > 4:
             #     break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
+            'Post_identifier': self.post_identifier,
             'link': self.link,
             'profile_header': self.profile_header,
             'about_info': self.about_info,
@@ -121,10 +143,11 @@ class ErosScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'eros-{str(datetime.today())[0:10]}.csv', index=False, sep='\t')
+        data.to_csv(f'{self.main_page_path}/eros-{self.date_time}.csv', index=False, sep='\t')
 
     def capture_screenshot(self, screenshot_name):
-        self.driver.save_screenshot(f'screenshots/{screenshot_name}')
+        print(f'{self.screenshot_directory}/{screenshot_name}')
+        self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
     def read_keywords(self) -> str:
