@@ -11,15 +11,15 @@ class Keywords:
         with open("keywords.txt", "r+") as filename:
             contentSet = filename.read().splitlines()
             if keyword not in contentSet:
-                filename.write("\n" + keyword)
+                filename.write("\n" + keyword.lower())
             else:
-                print("Error")
+                print("Keyword already in file")
 
     @staticmethod
     def remove_keywords(keyword):
         with open("keywords.txt", "r") as filename:
             contentSet = filename.read().splitlines()
-            index = contentSet.index(keyword)
+            index = contentSet.index(keyword.lower())
 
             contentSet.remove(contentSet[index])
 
@@ -31,17 +31,15 @@ class Keywords:
             read = readfile.read()
             if read != '':
                 self.sets = json.loads(read)
-        self.sets[setName] = keywordsList.split(', ')
+        self.sets[setName.lower()] = keywordsList.split(', ')
         with open("keyword_sets.txt", "w") as writefile:
             json.dump(self.sets, writefile)
 
-    # {"Testing": ["guru", "hello", "deepa"], "SE": ["guru", "hello", "deepa"], "Doggo": ["guru", "hello", "deepa"]}
     def remove_set(self, setName):
         with open("keyword_sets.txt", "r") as readfile:
             self.sets = json.loads(readfile.read())
-            print(self.sets)
 
-        del self.sets[setName]
+        del self.sets[setName.lower()]
 
         with open('keyword_sets.txt', 'w') as writefile:
             json.dump(self.sets, writefile)
@@ -57,37 +55,37 @@ class Keywords:
 
         return self.sets
 
-
-if __name__ == '__main__':
-    key = Keywords()
-
-    while True:
-        userInput = input("Type 1 for adding a keyword\n"
-                          "Type 2 for removing a keyword\n"
-                          "Type 3 to add a set\n"
-                          "Type 4 to remove a set\n"
-                          "Type 5 to view keywords\n"
-                          "Type 6 to view sets\n"
-                          "Type 0 to quit\n"
-                          "Enter input: ")
-        if userInput == '1':
-            addWord = input("Type the keyword to add: ")
-            key.add_keywords(addWord)
-        elif userInput == '2':
-            key.get_keywords()
-            removeWord = input("Type keyword to remove: ")
-            key.remove_keywords(removeWord)
-        elif userInput == '3':
-            setKey = input("Enter set name: ")
-            setValues = input("Enter set values seperated by ',': ")
-            key.create_set(setKey, setValues)
-        elif userInput == '4':
-            key.get_set()
-            removeSet = input("Enter set name to remove: ")
-            key.remove_set(removeSet)
-        elif userInput == '5':
-            print(key.get_keywords())
-        elif userInput == '6':
-            print(key.get_set())
-        else:
-            break
+# code to test if the keywords class is working
+# if __name__ == '__main__':
+#     key = Keywords()
+#
+#     while True:
+#         userInput = input("Type 1 for adding a keyword\n"
+#                           "Type 2 for removing a keyword\n"
+#                           "Type 3 to add a set\n"
+#                           "Type 4 to remove a set\n"
+#                           "Type 5 to view keywords\n"
+#                           "Type 6 to view sets\n"
+#                           "Type 0 to quit\n"
+#                           "Enter input: ")
+#         if userInput == '1':
+#             addWord = input("Type the keyword to add: ")
+#             key.add_keywords(addWord)
+#         elif userInput == '2':
+#             key.get_keywords()
+#             removeWord = input("Type keyword to remove: ")
+#             key.remove_keywords(removeWord)
+#         elif userInput == '3':
+#             setKey = input("Enter set name: ")
+#             setValues = input("Enter set values seperated by ',': ")
+#             key.create_set(setKey, setValues)
+#         elif userInput == '4':
+#             key.get_set()
+#             removeSet = input("Enter set name to remove: ")
+#             key.remove_set(removeSet)
+#         elif userInput == '5':
+#             print(key.get_keywords())
+#         elif userInput == '6':
+#             print(key.get_set())
+#         else:
+#             break
