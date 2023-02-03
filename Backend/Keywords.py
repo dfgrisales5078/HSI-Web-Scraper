@@ -1,7 +1,12 @@
+import ast
+import json
+import pickle
+
+
 class Keywords:
     def __init__(self):
         self.keywords = None
-        self.sets = None
+        self.sets = {}
 
     @staticmethod
     def add_keywords(keyword):
@@ -13,39 +18,38 @@ class Keywords:
             else:
                 print("Error")
 
-
-
     @staticmethod
     def remove_keywords(keyword):
         with open("keywords.txt", "r") as filename:
-            contentSet = filename.read()
+            contentSet = filename.read().splitlines()
+            index = contentSet.index(keyword)
             print(contentSet)
-            #if keyword in contentSet:
+            contentSet.remove(contentSet[index])
+            print(contentSet)
 
-            #
         with open("keywords.txt", "w") as filename:
-            newcontent = contentSet.replace(keyword, "")
-            filename.write(newcontent)
+            filename.write("\n".join(contentSet))
 
+    def create_set(self, setName, keywordsList):
+        with open("keyword_sets.txt", "r") as readfile:
+            self.sets = json.loads(readfile.read())
+        self.sets[setName] = keywordsList.split(', ')
 
+        with open("keyword_sets.txt", "w") as writefile:
+            json.dump(self.sets, writefile)
+        return
 
-            # if keyword in contentSet:
-            #     index = contentSet.index(keyword)
-            #     contentSet.remove(contentSet[index])
-            #
-            #     with open("keywords.txt", "w") as writefile:
-            #         writefile.write(*contentSet)
+# {"Testing": ["guru", "hello", "deepa"], "SE": ["guru", "hello", "deepa"], "Doggo": ["guru", "hello", "deepa"]}
+    def remove_set(self, setName):
+        with open("keyword_sets.txt", "r") as readfile:
+            self.sets = json.loads(readfile.read())
+            print(self.sets)
 
-            print(contentSet)
+        del self.sets[setName]
 
-
-    @staticmethod
-    def create_set(self):
-        pass
-
-    @staticmethod
-    def remove_set(self):
-        pass
+        with open('keyword_sets.txt', 'w') as writefile:
+            json.dump(self.sets, writefile)
+        return
 
     @staticmethod
     def get_keywords(self):
@@ -53,7 +57,14 @@ class Keywords:
 
 
 if __name__ == '__main__':
-    keyword = Keywords()
-    data = "incall"
-    keyword.add_keywords(data)
-    keyword.remove_keywords(data)
+    key = Keywords()
+
+    while True:
+        # keyInput = input("Enter Key word for set: ")
+        # words = input("Enter list of keys to add to set seperated by ',': ")
+        # key.create_set(keyInput, words)
+
+        removeKey = input("Enter key word to remove: ")
+        key.remove_set(removeKey)
+        break
+
