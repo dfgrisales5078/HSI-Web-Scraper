@@ -47,7 +47,7 @@ class SkipthegamesScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         options = uc.ChromeOptions()
-        options.headless = False
+        options.headless = True
         self.driver = uc.Chrome(use_subprocess=True, options=options)
         self.open_webpage()
 

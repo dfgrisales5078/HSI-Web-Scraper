@@ -6,6 +6,7 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+import undetected_chromedriver as uc
 
 
 class MegapersonalsScraper(ScraperPrototype):
@@ -45,9 +46,14 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        options = ChromeOptions()
-        options.headless = True
-        self.driver = webdriver.Chrome(options=options)
+        # options = ChromeOptions()
+        # options.headless = False
+        # self.driver = webdriver.Chrome(options=options)
+
+        options = uc.ChromeOptions()
+        options.headless = False
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
+
         self.open_webpage()
 
         links = self.get_links()
@@ -145,7 +151,7 @@ class MegapersonalsScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 3:
+            if counter > 0:
                 break
 
             print('\n')
