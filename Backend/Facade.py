@@ -7,7 +7,6 @@ from Backend.Scrapers.ErosScraper import ErosScraper
 class Facade:
     def __init__(self):
         pass
-        # self.data = DataPrototype()
 
     @staticmethod
     def initialize_escortalligator_scraper():

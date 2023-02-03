@@ -1,12 +1,13 @@
-from Backend.ScraperPrototype import ScraperPrototype
-import time
+import os
 from datetime import datetime
-from selenium.common import NoSuchElementException
-import logging
-from selenium.webdriver.common.by import By
 import pandas as pd
 from selenium import webdriver
-import os
+from selenium.common import NoSuchElementException
+from selenium.webdriver.common.by import By
+from Backend.ScraperPrototype import ScraperPrototype
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+import undetected_chromedriver as uc
+
 
 class MegapersonalsScraper(ScraperPrototype):
 
@@ -14,8 +15,10 @@ class MegapersonalsScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
         self.url = "https://megapersonals.eu"
+        self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
-        #set date variables and path
+        # set date variables and path
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
@@ -28,22 +31,29 @@ class MegapersonalsScraper(ScraperPrototype):
         self.location = []
         self.link = []
         self.post_identifier = []
+        self.payment_methods_found = []
 
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
-        #format date
+        # format date
         self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_')
-        self.date_time = self.date_time.replace(':', '-')
+        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
 
-        #create directories for screenshot and csv
+        # create directories for screenshot and csv
         self.main_page_path = f'megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        self.driver = webdriver.Firefox()
+        # options = ChromeOptions()
+        # options.headless = False
+        # self.driver = webdriver.Chrome(options=options)
+
+        options = uc.ChromeOptions()
+        options.headless = False
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
+
         self.open_webpage()
 
         links = self.get_links()
@@ -81,6 +91,8 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
+
+        description = ''
         counter = 0
 
         for link in links:
@@ -88,8 +100,6 @@ class MegapersonalsScraper(ScraperPrototype):
             self.link.append(link)
             print(link)
 
-            # self.driver.implicitly_wait(2)
-            # time.sleep(1)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -100,6 +110,8 @@ class MegapersonalsScraper(ScraperPrototype):
                 print(description)
             except NoSuchElementException:
                 self.description.append('N/A')
+
+            self.check_for_payment_methods(description)
 
             try:
                 phone_number = self.driver.find_element(
@@ -139,7 +151,7 @@ class MegapersonalsScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 1:
+            if counter > 0:
                 break
 
             print('\n')
@@ -147,16 +159,30 @@ class MegapersonalsScraper(ScraperPrototype):
     # TODO - move to class that handles data
     def format_data_to_csv(self):
         titled_columns = {
+            'Post_identifier': self.post_identifier,
             'name': self.name,
             'phone-number': self.phoneNumber,
             'city': self.city,
             'location': self.location,
             'description': self.description,
-            'Post_identifier': self.post_identifier
+            'payment_methods': self.payment_methods_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
+
+    def check_for_payment_methods(self, description):
+        payments = ''
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                print('payment method: ', payment)
+                payments += payment + ' '
+
+        if payments != '':
+            self.payment_methods_found.append(payments)
+        else:
+            self.payment_methods_found.append('N/A')
+            print('N/A')
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
