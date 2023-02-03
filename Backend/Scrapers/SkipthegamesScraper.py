@@ -14,6 +14,9 @@ class SkipthegamesScraper(ScraperPrototype):
         self.location = 'fort-myers'
         self.url = f'https://www.skipthegames.com/posts/{self.location}/'
 
+        self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
+
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
@@ -24,6 +27,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.description = []
         self.services = []
         self.post_identifier = []
+        self.payment_methods_found = []
 
         # TODO these need to be pulled from about_info, description, or activities using regex?
         # self.phone_number = []
@@ -36,8 +40,7 @@ class SkipthegamesScraper(ScraperPrototype):
     def initialize(self):
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_')
-        self.date_time = self.date_time.replace(':', '-')
+        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
         self.main_page_path = f'skipthegames_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
@@ -79,6 +82,8 @@ class SkipthegamesScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
+
+        description = ''
         counter = 0
 
         for link in links:
@@ -115,6 +120,8 @@ class SkipthegamesScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.description.append('N/A')
 
+            self.check_for_payment_methods(description.text)
+
             self.post_identifier.append(counter)
 
             screenshot_name = str(counter) + ".png"
@@ -127,15 +134,29 @@ class SkipthegamesScraper(ScraperPrototype):
     # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
+            'Post_identifier': self.post_identifier,
             'Link': self.link,
             'about-info': self.about_info,
             'services': self.services,
             'Description': self.description,
-            'Post_identifier': self.post_identifier
+            'payment_methods': self.payment_methods_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
+
+    def check_for_payment_methods(self, description):
+        payments = ''
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                print('payment method: ', payment)
+                payments += payment + ' '
+
+        if payments != '':
+            self.payment_methods_found.append(payments)
+        else:
+            self.payment_methods_found.append('N/A')
+            print('N/A')
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')

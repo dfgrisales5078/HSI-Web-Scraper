@@ -7,15 +7,15 @@ import pandas as pd
 import undetected_chromedriver as uc
 import os
 
+
 class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
         self.location = 'naples'
         self.url = f'https://www.eros.com/florida/{self.location}/sections/{self.location}_escorts.htm'
-
-        # self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit', 'deposit']
-        self.known_payment_methods = ['incall', 'outcall', 'independent']
+        self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.main_page_path = None
@@ -45,7 +45,7 @@ class ErosScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         options = uc.ChromeOptions()
-        options.headless = False
+        options.headless = True
         self.driver = uc.Chrome(use_subprocess=True, options=options)
         self.open_webpage()
         time.sleep(5)
@@ -82,9 +82,9 @@ class ErosScraper(ScraperPrototype):
 
     def get_data(self, links):
 
-        about_info = ''
-
+        description = ''
         counter = 0
+
         for link in links:
             # append link to list
             self.link.append(link)
@@ -104,25 +104,14 @@ class ErosScraper(ScraperPrototype):
                 self.profile_header.append('N/A')
 
             try:
-                about_info = self.driver.find_element(
+                description = self.driver.find_element(
                     By.XPATH, '// *[ @ id = "pageone"] / div[3] / div / div[1] / div[2]').text
-                print(about_info)
-                self.about_info.append(about_info)
+                print(description)
+                self.about_info.append(description)
             except NoSuchElementException:
                 self.about_info.append('N/A')
 
-            # check for payment methods in description
-            payments = ''
-            for payment in self.known_payment_methods:
-                if payment in about_info:
-                    print('payment method: ', payment)
-                    payments += payment + ' '
-
-            if payments != '':
-                self.payment_methods_found.append(payments)
-            else:
-                self.payment_methods_found.append('N/A')
-                print('N/A')
+            self.check_for_payment_methods(description)
 
             try:
                 info_details = self.driver.find_element(
@@ -165,6 +154,19 @@ class ErosScraper(ScraperPrototype):
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/eros-{self.date_time}.csv', index=False, sep='\t')
+
+    def check_for_payment_methods(self, description):
+        payments = ''
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                print('payment method: ', payment)
+                payments += payment + ' '
+
+        if payments != '':
+            self.payment_methods_found.append(payments)
+        else:
+            self.payment_methods_found.append('N/A')
+            print('N/A')
 
     def capture_screenshot(self, screenshot_name):
         print(f'{self.screenshot_directory}/{screenshot_name}')
