@@ -1,1 +1,1 @@
-{"Adult Trafficking": ["travel", "car rental", "hotel", "sex shops"]}
+{"se": ["diego", "ragy", "orscar"], "0": ["helo", "die"]}
