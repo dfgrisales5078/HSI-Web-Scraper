@@ -1,12 +1,11 @@
-from Backend.ScraperPrototype import ScraperPrototype
-import time
+import os
 from datetime import datetime
-from selenium.common import NoSuchElementException
-import logging
-from selenium.webdriver.common.by import By
 import pandas as pd
 from selenium import webdriver
-import os
+from selenium.common import NoSuchElementException
+from selenium.webdriver.common.by import By
+from Backend.ScraperPrototype import ScraperPrototype
+
 
 class MegapersonalsScraper(ScraperPrototype):
 
@@ -15,7 +14,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.driver = None
         self.url = "https://megapersonals.eu"
 
-        #set date variables and path
+        # set date variables and path
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
@@ -32,12 +31,12 @@ class MegapersonalsScraper(ScraperPrototype):
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
-        #format date
+        # format date
         self.date_time = str(datetime.today())[0:19]
         self.date_time = self.date_time.replace(' ', '_')
         self.date_time = self.date_time.replace(':', '-')
 
-        #create directories for screenshot and csv
+        # create directories for screenshot and csv
         self.main_page_path = f'megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'

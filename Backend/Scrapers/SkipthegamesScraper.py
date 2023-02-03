@@ -1,14 +1,10 @@
-from Backend.ScraperPrototype import ScraperPrototype
-import time
+import os
 from datetime import datetime
-from selenium import webdriver
-from selenium.common import NoSuchElementException
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-import logging
-from selenium.webdriver.common.by import By
 import pandas as pd
 import undetected_chromedriver as uc
-import os
+from selenium.common import NoSuchElementException
+from selenium.webdriver.common.by import By
+from Backend.ScraperPrototype import ScraperPrototype
 
 
 class SkipthegamesScraper(ScraperPrototype):

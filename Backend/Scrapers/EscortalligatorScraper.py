@@ -1,12 +1,11 @@
-from Backend.ScraperPrototype import ScraperPrototype
+import os
 import time
 from datetime import datetime
+import pandas as pd
 from selenium import webdriver
-import logging
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-import pandas as pd
-import os
+from Backend.ScraperPrototype import ScraperPrototype
 
 class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
@@ -14,6 +13,9 @@ class EscortalligatorScraper(ScraperPrototype):
         self.driver = None
         self.location = 'fortmyers'
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/{self.location}/1'
+
+        # self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit', 'deposit']
+        self.known_payment_methods = ['incall', 'outcall', 'independent']
 
         self.date_time = None
         self.main_page_path = None
@@ -25,14 +27,14 @@ class EscortalligatorScraper(ScraperPrototype):
         self.location_and_age = []
         self.links = []
         self.post_identifier = []
+        self.payment_methods_found = []
 
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_')
-        self.date_time = self.date_time.replace(':', '-')
+        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
         self.main_page_path = f'escortalligator{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
@@ -78,6 +80,9 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
+
+        description = ''
+
         counter = 0
         for link in links:
             print(link)
@@ -96,6 +101,19 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.description.append(description)
             except NoSuchElementException:
                 self.description.append('N/A')
+
+            # check for payment method in descriptions
+            payments = ''
+            for payment in self.known_payment_methods:
+                if payment in description:
+                    print('payment method: ', payment)
+                    payments += payment + ' '
+
+            if payments != '':
+                self.payment_methods_found.append(payments)
+            else:
+                self.payment_methods_found.append('N/A')
+                print('N/A')
 
             try:
                 phone_number = self.driver.find_element(
@@ -130,7 +148,8 @@ class EscortalligatorScraper(ScraperPrototype):
             'Link': self.links,
             'Location/Age': self.location_and_age,
             'Description': self.description,
-            'Post_identifier': self.post_identifier
+            'Post_identifier': self.post_identifier,
+            'payment_methods': self.payment_methods_found
         }
 
         data = pd.DataFrame(titled_columns)
