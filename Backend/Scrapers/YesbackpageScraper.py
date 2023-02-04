@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
 
+
 class YesbackpageScraper(ScraperPrototype):
 
     def __init__(self):

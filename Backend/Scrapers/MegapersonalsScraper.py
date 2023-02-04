@@ -46,10 +46,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        # options = ChromeOptions()
-        # options.headless = False
-        # self.driver = webdriver.Chrome(options=options)
-
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
