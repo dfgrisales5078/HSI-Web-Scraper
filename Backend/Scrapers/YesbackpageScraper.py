@@ -1,14 +1,11 @@
-from Backend.ScraperPrototype import ScraperPrototype
-import time
+import os
 from datetime import datetime
+import pandas as pd
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
-import logging
 from selenium.webdriver.common.by import By
-import pandas as pd
-import os
-
+from Backend.ScraperPrototype import ScraperPrototype
 
 
 class YesbackpageScraper(ScraperPrototype):
@@ -17,12 +14,16 @@ class YesbackpageScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
         self.url = f'https://www.yesbackpage.com/68/posts/8-Adult/122-Female-Escorts'
+        self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
 
         # lists to store data and then send to csv file
+
+        # TODO services?
         self.phone_number = []
         self.link = []
         self.name = []
@@ -31,21 +32,21 @@ class YesbackpageScraper(ScraperPrototype):
         self.location = []
         self.description = []
         self.post_identifier = []
+        self.payment_methods_found = []
 
         # TODO other info needs to be pulled using regex?
 
     def initialize(self):
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_')
-        self.date_time = self.date_time.replace(':', '-')
+        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
         self.main_page_path = f'yesbackpage_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
         options = ChromeOptions()
-        options.headless = False
+        options.headless = True
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
@@ -74,6 +75,8 @@ class YesbackpageScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
+
+        description = ''
         counter = 0
 
         for link in links:
@@ -134,6 +137,8 @@ class YesbackpageScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.description.append('N/A')
 
+            self.check_for_payment_methods(description.text)
+
             print("\n")
 
             self.post_identifier.append(counter)
@@ -142,12 +147,13 @@ class YesbackpageScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 5:
-                break
+            # if counter > 5:
+            #     break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
+            'Post_identifier': self.post_identifier,
             'Phone Number': self.phone_number,
             'Link': self.link,
             'Location': self.location,
@@ -155,11 +161,24 @@ class YesbackpageScraper(ScraperPrototype):
             'Sex': self.sex,
             'E-mail': self.email,
             'Description': self.description,
-            'Post_identifier': self.post_identifier
+            'payment_methods': self.payment_methods_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
+
+    def check_for_payment_methods(self, description):
+        payments = ''
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                print('payment method: ', payment)
+                payments += payment + ' '
+
+        if payments != '':
+            self.payment_methods_found.append(payments)
+        else:
+            self.payment_methods_found.append('N/A')
+            print('N/A')
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
