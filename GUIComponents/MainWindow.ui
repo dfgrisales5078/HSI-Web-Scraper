@@ -33,17 +33,27 @@
     </item>
     <item>
      <property name="text">
-      <string>www.facebook.com</string>
+      <string>escortalligator</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>www.craigslist.com</string>
+      <string>megapersonals</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>www.skipthegames.com</string>
+      <string>skipthegames</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>yesbackpage</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>eros</string>
      </property>
     </item>
    </widget>
@@ -341,7 +351,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
