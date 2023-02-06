@@ -80,7 +80,6 @@ class MainWindow(QMainWindow):
         # enable checkbox after it is unchecked
         self.ui.keywordInclusivecheckBox.setEnabled(True)
 
-    # TODO - make checkbox select al keywords
     def select_all_keywords_check_box(self):
         if self.ui.selectAllKeywordscheckBox.isChecked():
             self.ui.selectAllKeywordscheckBox.setEnabled(True)
