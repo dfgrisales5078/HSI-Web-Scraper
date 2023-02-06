@@ -98,7 +98,6 @@ class ErosScraper(ScraperPrototype):
 
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
         self.state = str(input("Enter state to search: "))
         print(f"state: {self.state}")
