@@ -7,15 +7,17 @@ import pandas as pd
 import undetected_chromedriver as uc
 import os
 
+
 class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.location = 'naples'
-        self.url = f'https://www.eros.com/florida/{self.location}/sections/{self.location}_escorts.htm'
+        self.state = ''
+        self.city = ''
+        self.url = ''
 
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
 
         # lists to store data and then send to csv file
@@ -32,20 +34,30 @@ class ErosScraper(ScraperPrototype):
         # Date and time of search
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
-        # Create directory for search data
-        self.main_page_path = f'eros_{self.date_time}'
-        os.mkdir(self.main_page_path)
+        # Format website URL based on state and city
+        self.get_formatted_url()
 
-        # Create directory for search screenshots
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
-        os.mkdir(self.screenshot_directory)
-
+        # Selenium Web Driver setup
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
+
+        # Open Webpage with URL
         self.open_webpage()
-        time.sleep(5)
+        time.sleep(10)
+
+        # Find links of posts
         links = self.get_links()
+
+        # Create directory for search data
+        self.scraper_directory = f'eros_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        # Create directory for search screenshots
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
+        # Get data from posts
         self.get_data(links)
         self.close_webpage()
         self.format_data_to_csv()
@@ -59,32 +71,53 @@ class ErosScraper(ScraperPrototype):
         self.driver.close()
 
     def get_links(self):
-        self.driver.find_element(
-            By.XPATH, '//*[@id="agree_enter_website"]').click()
-        self.driver.find_element(
-            By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
+        try:
+            # Find website agreement
+            self.driver.find_element(
+                By.XPATH, '//*[@id="agree_enter_website"]').click()
+            self.driver.find_element(
+                By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
+        except NoSuchElementException:
+            print("There was a problem with finding the website.")
+            exit(1)
 
-        # find all profile links
-        posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+        try:
+            # Find all profile links
+            posts = self.driver.find_elements(
+                By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+        except NoSuchElementException:
+            print("There was a problem finding posts.")
+            exit(1)
 
-        links = [post.get_attribute('href') for post in posts]
-        print(set(links))
+        if posts:
+            links = [post.get_attribute('href') for post in posts]
+            print(set(links))
+        else:
+            print("No posts found.")
+            exit(1)
+
         return set(links)
 
     # TODO - change if location changes?
     def get_formatted_url(self):
-        pass
+        self.state = str(input("Enter state to search: "))
+        print(f"state: {self.state}")
+        self.city = str(input("Enter city to search: "))
+        print(f"city: {self.city}")
+        if self.city:
+            self.url = f'https://www.eros.com/{self.state}/{self.city}/sections/{self.city}_escorts.htm'
+        else:
+            self.url = f'https://www.eros.com/{self.state}/sections/{self.state}_escorts.htm'
+        print(f"link: {self.url}")
 
     def get_data(self, links):
-
         counter = 0
         for link in links:
             # append link to list
             self.link.append(link)
             print(link)
 
-            self.driver.implicitly_wait(10)
+            self.driver.implicitly_wait(20)
             time.sleep(2)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -128,9 +161,6 @@ class ErosScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            # if counter > 4:
-            #     break
-
     # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
@@ -143,7 +173,7 @@ class ErosScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/eros-{self.date_time}.csv', index=False, sep='\t')
+        data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
 
     def capture_screenshot(self, screenshot_name):
         print(f'{self.screenshot_directory}/{screenshot_name}')
