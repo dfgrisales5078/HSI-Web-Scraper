@@ -130,23 +130,38 @@ class MainWindow(QMainWindow):
     def search_button_clicked(self):
         facade = Facade()
         if self.website_selection == 'escortalligator':
-            facade.initialize_escortalligator_scraper()
+            try:
+                facade.initialize_escortalligator_scraper()
+            except:
+                print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            facade.initialize_megapersonals_scraper()
+            try:
+                facade.initialize_megapersonals_scraper()
+            except:
+                print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
-            facade.initialize_skipthegames_scraper()
+            try:
+                facade.initialize_skipthegames_scraper()
+            except:
+                print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
-            facade.initialize_yesbackpage_scraper()
+            try:
+                facade.initialize_yesbackpage_scraper()
+            except:
+                print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'eros':
-            facade.initialize_eros_scraper()
+            try:
+                facade.initialize_eros_scraper()
+            except:
+                print('Error occurred, please try again.')
             time.sleep(2)
 
 
