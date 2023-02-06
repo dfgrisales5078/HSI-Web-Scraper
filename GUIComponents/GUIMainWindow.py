@@ -3,8 +3,8 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from Backend.Facade import Facade
 from MainWindow_ui import Ui_HSIWebScraper
 
-"""Temporarily hardcoded search button to scrape yesbackpacge"""
-
+# To make changes to UI: do NOT edit MainWindow_ui.py, make changes to UI using Qt Creator and then run the following
+# command: pyuic6 MainWindow.ui -o MainWindow_ui.py
 
 class MainWindow(QMainWindow):
 
