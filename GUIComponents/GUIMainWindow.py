@@ -1,9 +1,11 @@
 import time
 import qdarkstyle
-from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
 from Backend.Facade import Facade
 from MainWindow_ui import Ui_HSIWebScraper
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt6.QtCore import Qt
+import sys
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator and then run the
 # following command: pyuic6 MainWindow.ui -o MainWindow_ui.py
@@ -14,6 +16,13 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_HSIWebScraper()
         self.ui.setupUi(self)
+
+        # TODO - center app when screen maximized
+        # self.central_widget = QWidget(self)
+        # self.layout = QVBoxLayout(self.central_widget)
+        # self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.setCentralWidget(self.central_widget)
+        # self.showMaximized()
 
         # attributes used to handle events
         self.website_selection = ''
@@ -41,7 +50,6 @@ class MainWindow(QMainWindow):
         self.ui.searchTextBox.textChanged.connect(self.search_text_box)
 
         # bind keywordlistWidget to keyword_list_widget function
-        # self.ui.keywordlistWidget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.ui.keywordlistWidget.itemClicked.connect(self.keyword_list_widget)
 
         # bind toolButton to tool_button_clicked function
@@ -77,7 +85,7 @@ class MainWindow(QMainWindow):
             self.ui.keywordInclusivecheckBox.setEnabled(False)
             print('keyword inclusive box unchecked')
 
-        # enable checkbox after it is unchecked
+        # enable checkbox after it's unchecked
         self.ui.keywordInclusivecheckBox.setEnabled(True)
 
     def select_all_keywords_check_box(self):
@@ -95,7 +103,7 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
-        # enable checkbox after it is unchecked
+        # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
 
     # TODO - add logic to scrape with payment method only 
@@ -109,7 +117,7 @@ class MainWindow(QMainWindow):
             self.include_payment_method = 'checked'
             print('payment box unchecked')
 
-        # enable checkbox after it is unchecked
+        # enable checkbox after it's unchecked
         self.ui.paymentMethodcheckBox.setEnabled(True)
 
     def website_selection_dropdown(self):
