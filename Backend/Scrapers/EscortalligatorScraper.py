@@ -8,15 +8,17 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 import os
 
+
 class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.location = 'fortmyers'
-        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/{self.location}/1'
+        self.state = ''
+        self.city = ''
+        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
 
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
 
         # lists to store data and then send to csv file
@@ -30,19 +32,31 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def initialize(self):
         # set up directories to save screenshots and csv file.
-        self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_')
-        self.date_time = self.date_time.replace(':', '-')
-        self.main_page_path = f'escortalligator{self.date_time}'
-        os.mkdir(self.main_page_path)
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
-        os.mkdir(self.screenshot_directory)
+        self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
+        # Format website URL based on state and city
+        self.get_formatted_url()
+
+        # Selenium Web Driver setup
         options = webdriver.FirefoxOptions()
         options.headless = False
         self.driver = webdriver.Firefox()
+
+        # Open Webpage with URL
         self.open_webpage()
+
+        # Find links of posts
         links = self.get_links()
+
+        # Create directory for search data
+        self.scraper_directory = f'escortalligator_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        # Create directory for search screenshots
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
+        # Get data from posts
         self.get_data(links)
         self.close_webpage()
         self.format_data_to_csv()
@@ -74,7 +88,12 @@ class EscortalligatorScraper(ScraperPrototype):
 
     # TODO - change if location changes?
     def get_formatted_url(self):
-        pass
+        self.state = str(input("Enter state to search: ")).replace(' ', '')
+        print(f"state: {self.state}")
+        self.city = str(input("Enter city to search: ")).replace(' ', '')
+        print(f"city: {self.city}")
+        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
+        print(f"link: {self.url}")
 
     def get_data(self, links):
         links = set(links)
@@ -134,7 +153,7 @@ class EscortalligatorScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
