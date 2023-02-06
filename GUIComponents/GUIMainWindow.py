@@ -5,7 +5,6 @@ from PyQt6 import QtWidgets
 from Backend.Facade import Facade
 from MainWindow_ui import Ui_HSIWebScraper
 
-
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator and then run the
 # following command: pyuic6 MainWindow.ui -o MainWindow_ui.py
 
@@ -42,6 +41,7 @@ class MainWindow(QMainWindow):
         self.ui.searchTextBox.textChanged.connect(self.search_text_box)
 
         # bind keywordlistWidget to keyword_list_widget function
+        # self.ui.keywordlistWidget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.ui.keywordlistWidget.itemClicked.connect(self.keyword_list_widget)
 
         # bind toolButton to tool_button_clicked function
@@ -55,10 +55,9 @@ class MainWindow(QMainWindow):
 
     # TODO - find way to edit list
     def keyword_list_widget(self):
-        # print all items in list widget
-        print('list of keywords:')
-        for i in range(self.ui.keywordlistWidget.count()):
-            print(self.ui.keywordlistWidget.item(i).text())
+        # print('selected keywords:')
+        for item in self.ui.keywordlistWidget.selectedItems():
+            print(item.text())
 
     # TODO - find way to edit list of sets
     def set_selection_dropdown(self):
@@ -89,6 +88,7 @@ class MainWindow(QMainWindow):
             # select all items in list widget
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
+                print(self.ui.keywordlistWidget.item(i).text())
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
             print('select all keywords box unchecked')
