@@ -32,6 +32,10 @@ class ScraperPrototype(ABC):
         pass
 
     @abstractmethod
+    def check_for_payment_methods(self, description):
+        pass
+
+    @abstractmethod
     def capture_screenshot(self, screenshot_name):
         pass
 
