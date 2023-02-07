@@ -1,11 +1,8 @@
 import time
-import qdarkstyle
 from PyQt6 import QtWidgets
 from Backend.Facade import Facade
 from MainWindow_ui import Ui_HSIWebScraper
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
-from PyQt6.QtCore import Qt
-import sys
+from PyQt6.QtWidgets import QApplication, QMainWindow
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator and then run the
 # following command: pyuic6 MainWindow.ui -o MainWindow_ui.py
@@ -28,6 +25,7 @@ class MainWindow(QMainWindow):
         self.website_selection = ''
         self.include_payment_method = ''
         self.search_text = ''
+        self.keywords_selected = set()
 
         # dark mode
         # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
@@ -66,6 +64,8 @@ class MainWindow(QMainWindow):
         # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
             print(item.text())
+            self.keywords_selected.add(item.text())
+        print(self.keywords_selected)
 
     # TODO - find way to edit list of sets
     def set_selection_dropdown(self):
@@ -96,15 +96,18 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
                 print(self.ui.keywordlistWidget.item(i).text())
+                self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
             print('select all keywords box unchecked')
+            self.keywords_selected = set()
             # deselect all items in list widget
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
         # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
+        print(self.keywords_selected)
 
     # TODO - add logic to scrape with payment method only 
     def payment_method_check_box(self):
