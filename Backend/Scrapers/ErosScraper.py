@@ -45,10 +45,10 @@ class ErosScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         options = uc.ChromeOptions()
-        options.headless = True
+        options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
         self.open_webpage()
-        time.sleep(5)
+        # time.sleep(5)
         links = self.get_links()
         self.get_data(links)
         self.close_webpage()
@@ -57,7 +57,7 @@ class ErosScraper(ScraperPrototype):
     def open_webpage(self) -> None:
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
-        self.driver.maximize_window()
+        # self.driver.maximize_window()
 
     def close_webpage(self) -> None:
         self.driver.close()
@@ -91,7 +91,7 @@ class ErosScraper(ScraperPrototype):
             print(link)
 
             self.driver.implicitly_wait(10)
-            time.sleep(2)
+            # time.sleep(2)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 

@@ -46,7 +46,7 @@ class YesbackpageScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         options = ChromeOptions()
-        options.headless = True
+        options.headless = False
         self.driver = webdriver.Chrome(options=options)
         self.open_webpage()
 
@@ -147,8 +147,8 @@ class YesbackpageScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            # if counter > 5:
-            #     break
+            if counter > 10:
+                break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):
