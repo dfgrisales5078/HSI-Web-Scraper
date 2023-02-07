@@ -15,7 +15,6 @@ if __name__ == '__main__':
         if website_selection == '':
             exit(0)
 
-
         facade = Facade()
 
         if website_selection == '1':

@@ -11,7 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>HSI Web Scraper</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Triangular</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QComboBox" name="websiteSelectionDropdown">
@@ -33,17 +36,27 @@
     </item>
     <item>
      <property name="text">
-      <string>www.facebook.com</string>
+      <string>escortalligator</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>www.craigslist.com</string>
+      <string>megapersonals</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>www.skipthegames.com</string>
+      <string>skipthegames</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>yesbackpage</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>eros</string>
      </property>
     </item>
    </widget>
@@ -119,10 +132,10 @@
    <widget class="QLineEdit" name="searchTextBox">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>130</x>
       <y>210</y>
       <width>161</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -139,7 +152,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Select website to scrape:</string>
+     <string>  Select website to scrape:</string>
     </property>
    </widget>
    <widget class="QLabel" name="textSearchLabel">
@@ -147,12 +160,12 @@
      <rect>
       <x>120</x>
       <y>190</y>
-      <width>161</width>
+      <width>201</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Type text to scrape (optional):</string>
+     <string>  Type text to scrape (optional):</string>
     </property>
    </widget>
    <widget class="QLabel" name="setSelectionLabel">
@@ -160,12 +173,12 @@
      <rect>
       <x>120</x>
       <y>280</y>
-      <width>161</width>
+      <width>191</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Select set to scrape (optional):</string>
+     <string>  Select set to scrape (optional):</string>
     </property>
    </widget>
    <widget class="QToolButton" name="toolButton">
@@ -202,6 +215,9 @@
       <width>301</width>
       <height>271</height>
      </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
     </property>
     <item>
      <property name="text">
@@ -294,7 +310,7 @@
      <rect>
       <x>540</x>
       <y>400</y>
-      <width>181</width>
+      <width>201</width>
       <height>22</height>
      </rect>
     </property>
@@ -318,9 +334,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>360</x>
       <y>0</y>
-      <width>321</width>
+      <width>231</width>
       <height>61</height>
      </rect>
     </property>
@@ -335,18 +351,19 @@
     </property>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">
     <property name="title">
-     <string>file</string>
+     <string>File</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionSelectStorageLocation"/>
@@ -354,7 +371,6 @@
    </widget>
    <addaction name="menufile"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>

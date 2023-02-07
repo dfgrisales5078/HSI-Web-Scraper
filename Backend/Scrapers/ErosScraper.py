@@ -76,7 +76,7 @@ class ErosScraper(ScraperPrototype):
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
-        self.driver.maximize_window()
+        # self.driver.maximize_window()
 
     def close_webpage(self) -> None:
         self.driver.close()
