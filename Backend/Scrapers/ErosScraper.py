@@ -13,7 +13,13 @@ class ErosScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
 
-        self.state = ''
+        self.cities = {
+            "miami": 'https://www.eros.com/florida/miami/sections/miami_escorts.htm',
+            "naples": 'https://www.eros.com/florida/naples/sections/naples_escorts.htm',
+            "north florida": 'https://www.eros.com/florida/north_florida/sections/north_florida_escorts.htm',
+            "orlando": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm',
+            "tampa": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm'
+        }
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
@@ -43,7 +49,7 @@ class ErosScraper(ScraperPrototype):
 
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
-        options.headless = True
+        options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -67,6 +73,7 @@ class ErosScraper(ScraperPrototype):
         self.format_data_to_csv()
 
     def open_webpage(self) -> None:
+        self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
         self.driver.maximize_window()
@@ -103,14 +110,12 @@ class ErosScraper(ScraperPrototype):
         return set(links)
 
     def get_formatted_url(self):
-        self.state = str(input("Enter state to search: "))
-        print(f"state: {self.state}")
-        self.city = str(input("Enter city to search: "))
-        print(f"city: {self.city}")
-        if self.city:
-            self.url = f'https://www.eros.com/{self.state}/{self.city}/sections/{self.city}_escorts.htm'
-        else:
-            self.url = f'https://www.eros.com/{self.state}/sections/{self.state}_escorts.htm'
+        while self.city not in self.cities.keys():
+            print(list(self.cities.keys()))
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
+        self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
     def get_data(self, links):
@@ -122,8 +127,7 @@ class ErosScraper(ScraperPrototype):
             self.link.append(link)
             print(link)
 
-            self.driver.implicitly_wait(20)
-            time.sleep(2)
+            self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -168,6 +172,9 @@ class ErosScraper(ScraperPrototype):
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
             counter += 1
+
+            if counter > 3:
+                break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):

@@ -13,9 +13,32 @@ class EscortalligatorScraper(ScraperPrototype):
         super().__init__()
         self.driver = None
 
-        self.state = ''
+        self.cities = [
+            "daytona",
+            "fort lauderdale",
+            "fort myers",
+            "gainesville",
+            "jacksonville",
+            "keys",
+            "miami",
+            "ocala",
+            "okaloosa",
+            "orlando",
+            "palm bay",
+            "panama city",
+            "pensacola",
+            "sarasota",
+            "space coast",
+            "st. augustine",
+            "tallahassee",
+            "tampa",
+            "treasure coast",
+            "west palm beach",
+            "jacksonville"
+        ]
         self.city = ''
-        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
+        self.state = 'florida'
+        self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
 
@@ -68,6 +91,10 @@ class EscortalligatorScraper(ScraperPrototype):
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
+    def close_webpage(self):
+        self.driver.close()
+
+    def get_links(self):
         # click on terms btn
         btn = self.driver.find_element(
             By.CLASS_NAME, 'button')
@@ -79,10 +106,6 @@ class EscortalligatorScraper(ScraperPrototype):
             By.CLASS_NAME, 'footer')
         btn.click()
 
-    def close_webpage(self):
-        self.driver.close()
-
-    def get_links(self):
         posts = self.driver.find_elements(
             By.CSS_SELECTOR, '#list [href]')
         links = [post.get_attribute('href') for post in posts]
@@ -90,10 +113,12 @@ class EscortalligatorScraper(ScraperPrototype):
 
     # TODO - change if location changes?
     def get_formatted_url(self):
-        self.state = str(input("Enter state to search: ")).replace(' ', '')
-        print(f"state: {self.state}")
-        self.city = str(input("Enter city to search: ")).replace(' ', '')
-        print(f"city: {self.city}")
+        while self.city not in self.cities:
+            print(self.cities)
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
+        self.city = self.city.replace(' ', '').replace('.', '')
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
         print(f"link: {self.url}")
 
@@ -108,8 +133,8 @@ class EscortalligatorScraper(ScraperPrototype):
             # append link to list
             self.links.append(link)
 
-            self.driver.implicitly_wait(10)
-            time.sleep(3)
+            # self.driver.implicitly_wait(10)
+            # time.sleep(3)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
