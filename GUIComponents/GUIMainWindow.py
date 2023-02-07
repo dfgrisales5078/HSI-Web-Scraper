@@ -58,8 +58,8 @@ class MainWindow(QMainWindow):
 
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
-        # self.add_keyword('test keyword')
-        self.remove_keyword('test keyword')
+        self.add_keyword('test keyword')
+        # self.remove_keyword('test keyword')
 
     ''' Functions used to handle events: '''
 
