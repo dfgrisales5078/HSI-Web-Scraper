@@ -58,17 +58,40 @@ class MainWindow(QMainWindow):
 
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
+        # self.add_keyword('test keyword')
+        self.remove_keyword('test keyword')
 
     ''' Functions used to handle events: '''
 
-    # TODO - find way to edit list, remove keyword if it's manually unselected
+    # print number of elements in keywordlistWidget
+    def get_number_of_keywords(self):
+        print(self.ui.keywordlistWidget.count())
+
+    # remove keyword from keywordlistWidget
+    def add_keyword(self, keyword):
+        self.get_number_of_keywords()
+        self.ui.keywordlistWidget.addItem(keyword)
+
+    def remove_keyword(self, keyword):
+        # remove keyword from keywordlistWidget using keyword text
+        for i in range(self.ui.keywordlistWidget.count()):
+            if self.ui.keywordlistWidget.item(i).text() == keyword:
+                self.ui.keywordlistWidget.takeItem(i)
+                break
+
+    # TODO - find way to edit list
     def keyword_list_widget(self):
         # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
             print(item.text())
             self.keywords_selected.add(item.text())
-        print(self.keywords_selected)
 
+        # if a keyword is unselected, remove it from the set
+        for i in range(self.ui.keywordlistWidget.count()):
+            if not self.ui.keywordlistWidget.item(i).isSelected():
+                self.keywords_selected.discard(self.ui.keywordlistWidget.item(i).text())
+
+        print(self.keywords_selected)
 
     # TODO - find way to edit list of sets
     def set_selection_dropdown(self):
@@ -131,7 +154,7 @@ class MainWindow(QMainWindow):
         print(self.ui.websiteSelectionDropdown.currentText())
         self.ui.searchButton.setEnabled(True)
 
-    # TODO - edit popup window in QT Creator
+    # TODO - edit popup window OR secondary screen in QT Creator
     def tool_button_clicked(self):
         print('tool button clicked')
         # pop up window
