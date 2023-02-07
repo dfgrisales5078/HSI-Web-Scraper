@@ -219,91 +219,6 @@
     <property name="selectionMode">
      <enum>QAbstractItemView::MultiSelection</enum>
     </property>
-    <item>
-     <property name="text">
-      <string>cheese</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>hotdog</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>cheese pizza</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>ice cream</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>fashion show</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>lola</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>mac and cheese</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>pos</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>pal</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>pir</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>p911</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>kpc</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>paw</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>lolita group</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>magic kingdom</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>outcall</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>incall</string>
-     </property>
-    </item>
    </widget>
    <widget class="QCheckBox" name="selectAllKeywordscheckBox">
     <property name="geometry">
@@ -358,7 +273,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>24</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">

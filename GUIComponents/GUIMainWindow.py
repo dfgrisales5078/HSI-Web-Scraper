@@ -3,6 +3,7 @@ from PyQt6 import QtWidgets
 from Backend.Facade import Facade
 from MainWindow_ui import Ui_HSIWebScraper
 from PyQt6.QtWidgets import QApplication, QMainWindow
+from Backend.Keywords import Keywords
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator and then run the
 # following command: pyuic6 MainWindow.ui -o MainWindow_ui.py
@@ -13,6 +14,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_HSIWebScraper()
         self.ui.setupUi(self)
+        self.keywords_instance = Keywords()
 
         # TODO - center app when screen maximized
         # self.central_widget = QWidget(self)
@@ -25,7 +27,12 @@ class MainWindow(QMainWindow):
         self.website_selection = ''
         self.include_payment_method = ''
         self.search_text = ''
+        self.keywords = self.keywords_instance.get_keywords()
         self.keywords_selected = set()
+
+        # TODO - remove all hardcoded keywords
+        self.initialize_keywords(self.keywords)
+        # self.remove_keyword('test keyword')
 
         # dark mode
         # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
@@ -58,20 +65,22 @@ class MainWindow(QMainWindow):
 
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
-        self.add_keyword('test keyword')
-        # self.remove_keyword('test keyword')
+
+        # TODO - bind these functions to the add and remove buttons & Keywords.py from backend
+        # self.add_keyword('new keyword')
+        # self.remove_keyword('new keyword')
 
     ''' Functions used to handle events: '''
-
-    # print number of elements in keywordlistWidget
-    def get_number_of_keywords(self):
-        print(self.ui.keywordlistWidget.count())
-
-    # remove keyword from keywordlistWidget
+    # add single keyword to keywordlistWidget
     def add_keyword(self, keyword):
-        self.get_number_of_keywords()
         self.ui.keywordlistWidget.addItem(keyword)
 
+    # initialize all keywords to GUI
+    def initialize_keywords(self, keywords):
+        for keyword in keywords:
+            self.ui.keywordlistWidget.addItem(keyword)
+
+    # remove keyword from keywordlistWidget
     def remove_keyword(self, keyword):
         # remove keyword from keywordlistWidget using keyword text
         for i in range(self.ui.keywordlistWidget.count()):
@@ -79,7 +88,6 @@ class MainWindow(QMainWindow):
                 self.ui.keywordlistWidget.takeItem(i)
                 break
 
-    # TODO - find way to edit list
     def keyword_list_widget(self):
         # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
