@@ -9,8 +9,8 @@ class Keywords:
     @staticmethod
     def add_keywords(keyword):
         with open("../keywords.txt", "r+") as filename:
-            contentSet = filename.read().splitlines()
-            if keyword not in contentSet:
+            content_set = filename.read().splitlines()
+            if keyword not in content_set:
                 filename.write("\n" + keyword.lower())
             else:
                 print("Keyword already in file")
