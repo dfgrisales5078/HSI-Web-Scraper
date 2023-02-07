@@ -74,6 +74,8 @@ class MainWindow(QMainWindow):
     # add single keyword to keywordlistWidget
     def add_keyword(self, keyword):
         self.ui.keywordlistWidget.addItem(keyword)
+        # add keyword to text file
+        self.keywords_instance.add_keywords(keyword)
 
     # initialize all keywords to GUI
     def initialize_keywords(self, keywords):
@@ -86,6 +88,8 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).text() == keyword:
                 self.ui.keywordlistWidget.takeItem(i)
+                # remove from text file
+                self.keywords_instance.remove_keywords(keyword)
                 break
 
     def keyword_list_widget(self):
