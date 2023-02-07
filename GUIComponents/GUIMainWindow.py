@@ -59,13 +59,16 @@ class MainWindow(QMainWindow):
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
 
-    # TODO - find way to edit list
+    ''' Functions used to handle events: '''
+
+    # TODO - find way to edit list, remove keyword if it's manually unselected
     def keyword_list_widget(self):
         # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
             print(item.text())
             self.keywords_selected.add(item.text())
         print(self.keywords_selected)
+
 
     # TODO - find way to edit list of sets
     def set_selection_dropdown(self):
