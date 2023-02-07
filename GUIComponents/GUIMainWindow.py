@@ -88,6 +88,7 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).text() == keyword:
                 self.ui.keywordlistWidget.takeItem(i)
+
                 # remove from text file
                 self.keywords_instance.remove_keywords(keyword)
                 break
