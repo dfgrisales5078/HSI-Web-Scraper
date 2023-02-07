@@ -12,13 +12,21 @@ class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.location = 'naples'
-        self.url = f'https://www.eros.com/florida/{self.location}/sections/{self.location}_escorts.htm'
+
+        self.cities = {
+            "miami": 'https://www.eros.com/florida/miami/sections/miami_escorts.htm',
+            "naples": 'https://www.eros.com/florida/naples/sections/naples_escorts.htm',
+            "north florida": 'https://www.eros.com/florida/north_florida/sections/north_florida_escorts.htm',
+            "orlando": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm',
+            "tampa": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm'
+        }
+        self.city = ''
+        self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
 
         # lists to store data and then send to csv file
@@ -36,25 +44,36 @@ class ErosScraper(ScraperPrototype):
         # Date and time of search
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
-        # Create directory for search data
-        self.main_page_path = f'eros_{self.date_time}'
-        os.mkdir(self.main_page_path)
+        # Format website URL based on state and city
+        self.get_formatted_url()
 
-        # Create directory for search screenshots
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
-        os.mkdir(self.screenshot_directory)
-
+        # Selenium Web Driver setup
         options = uc.ChromeOptions()
         options.headless = False
         self.driver = uc.Chrome(use_subprocess=True, options=options)
+
+        # Open Webpage with URL
         self.open_webpage()
-        # time.sleep(5)
+        time.sleep(10)
+
+        # Find links of posts
         links = self.get_links()
+
+        # Create directory for search data
+        self.scraper_directory = f'eros_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        # Create directory for search screenshots
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
+        os.mkdir(self.screenshot_directory)
+
+        # Get data from posts
         self.get_data(links)
         self.close_webpage()
         self.format_data_to_csv()
 
     def open_webpage(self) -> None:
+        self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
         # self.driver.maximize_window()
@@ -63,25 +82,43 @@ class ErosScraper(ScraperPrototype):
         self.driver.close()
 
     def get_links(self):
-        self.driver.find_element(
-            By.XPATH, '//*[@id="agree_enter_website"]').click()
-        self.driver.find_element(
-            By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
+        try:
+            # Find website agreement
+            self.driver.find_element(
+                By.XPATH, '//*[@id="agree_enter_website"]').click()
+            self.driver.find_element(
+                By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
+        except NoSuchElementException:
+            print("There was a problem with finding the website.")
+            exit(1)
 
-        # find all profile links
-        posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+        try:
+            # Find all profile links
+            posts = self.driver.find_elements(
+                By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+        except NoSuchElementException:
+            print("There was a problem finding posts.")
+            exit(1)
 
-        links = [post.get_attribute('href') for post in posts]
-        print(set(links))
+        if posts:
+            links = [post.get_attribute('href') for post in posts]
+            print(set(links))
+        else:
+            print("No posts found.")
+            exit(1)
+
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
-        pass
+        while self.city not in self.cities.keys():
+            print(list(self.cities.keys()))
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
+        self.url = self.cities.get(self.city)
+        print(f"link: {self.url}")
 
     def get_data(self, links):
-
         description = ''
         counter = 0
 
@@ -91,7 +128,6 @@ class ErosScraper(ScraperPrototype):
             print(link)
 
             self.driver.implicitly_wait(10)
-            # time.sleep(2)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -137,7 +173,7 @@ class ErosScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 4:
+            if counter > 3:
                 break
 
     # TODO - move to class than handles data
@@ -153,7 +189,7 @@ class ErosScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/eros-{self.date_time}.csv', index=False, sep='\t')
+        data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
 
     def check_for_payment_methods(self, description):
         payments = ''
