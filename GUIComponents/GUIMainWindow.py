@@ -1,9 +1,9 @@
 import time
-from PyQt6 import QtWidgets
 from Backend.Facade import Facade
-from MainWindow_ui import Ui_HSIWebScraper
+from ui_Scraper import Ui_HSIWebScraper
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from Backend.Keywords import Keywords
+
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator and then run the
 # following command: pyuic6 MainWindow.ui -o MainWindow_ui.py
@@ -28,11 +28,11 @@ class MainWindow(QMainWindow):
         self.include_payment_method = ''
         self.search_text = ''
         self.keywords = self.keywords_instance.get_keywords()
+        self.keyword_sets = self.keywords_instance.get_set()
         self.keywords_selected = set()
 
-        # TODO - remove all hardcoded keywords
         self.initialize_keywords(self.keywords)
-        # self.remove_keyword('test keyword')
+        self.initialize_keyword_sets(self.keyword_sets)
 
         # dark mode
         # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
@@ -57,30 +57,49 @@ class MainWindow(QMainWindow):
         # bind keywordlistWidget to keyword_list_widget function
         self.ui.keywordlistWidget.itemClicked.connect(self.keyword_list_widget)
 
-        # bind toolButton to tool_button_clicked function
-        self.ui.toolButton.clicked.connect(self.tool_button_clicked)
-
         # bind keywordInclusivecheckBox to keyword_inclusive_check_box function
         self.ui.keywordInclusivecheckBox.stateChanged.connect(self.keyword_inclusive_check_box)
 
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
 
-        # TODO - bind these functions to the add and remove buttons & Keywords.py from backend
-        # self.add_keyword('new keyword')
-        # self.remove_keyword('new keyword')
+        # bind addKeywordButton to add_keyword_button_clicked function
+        self.ui.addKeywordButton.clicked.connect(self.add_keyword_button_clicked)
+
+        # bind removeKeywordButton to remove_keyword_button_clicked function
+        self.ui.removeKeywordButton.clicked.connect(self.remove_keyword_button_clicked)
 
     ''' Functions used to handle events: '''
-    # add single keyword to keywordlistWidget
-    def add_keyword(self, keyword):
-        self.ui.keywordlistWidget.addItem(keyword)
-        # add keyword to text file
-        self.keywords_instance.add_keywords(keyword)
 
-    # initialize all keywords to GUI
+    # remove new keyword
+    def remove_keyword_button_clicked(self):
+        # find text of selected item
+        keyword = self.ui.keywordList.currentItem().text()
+
+        if keyword != '':
+            self.remove_keyword(keyword)
+
+    # add new keyword
+    def add_keyword_button_clicked(self):
+        keyword = self.ui.newKeywordTextBox.text()
+
+        if keyword != '':
+            self.ui.keywordlistWidget.addItem(keyword)
+            self.ui.keywordList.addItem(keyword)
+            # add keyword to text file
+            self.keywords_instance.add_keywords(keyword)
+
+    # initialize all keywords to scraper tab
     def initialize_keywords(self, keywords):
         for keyword in keywords:
             self.ui.keywordlistWidget.addItem(keyword)
+            self.ui.keywordList.addItem(keyword)
+
+    # initialize all keyword sets to GUI
+    def initialize_keyword_sets(self, keyword_sets):
+        for keyword_set in keyword_sets:
+            self.ui.setSelectionDropdown.addItem(keyword_set)
+            self.ui.setList.addItem(keyword_set)
 
     # remove keyword from keywordlistWidget
     def remove_keyword(self, keyword):
@@ -88,6 +107,7 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).text() == keyword:
                 self.ui.keywordlistWidget.takeItem(i)
+                self.ui.keywordList.takeItem(i)
 
                 # remove from text file
                 self.keywords_instance.remove_keywords(keyword)
@@ -166,15 +186,6 @@ class MainWindow(QMainWindow):
         self.website_selection = self.ui.websiteSelectionDropdown.currentText()
         print(self.ui.websiteSelectionDropdown.currentText())
         self.ui.searchButton.setEnabled(True)
-
-    # TODO - edit popup window OR secondary screen in QT Creator
-    def tool_button_clicked(self):
-        print('tool button clicked')
-        # pop up window
-        self.popup = QtWidgets.QWidget()
-        self.popup.setGeometry(100, 100, 400, 200)
-        self.popup.setWindowTitle('Edit Keywords and sets')
-        self.popup.show()
 
     def search_button_clicked(self):
         facade = Facade()
