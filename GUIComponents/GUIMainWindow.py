@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.keyword_sets = self.keywords_instance.get_set()
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
+        self.location = ''
 
         self.initialize_keywords(self.keywords)
         self.initialize_keyword_sets(self.keyword_sets)
@@ -116,9 +117,17 @@ class MainWindow(QMainWindow):
         # update list of sets
         self.ui.setList.addItem(new_set_name)
 
-        # make self.keys_to_add_to_new_set a empty list
+        # make self.keys_to_add_to_new_set of an empty list
         self.keys_to_add_to_new_set = []
 
+        # add new set to setSelectionDropdown
+        self.ui.setSelectionDropdown.addItem(new_set_name)
+
+        # clear new set text box
+        self.ui.newSetTextBox.clear()
+
+    # TODO - loop through sets and remove keyword from each set 
+    # BUG - if multiple keywords are selected and one is removed, the other keywords are not removed from the set
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
@@ -136,6 +145,9 @@ class MainWindow(QMainWindow):
             self.ui.keywordList.addItem(keyword)
             # add keyword to text file
             self.keywords_instance.add_keywords(keyword)
+
+            # clear new keyword text box
+            self.ui.newKeywordTextBox.clear()
 
     # initialize all keywords to scraper tab
     def initialize_keywords(self, keywords):
@@ -161,7 +173,7 @@ class MainWindow(QMainWindow):
                 self.keywords_instance.remove_keywords(keyword)
                 break
 
-    # hadle list of keywords to be searched
+    # handle list of keywords to be searched
     def keyword_list_widget(self):
         # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
@@ -202,7 +214,6 @@ class MainWindow(QMainWindow):
         if not keyword_in_set:
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
-
 
     # TODO - add logic to scrape with search text
     def search_text_box(self):

@@ -35,7 +35,7 @@
     <widget class="QListWidget" name="keywordlistWidget">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>130</y>
        <width>301</width>
        <height>221</height>
@@ -79,7 +79,7 @@
     <widget class="QLabel" name="keywordListLabel">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>110</y>
        <width>161</width>
        <height>16</height>
@@ -92,7 +92,7 @@
     <widget class="QPushButton" name="searchButton">
      <property name="geometry">
       <rect>
-       <x>440</x>
+       <x>430</x>
        <y>500</y>
        <width>80</width>
        <height>24</height>
@@ -105,7 +105,7 @@
     <widget class="QCheckBox" name="keywordInclusivecheckBox">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>430</y>
        <width>241</width>
        <height>22</height>
@@ -222,7 +222,7 @@
     <widget class="QCheckBox" name="selectAllKeywordscheckBox">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>370</y>
        <width>201</width>
        <height>22</height>
@@ -235,7 +235,7 @@
     <widget class="QCheckBox" name="paymentMethodcheckBox">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>400</y>
        <width>271</width>
        <height>22</height>
@@ -257,11 +257,6 @@
      <property name="currentText">
       <string/>
      </property>
-     <item>
-      <property name="text">
-       <string/>
-      </property>
-     </item>
     </widget>
     <widget class="QLabel" name="setLocationLabel">
      <property name="geometry">
@@ -284,7 +279,7 @@
     <widget class="QListWidget" name="setList">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>590</x>
        <y>191</y>
        <width>256</width>
        <height>181</height>
@@ -297,14 +292,14 @@
     <widget class="QLineEdit" name="newSetTextBox">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>590</x>
        <y>150</y>
        <width>131</width>
        <height>31</height>
       </rect>
      </property>
      <property name="placeholderText">
-      <string> Type set name.</string>
+      <string> Type new set name.</string>
      </property>
     </widget>
     <widget class="QPushButton" name="addKeywordButton">
@@ -338,7 +333,7 @@
       <rect>
        <x>110</x>
        <y>171</y>
-       <width>256</width>
+       <width>281</width>
        <height>201</height>
       </rect>
      </property>
@@ -375,7 +370,7 @@
     <widget class="QLabel" name="newSetLabel">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>590</x>
        <y>130</y>
        <width>141</width>
        <height>16</height>
@@ -388,7 +383,7 @@
     <widget class="QPushButton" name="addSetButton">
      <property name="geometry">
       <rect>
-       <x>750</x>
+       <x>740</x>
        <y>150</y>
        <width>101</width>
        <height>32</height>
@@ -401,7 +396,7 @@
     <widget class="QPushButton" name="removeSetButton">
      <property name="geometry">
       <rect>
-       <x>630</x>
+       <x>620</x>
        <y>380</y>
        <width>191</width>
        <height>32</height>
@@ -414,7 +409,7 @@
     <widget class="QLabel" name="newSetLabel_2">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>590</x>
        <y>110</y>
        <width>241</width>
        <height>16</height>
