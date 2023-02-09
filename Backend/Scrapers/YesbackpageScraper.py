@@ -44,6 +44,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
+        self.keywords = None
 
         # lists to store data and then send to csv file
 
@@ -60,13 +61,10 @@ class YesbackpageScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
-    def get_cities(self):
-        return list(self.cities.keys())
+    def initialize(self, keywords):
+        # set keywords value
+        self.read_keywords(keywords)
 
-    def set_city(self, city):
-        self.city = city
-
-    def initialize(self):
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
@@ -112,6 +110,11 @@ class YesbackpageScraper(ScraperPrototype):
         return links[2:]
 
     def get_formatted_url(self):
+        while self.city not in self.cities.keys():
+            print(list(self.cities.keys()))
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
@@ -132,54 +135,96 @@ class YesbackpageScraper(ScraperPrototype):
             assert "Page not found" not in self.driver.page_source
 
             try:
-                name = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]')
-                print(name.text[2:])
-                self.name.append(name.text[2:])
+                description = self.driver.find_element(
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]').text[2:]
+                print(description)
+                # self.description.append(description.text)
             except NoSuchElementException:
-                self.name.append('N/A')
+                description = 'N/A'
+                # self.description.append('N/A')
+
+            try:
+                name = self.driver.find_element(
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]').text[2:]
+                print(name)
+                # self.name.append(name.text[2:])
+            except NoSuchElementException:
+                name = 'N/A'
+                # self.name.append('N/A')
 
             try:
                 sex = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]')
-                print(sex.text[2:])
-                self.sex.append(sex.text[2:])
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]').text[2:]
+                print(sex)
+                # self.sex.append(sex.text[2:])
             except NoSuchElementException:
-                self.sex.append('N/A')
+                sex = 'N/A'
+                # self.sex.append('N/A')
 
             try:
                 phone_number = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]')
-                print(phone_number.text[2:])
-                self.phone_number.append(phone_number.text[2:])
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]').text[2:]
+                print(phone_number)
+                # self.phone_number.append(phone_number.text[2:])
             except NoSuchElementException:
-                self.phone_number.append('N/A')
+                phone_number = 'NA'
+                # self.phone_number.append('N/A')
 
             try:
                 email = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]')
-                print(email.text[2:])
-                self.email.append(email.text[2:])
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]').text[2:]
+                print(email)
+                # self.email.append(email)
             except NoSuchElementException:
-                self.email.append('N/A')
+                email = 'N/A'
+                # self.email.append('N/A')
 
             try:
                 location = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]')
-                print(location.text[2:])
-                self.location.append(location.text[2:])
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]').text[2:]
+                print(location)
+                # self.location.append(location)
             except NoSuchElementException:
-                self.location.append('N/A')
+                location = 'N/A'
+                # self.location.append('N/A')
 
-            try:
-                description = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]')
-                print(description.text)
-                self.description.append(description.text)
-            except NoSuchElementException:
-                self.description.append('N/A')
 
-            self.check_for_payment_methods(description.text)
+            # TODO: IF the keywords list is more than 0 look for keywords
+            # TODO: IF the keywords is in the description elif check into the other components
+            # TODO: ELSE the keywords is not in any of them continue to the next link
+            # TODO: ELSE run all of the links
+            print(f'description check: {self.check_keywords(description)}')
+            print(f'name check: {self.check_keywords(name)}')
+            print(f'sex check: {self.check_keywords(sex)}')
+            print(f'phone number check: {self.check_keywords(phone_number)}')
+            print(f'email check: {self.check_keywords(email)}')
+            print(f'location check: {self.check_keywords(location)}')
+
+            # if len(self.keywords) > 0:
+            #     if self.check_keywords(description):
+            #         self.description.append(description)
+            #
+            #     elif self.check_keywords(name):
+            #         self.name.append(name)
+            #
+            #     elif self.check_keywords(sex):
+            #         self.sex.append(sex)
+            #
+            #     elif self.check_keywords(phone_number):
+            #         self.phone_number.append(phone_number)
+            #
+            #     elif self.check_keywords(email):
+            #         self.email.append(email)
+            #
+            #     elif self.check_keywords(location):
+            #         self.location.append(location)
+            #
+            #     else:
+            #         continue
+            # else:
+            #     self.description.append(description)
+
+            self.check_for_payment_methods(description)
 
             print("\n")
 
@@ -189,8 +234,8 @@ class YesbackpageScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 10:
-                break
+            # if counter > 10:
+            #     break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):
@@ -226,5 +271,11 @@ class YesbackpageScraper(ScraperPrototype):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
-    def read_keywords(self):
-        pass
+    def read_keywords(self, keywords):
+        self.keywords = keywords
+
+    def check_keywords(self, data):
+        for key in self.keywords:
+            if key in data:
+                return True
+        return False

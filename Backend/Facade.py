@@ -6,61 +6,32 @@ from Backend.Scrapers.ErosScraper import ErosScraper
 
 class Facade:
     def __init__(self):
-        self.megapersonals = None
-        self.eros = None
-        self.escortalligator = None
-        self.yesbackpage = None
-        self.skipthegames = None
+        pass
 
-    def initialize_escortalligator_scraper(self):
-        self.escortalligator.initialize()
+    @staticmethod
+    def initialize_escortalligator_scraper():
+        escortalligator = EscortalligatorScraper()
+        escortalligator.initialize()
 
-    def set_escortalligator_city(self, city):
-        self.escortalligator.set_city(city)
+    @staticmethod
+    def initialize_megapersonals_scraper():
+        megapersonals = MegapersonalsScraper()
+        megapersonals.initialize()
 
-    def get_escortalligator_cities(self):
-        self.escortalligator = EscortalligatorScraper()
-        return self.escortalligator.get_cities()
+    @staticmethod
+    def initialize_skipthegames_scraper():
+        skipthegames = SkipthegamesScraper()
+        skipthegames.initialize()
 
-    def initialize_megapersonals_scraper(self):
-        self.megapersonals.initialize()
+    @staticmethod
+    def initialize_yesbackpage_scraper(keywords):
+        yesbackpage = YesbackpageScraper()
+        yesbackpage.initialize(keywords)
 
-    def set_megapersonals_city(self, city):
-        self.megapersonals.set_city(city)
-    
-    def get_megapersonals_cities(self):
-        self.megapersonals = MegapersonalsScraper()
-        return self.megapersonals.get_cities()
-
-    def initialize_skipthegames_scraper(self):
-        self.skipthegames.initialize()
-
-    def set_skipthegames_city(self, city):
-        self.skipthegames.set_city(city)
-
-    def get_skipthegames_cities(self):
-        self.skipthegames = SkipthegamesScraper()
-        return self.skipthegames.get_cities()
-
-    def initialize_yesbackpage_scraper(self):
-        self.yesbackpage.initialize()
-
-    def set_yesbackpage_city(self, city):
-        self.yesbackpage.set_city(city)
-
-    def get_yesbackpage_cities(self):
-        self.yesbackpage = YesbackpageScraper()
-        return self.yesbackpage.get_cities()
-
-    def initialize_eros_scraper(self):
-        self.eros.initialize()
-
-    def set_eros_city(self, city):
-        self.eros.set_city(city)
-
-    def get_eros_cities(self):
-        self.eros = ErosScraper()
-        return self.eros.get_cities()
+    @staticmethod
+    def initialize_eros_scraper():
+        eros = ErosScraper()
+        eros.initialize()
 
     def format_data(self, data):
         pass
