@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         if self.website_selection == 'yesbackpage':
             self.facade.set_yesbackpage_city(self.location)
 
-    # initialize locations based on website selected
+    # initialize locations based on website that is selected
     def initialize_location_dropdown(self):
         self.ui.setlocationDropdown.clear()
         for location in self.locations:
