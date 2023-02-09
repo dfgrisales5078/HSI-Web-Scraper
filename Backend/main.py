@@ -1,4 +1,5 @@
 from Backend.Facade import Facade
+from Backend.Keywords import Keywords
 
 if __name__ == '__main__':
 
@@ -11,6 +12,10 @@ if __name__ == '__main__':
                                   '\npress 5 to scrape eros'
                                   '\nor press enter to quit.\n'
                                   '\nEnter your selection: ')
+        keyword = Keywords()
+        print(keyword.get_keywords())
+        keyword_search = input("Enter keywords to search for sperated by ',' --> ")
+        keywordSearchList = keyword_search.split(", ")
 
         if website_selection == '':
             exit(0)
@@ -30,7 +35,7 @@ if __name__ == '__main__':
             break
 
         if website_selection == '4':
-            facade.initialize_yesbackpage_scraper()
+            facade.initialize_yesbackpage_scraper(keywordSearchList)
             break
 
         if website_selection == '5':

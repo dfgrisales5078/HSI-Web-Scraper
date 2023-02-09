@@ -24,9 +24,9 @@ class Facade:
         skipthegames.initialize()
 
     @staticmethod
-    def initialize_yesbackpage_scraper():
+    def initialize_yesbackpage_scraper(keywords):
         yesbackpage = YesbackpageScraper()
-        yesbackpage.initialize()
+        yesbackpage.initialize(keywords)
 
     @staticmethod
     def initialize_eros_scraper():
