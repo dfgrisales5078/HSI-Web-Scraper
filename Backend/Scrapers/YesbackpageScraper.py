@@ -60,6 +60,12 @@ class YesbackpageScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
+
     def initialize(self):
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
@@ -106,11 +112,6 @@ class YesbackpageScraper(ScraperPrototype):
         return links[2:]
 
     def get_formatted_url(self):
-        while self.city not in self.cities.keys():
-            print(list(self.cities.keys()))
-            self.city = str(input("Enter city to search from above: ")).lower()
-            print(f"city: {self.city}")
-
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
@@ -188,8 +189,8 @@ class YesbackpageScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            # if counter > 10:
-            #     break
+            if counter > 10:
+                break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):

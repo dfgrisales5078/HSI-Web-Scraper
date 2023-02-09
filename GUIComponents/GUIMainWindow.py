@@ -3,6 +3,7 @@ from Backend.Facade import Facade
 from ui_Scraper import Ui_HSIWebScraper
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from Backend.Keywords import Keywords
+from Backend.Scrapers.ErosScraper import ErosScraper
 
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator.
@@ -14,6 +15,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_HSIWebScraper()
         self.ui.setupUi(self)
         self.keywords_instance = Keywords()
+        self.facade = Facade()
 
         # TODO - center app when screen maximized
         # self.central_widget = QWidget(self)
@@ -30,6 +32,7 @@ class MainWindow(QMainWindow):
         self.keyword_sets = self.keywords_instance.get_set()
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
+        self.locations = []
         self.location = ''
 
         self.initialize_keywords(self.keywords)
@@ -79,7 +82,7 @@ class MainWindow(QMainWindow):
         self.ui.removeSetButton.clicked.connect(self.remove_set_button_clicked)
 
         # bind locationTextBox to location_text_box function
-        self.ui.setlocationDropdown.currentIndexChanged.connect(self.location_text_box)
+        self.ui.setlocationDropdown.currentIndexChanged.connect(self.set_location)
 
     ''' Functions used to handle events: '''
 
@@ -98,9 +101,24 @@ class MainWindow(QMainWindow):
         self.ui.setSelectionDropdown.clear()
         self.ui.setSelectionDropdown.addItems(self.keyword_sets)
 
-    # TODO - get locations based on scraper selected 
-    def location_text_box(self):
+    # set location based on selection from the dropdown
+    def set_location(self):
         self.location = self.ui.setlocationDropdown.currentText()
+
+        if self.website_selection == 'eros':
+            self.facade.set_eros_city(self.location)
+
+        if self.website_selection == 'escortalligator':
+            self.facade.set_escortalligator_city(self.location)
+
+        if self.website_selection == 'yesbackpage':
+            self.facade.set_yesbackpage_city(self.location)
+
+    # initialize locations based on website selected
+    def initialize_location_dropdown(self):
+        self.ui.setlocationDropdown.clear()
+        for location in self.locations:
+            self.ui.setlocationDropdown.addItem(location)
 
     # add new set when button is clicked
     def add_set_button_clicked(self):
@@ -274,40 +292,53 @@ class MainWindow(QMainWindow):
         print(self.ui.websiteSelectionDropdown.currentText())
         self.ui.searchButton.setEnabled(True)
 
+        if self.website_selection == 'eros':
+            self.locations = self.facade.get_eros_cities()
+            self.set_location()
+            self.initialize_location_dropdown()
+
+        if self.website_selection == 'escortalligator':
+            self.locations = self.facade.get_escortalligator_cities()
+            self.initialize_location_dropdown()
+
+        if self.website_selection == 'yesbackpage':
+            self.locations = self.facade.get_yesbackpage_cities()
+            self.initialize_location_dropdown()
+
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
-        facade = Facade()
+
         if self.website_selection == 'escortalligator':
             try:
-                facade.initialize_escortalligator_scraper()
+                self.facade.initialize_escortalligator_scraper()
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
             try:
-                facade.initialize_megapersonals_scraper()
+                self.facade.initialize_megapersonals_scraper()
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
-                facade.initialize_skipthegames_scraper()
+                self.facade.initialize_skipthegames_scraper()
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
             try:
-                facade.initialize_yesbackpage_scraper()
+                self.facade.initialize_yesbackpage_scraper()
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'eros':
             try:
-                facade.initialize_eros_scraper()
+                self.facade.initialize_eros_scraper()
             except:
                 print('Error occurred, please try again.')
             time.sleep(2)
