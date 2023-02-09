@@ -111,7 +111,6 @@ class EscortalligatorScraper(ScraperPrototype):
         links = [post.get_attribute('href') for post in posts]
         return links[::3]
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
         while self.city not in self.cities:
             print(self.cities)
