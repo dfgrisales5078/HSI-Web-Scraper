@@ -63,40 +63,40 @@ class Keywords:
 
 
 # code to test if the keywords class is working
-if __name__ == '__main__':
-    key = Keywords()
-
-    while True:
-        userInput = input("Type 1 for adding a keyword\n"
-                          "Type 2 for removing a keyword\n"
-                          "Type 3 to add a set\n"
-                          "Type 4 to remove a set\n"
-                          "Type 5 to view keywords\n"
-                          "Type 6 to view sets\n"
-                          "Type 7 to view values of a set\n"
-                          "Type 0 to quit\n"
-                          "Enter input: ")
-        if userInput == '1':
-            addWord = input("Type the keyword to add: ")
-            key.add_keywords(addWord)
-        elif userInput == '2':
-            key.get_keywords()
-            removeWord = input("Type keyword to remove: ")
-            key.remove_keywords(removeWord)
-        elif userInput == '3':
-            setKey = input("Enter set name: ")
-            setValues = input("Enter set values seperated by ',': ")
-            key.create_set(setKey, setValues)
-        elif userInput == '4':
-            key.get_set()
-            removeSet = input("Enter set name to remove: ")
-            key.remove_set(removeSet)
-        elif userInput == '5':
-            print(key.get_keywords())
-        elif userInput == '6':
-            print(key.get_set())
-        elif userInput == '7':
-            st = input("enter set to get values: ")
-            print(key.get_set_values(st))
-        else:
-            break
+# if __name__ == '__main__':
+#     key = Keywords()
+#
+#     while True:
+#         userInput = input("Type 1 for adding a keyword\n"
+#                           "Type 2 for removing a keyword\n"
+#                           "Type 3 to add a set\n"
+#                           "Type 4 to remove a set\n"
+#                           "Type 5 to view keywords\n"
+#                           "Type 6 to view sets\n"
+#                           "Type 7 to view values of a set\n"
+#                           "Type 0 to quit\n"
+#                           "Enter input: ")
+#         if userInput == '1':
+#             addWord = input("Type the keyword to add: ")
+#             key.add_keywords(addWord)
+#         elif userInput == '2':
+#             key.get_keywords()
+#             removeWord = input("Type keyword to remove: ")
+#             key.remove_keywords(removeWord)
+#         elif userInput == '3':
+#             setKey = input("Enter set name: ")
+#             setValues = input("Enter set values seperated by ',': ")
+#             key.create_set(setKey, setValues)
+#         elif userInput == '4':
+#             key.get_set()
+#             removeSet = input("Enter set name to remove: ")
+#             key.remove_set(removeSet)
+#         elif userInput == '5':
+#             print(key.get_keywords())
+#         elif userInput == '6':
+#             print(key.get_set())
+#         elif userInput == '7':
+#             st = input("enter set to get values: ")
+#             print(key.get_set_values(st))
+#         else:
+#             break
