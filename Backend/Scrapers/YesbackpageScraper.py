@@ -121,7 +121,6 @@ class YesbackpageScraper(ScraperPrototype):
     def get_data(self, links):
         links = set(links)
 
-        description = ''
         counter = 0
 
         for link in links:

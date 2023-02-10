@@ -22,6 +22,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
+        self.keywords = None
 
         # lists to store data and then send to csv file
         self.description = []
@@ -35,7 +36,10 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
-    def initialize(self):
+    def initialize(self, keywords):
+        # set keywords value
+        self.read_keywords(keywords)
+
         # format date
         self.date_time = str(datetime.today())[0:19]
         self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
@@ -46,9 +50,9 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        options = uc.ChromeOptions()
+        options = ChromeOptions()
         options.headless = False
-        self.driver = uc.Chrome(use_subprocess=True, options=options)
+        self.driver = webdriver.Chrome(options=options)
 
         self.open_webpage()
 
@@ -102,60 +106,86 @@ class MegapersonalsScraper(ScraperPrototype):
             try:
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/span').text
-                self.description.append(description)
                 print(description)
             except NoSuchElementException:
-                self.description.append('N/A')
-
-            self.check_for_payment_methods(description)
+                description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/div[1]/span').text
-                self.phoneNumber.append(phone_number)
                 print(phone_number)
             except NoSuchElementException:
-                self.phoneNumber.append('N/A')
+                phone_number = 'N/A'
 
             try:
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[2]').text[5:]
-                self.name.append(name)
                 print(name)
             except NoSuchElementException:
-                self.name.append('N/A')
+                name = 'N/A'
 
             try:
                 city = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[1]').text[5:]
-                self.city.append(city)
                 print(city)
             except NoSuchElementException:
-                self.city.append('N/A')
+                city = 'N/A'
 
             try:
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[2]').text[9:]
-                self.location.append(location)
                 print(location)
             except NoSuchElementException:
-                self.location.append('N/A')
+                location = 'N/A'
 
-            self.post_identifier.append(counter)
+            if len(self.keywords) > 0:
+                if self.check_keywords(description) or self.check_keywords(name) \
+                        or self.check_keywords(phone_number) or self.check_keywords(city) \
+                        or self.check_keywords(location):
+                    self.post_identifier.append(counter)
+                    self.name.append(name)
+                    self.phoneNumber.append(phone_number)
+                    self.city.append(city)
+                    self.location.append(location)
+                    self.description.append(description)
+                    self.check_for_payment_methods(description)
+                    self.link.append(link)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
+                else:
+                    continue
+            else:
+                self.post_identifier.append(counter)
+                self.name.append(name)
+                self.phoneNumber.append(phone_number)
+                self.city.append(city)
+                self.location.append(location)
+                self.description.append(description)
+                self.check_for_payment_methods(description)
+                self.link.append(link)
+                screenshot_name = str(counter) + ".png"
+                self.capture_screenshot(screenshot_name)
+                counter += 1
 
-            screenshot_name = str(counter) + ".png"
-            self.capture_screenshot(screenshot_name)
-            counter += 1
-
-            if counter > 0:
+            if counter > 5:
                 break
 
             print('\n')
+        print(len(self.post_identifier))
+        print(len(self.link))
+        print(len(self.name))
+        print(len(self.phoneNumber))
+        print(len(self.city))
+        print(len(self.location))
+        print(len(self.description))
+        print(len(self.payment_methods_found))
 
     # TODO - move to class that handles data
     def format_data_to_csv(self):
         titled_columns = {
             'Post_identifier': self.post_identifier,
+            'Link': self.link,
             'name': self.name,
             'phone-number': self.phoneNumber,
             'city': self.city,
@@ -183,6 +213,11 @@ class MegapersonalsScraper(ScraperPrototype):
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    # TODO - read keywords from keywords.txt
-    def read_keywords(self):
-        pass
+    def read_keywords(self, keywords):
+        self.keywords = keywords
+
+    def check_keywords(self, data):
+        for key in self.keywords:
+            if key in data:
+                return True
+        return False
