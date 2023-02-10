@@ -27,7 +27,7 @@ class EscortalligatorScraper(ScraperPrototype):
             "palm bay",
             "panama city",
             "pensacola",
-            "sarasota",
+            "bradenton",
             "space coast",
             "st. augustine",
             "tallahassee",
@@ -55,6 +55,12 @@ class EscortalligatorScraper(ScraperPrototype):
         self.payment_methods_found = []
 
         # TODO other info needs to be pulled using regex?
+
+    def get_cities(self):
+        return self.cities
+
+    def set_city(self, city):
+        self.city = city.replace(' ', '').replace('.', '')
 
     def initialize(self):
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
@@ -112,12 +118,6 @@ class EscortalligatorScraper(ScraperPrototype):
         return links[::3]
 
     def get_formatted_url(self):
-        while self.city not in self.cities:
-            print(self.cities)
-            self.city = str(input("Enter city to search from above: ")).lower()
-            print(f"city: {self.city}")
-
-        self.city = self.city.replace(' ', '').replace('.', '')
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
         print(f"link: {self.url}")
 
@@ -169,7 +169,7 @@ class EscortalligatorScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 5:
+            if counter > 0:
                 break
             time.sleep(1)
 
