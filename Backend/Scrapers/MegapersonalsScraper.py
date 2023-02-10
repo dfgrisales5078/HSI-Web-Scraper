@@ -14,7 +14,30 @@ class MegapersonalsScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.url = "https://megapersonals.eu"
+        self.cities = {
+            "daytona": 'https://megapersonals.eu/public/post_list/109/1/1',
+            "fort lauderdale": 'https://megapersonals.eu/public/post_list/113/1/1',
+            "fort myers": 'https://megapersonals.eu/public/post_list/234/1/1',
+            "gainesville": 'https://megapersonals.eu/public/post_list/235/1/1',
+            "jacksonville": 'https://megapersonals.eu/public/post_list/236/1/1',
+            "keys": 'https://megapersonals.eu/public/post_list/114/1/1',
+            "miami": 'https://megapersonals.eu/public/post_list/25/1/1',
+            "ocala": 'https://megapersonals.eu/public/post_list/238/1/1',
+            "okaloosa": 'https://megapersonals.eu/public/post_list/239/1/1',
+            "orlando": 'https://megapersonals.eu/public/post_list/18/1/1',
+            "palm bay": 'https://megapersonals.eu/public/post_list/110/1/1',
+            "panama city": 'https://megapersonals.eu/public/post_list/240/1/1',
+            "pensacola": 'https://megapersonals.eu/public/post_list/241/1/1',
+            "sarasota": 'https://megapersonals.eu/public/post_list/242/1/1',
+            "space coast": 'https://megapersonals.eu/public/post_list/111/1/1',
+            "st. augustine": 'https://megapersonals.eu/public/post_list/243/1/1',
+            "tallahassee": 'https://megapersonals.eu/public/post_list/244/1/1',
+            "tampa": 'https://megapersonals.eu/public/post_list/50/1/1',
+            "treasure coast": 'https://megapersonals.eu/public/post_list/112/1/1',
+            "west palm beach": 'https://megapersonals.eu/public/post_list/115/1/1'
+        }
+        self.city = ''
+        self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
@@ -27,7 +50,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.description = []
         self.name = []
         self.phoneNumber = []
-        self.city = []
+        # self.city = []
         self.location = []
         self.link = []
         self.post_identifier = []
@@ -35,10 +58,29 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
+
     def initialize(self):
         # format date
-        self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
+        self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
+
+        # Format website URL based on state and city
+        self.get_formatted_url()
+
+        # Selenium Web Driver setup
+        options = uc.ChromeOptions()
+        options.headless = False
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
+
+        # Open Webpage with URL
+        self.open_webpage()
+
+        # Find links of posts
+        links = self.get_links()
 
         # create directories for screenshot and csv
         self.main_page_path = f'megapersonals_{self.date_time}'
@@ -46,13 +88,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        options = uc.ChromeOptions()
-        options.headless = False
-        self.driver = uc.Chrome(use_subprocess=True, options=options)
-
-        self.open_webpage()
-
-        links = self.get_links()
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
@@ -81,9 +116,14 @@ class MegapersonalsScraper(ScraperPrototype):
             links.append(person.find_element(By.TAG_NAME, "a").get_attribute("href"))
         return links
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
-        pass
+        while self.city not in self.cities.keys():
+            print(list(self.cities.keys()))
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
+        self.url = self.cities.get(self.city)
+        print(f"link: {self.url}")
 
     def get_data(self, links):
         links = set(links)
@@ -125,13 +165,13 @@ class MegapersonalsScraper(ScraperPrototype):
             except NoSuchElementException:
                 self.name.append('N/A')
 
-            try:
-                city = self.driver.find_element(
-                    By.XPATH, '/html/body/div/div[6]/p[1]/span[1]').text[5:]
-                self.city.append(city)
-                print(city)
-            except NoSuchElementException:
-                self.city.append('N/A')
+            # try:
+            #     city = self.driver.find_element(
+            #         By.XPATH, '/html/body/div/div[6]/p[1]/span[1]').text[5:]
+            #     self.city.append(city)
+            #     print(city)
+            # except NoSuchElementException:
+            #     self.city.append('N/A')
 
             try:
                 location = self.driver.find_element(
@@ -158,7 +198,7 @@ class MegapersonalsScraper(ScraperPrototype):
             'Post_identifier': self.post_identifier,
             'name': self.name,
             'phone-number': self.phoneNumber,
-            'city': self.city,
+            # 'city': self.city,
             'location': self.location,
             'description': self.description,
             'payment_methods': self.payment_methods_found
