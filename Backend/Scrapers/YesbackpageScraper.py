@@ -125,8 +125,6 @@ class YesbackpageScraper(ScraperPrototype):
         counter = 0
 
         for link in links:
-            # append link to list
-            self.link.append(link)
             print(link)
 
             self.driver.implicitly_wait(10)
@@ -136,103 +134,85 @@ class YesbackpageScraper(ScraperPrototype):
 
             try:
                 description = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]').text[
+                              2:]
                 print(description)
-                # self.description.append(description.text)
             except NoSuchElementException:
                 description = 'N/A'
-                # self.description.append('N/A')
 
             try:
                 name = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]').text[2:]
+                    By.XPATH,
+                    '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]').text[2:]
                 print(name)
-                # self.name.append(name.text[2:])
             except NoSuchElementException:
                 name = 'N/A'
-                # self.name.append('N/A')
 
             try:
                 sex = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]').text[2:]
+                    By.XPATH,
+                    '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]').text[2:]
                 print(sex)
-                # self.sex.append(sex.text[2:])
             except NoSuchElementException:
                 sex = 'N/A'
-                # self.sex.append('N/A')
 
             try:
                 phone_number = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]').text[2:]
+                    By.XPATH,
+                    '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]').text[2:]
                 print(phone_number)
-                # self.phone_number.append(phone_number.text[2:])
             except NoSuchElementException:
                 phone_number = 'NA'
-                # self.phone_number.append('N/A')
 
             try:
                 email = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]').text[2:]
+                    By.XPATH,
+                    '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]').text[2:]
                 print(email)
-                # self.email.append(email)
             except NoSuchElementException:
                 email = 'N/A'
-                # self.email.append('N/A')
 
             try:
                 location = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]').text[2:]
+                    By.XPATH,
+                    '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]').text[2:]
                 print(location)
-                # self.location.append(location)
             except NoSuchElementException:
                 location = 'N/A'
-                # self.location.append('N/A')
 
-
-            # TODO: IF the keywords list is more than 0 look for keywords
-            # TODO: IF the keywords is in the description elif check into the other components
-            # TODO: ELSE the keywords is not in any of them continue to the next link
-            # TODO: ELSE run all of the links
-            print(f'description check: {self.check_keywords(description)}')
-            print(f'name check: {self.check_keywords(name)}')
-            print(f'sex check: {self.check_keywords(sex)}')
-            print(f'phone number check: {self.check_keywords(phone_number)}')
-            print(f'email check: {self.check_keywords(email)}')
-            print(f'location check: {self.check_keywords(location)}')
-
-            # if len(self.keywords) > 0:
-            #     if self.check_keywords(description):
-            #         self.description.append(description)
-            #
-            #     elif self.check_keywords(name):
-            #         self.name.append(name)
-            #
-            #     elif self.check_keywords(sex):
-            #         self.sex.append(sex)
-            #
-            #     elif self.check_keywords(phone_number):
-            #         self.phone_number.append(phone_number)
-            #
-            #     elif self.check_keywords(email):
-            #         self.email.append(email)
-            #
-            #     elif self.check_keywords(location):
-            #         self.location.append(location)
-            #
-            #     else:
-            #         continue
-            # else:
-            #     self.description.append(description)
-
-            self.check_for_payment_methods(description)
+            if len(self.keywords) > 0:
+                if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(
+                        sex) or self.check_keywords(phone_number) \
+                        or self.check_keywords(email) or self.check_keywords(location):
+                    self.description.append(description)
+                    self.name.append(name)
+                    self.sex.append(sex)
+                    self.phone_number.append(phone_number)
+                    self.email.append(email)
+                    self.location.append(location)
+                    self.post_identifier.append(counter)
+                    self.link.append(link)
+                    self.check_for_payment_methods(description)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
+                else:
+                    continue
+            else:
+                self.description.append(description)
+                self.name.append(name)
+                self.sex.append(sex)
+                self.phone_number.append(phone_number)
+                self.email.append(email)
+                self.location.append(location)
+                self.check_for_payment_methods(description)
+                self.link.append(link)
+                self.post_identifier.append(counter)
+                screenshot_name = str(counter) + ".png"
+                self.capture_screenshot(screenshot_name)
+                counter += 1
 
             print("\n")
-
-            self.post_identifier.append(counter)
-
-            screenshot_name = str(counter) + ".png"
-            self.capture_screenshot(screenshot_name)
-            counter += 1
 
             # if counter > 10:
             #     break
