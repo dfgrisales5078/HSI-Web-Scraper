@@ -1,9 +1,12 @@
 import time
+
+import qdarkstyle
+
 from Backend.Facade import Facade
 from ui_Scraper import Ui_HSIWebScraper
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from Backend.Keywords import Keywords
-from Backend.Scrapers.ErosScraper import ErosScraper
+from PyQt6 import QtWidgets
 
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator.
@@ -75,8 +78,7 @@ class MainWindow(QMainWindow):
         self.ui.removeKeywordButton.clicked.connect(self.remove_keyword_button_clicked)
 
         # bind addSetButton to add_set_button_clicked function
-        self.ui.addSetButton.clicked.connect(self.add_set_button_clicked)
-        # TODO - disable addSetButton until new set name is entered?
+        self.ui.addSetButton.clicked.connect(self.add_set_button_clicked)    
 
         # bind removeSetButton to remove_set_button_clicked function
         self.ui.removeSetButton.clicked.connect(self.remove_set_button_clicked)
@@ -86,10 +88,28 @@ class MainWindow(QMainWindow):
 
     ''' Functions used to handle events: '''
 
+    # popup to confirm set removal
+    @staticmethod
+    def remove_set_popup_window(set_to_remove):
+        popup = QtWidgets.QMessageBox()
+
+        popup.setWindowTitle("Confirm Set Removal")
+        popup.setText(f"Are you sure you want to remove {set_to_remove} from the list of sets?")
+        popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
+            return True
+        else:
+            return False
+
     # remove set when button is clicked
     def remove_set_button_clicked(self):
         # get name of set to remove
         set_to_remove = self.ui.setList.currentItem().text()
+
+        confirmation = self.remove_set_popup_window(set_to_remove)
+        if not confirmation:
+            return
 
         # remove set from keyword_sets
         self.keywords_instance.remove_set(set_to_remove)
@@ -144,15 +164,42 @@ class MainWindow(QMainWindow):
         # clear new set text box
         self.ui.newSetTextBox.clear()
 
-    # TODO - loop through sets and remove keyword from each set 
-    # BUG - if multiple keywords are selected and one is removed, the other keywords are not removed from the set
+    # popup to confirm keyword removal
+    @staticmethod
+    def remove_keyword_popup_window(keyword_to_remove):
+        popup = QtWidgets.QMessageBox()
+        popup.setWindowTitle("Confirm Keyword Removal")
+        popup.setText(f"Are you sure you want to remove {keyword_to_remove} from the list of keywords? \n\nWarning: "
+                      f"{keyword_to_remove} will be removed from all sets.")
+        font = popup.font()
+        font.setBold(True)
+        popup.setFont(font)
+        popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
+            return True
+        else:
+            return False
+
+    # TODO BUG - last item clicked on is deleted even if not selected
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
         keyword = self.ui.keywordList.currentItem().text()
 
+        # confirm keyword removal
+        confirmation = self.remove_keyword_popup_window(keyword)
+
+        if not confirmation:
+            return
+
         if keyword != '':
             self.remove_keyword(keyword)
+
+            # loop through sets and remove keyword from each set
+            for set_name in self.keyword_sets:
+                if keyword in self.keywords_instance.get_set_values(set_name):
+                    self.keywords_instance.remove_keyword_from_set(keyword, set_name)
 
     # add new keyword
     def add_keyword_button_clicked(self):
@@ -304,6 +351,21 @@ class MainWindow(QMainWindow):
         if self.website_selection == 'yesbackpage':
             self.locations = self.facade.get_yesbackpage_cities()
             self.initialize_location_dropdown()
+
+    # TODO - pop up when search button is clicked - show progress bar, status? & cancel button
+    @staticmethod
+    def search_popup_window(website_selection):
+        popup = QtWidgets.QMessageBox()
+        popup.setWindowTitle("Scraping in Progress")
+        popup.setText(f"Currently Scraping {website_selection}.?")
+        popup.exec()
+        
+        # popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        # if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
+        #     return True
+        # else:
+        #     return False        
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
