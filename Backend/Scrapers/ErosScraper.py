@@ -39,6 +39,11 @@ class ErosScraper(ScraperPrototype):
         self.payment_methods_found = []
 
         # TODO other info needs to be pulled using regex?
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
 
     def initialize(self):
         # Date and time of search
@@ -110,11 +115,6 @@ class ErosScraper(ScraperPrototype):
         return set(links)
 
     def get_formatted_url(self):
-        while self.city not in self.cities.keys():
-            print(list(self.cities.keys()))
-            self.city = str(input("Enter city to search from above: ")).lower()
-            print(f"city: {self.city}")
-
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
@@ -173,7 +173,7 @@ class ErosScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 3:
+            if counter > 0:
                 break
 
     # TODO - move to class than handles data
