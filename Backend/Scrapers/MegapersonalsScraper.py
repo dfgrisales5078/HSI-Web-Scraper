@@ -58,6 +58,12 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
+
     def initialize(self):
         # format date
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
