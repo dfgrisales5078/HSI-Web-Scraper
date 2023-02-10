@@ -136,55 +136,43 @@ class YesbackpageScraper(ScraperPrototype):
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]').text[2:]
                 print(description)
-                # self.description.append(description.text)
             except NoSuchElementException:
                 description = 'N/A'
-                # self.description.append('N/A')
 
             try:
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]').text[2:]
                 print(name)
-                # self.name.append(name.text[2:])
             except NoSuchElementException:
                 name = 'N/A'
-                # self.name.append('N/A')
 
             try:
                 sex = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]').text[2:]
                 print(sex)
-                # self.sex.append(sex.text[2:])
             except NoSuchElementException:
                 sex = 'N/A'
-                # self.sex.append('N/A')
 
             try:
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]').text[2:]
                 print(phone_number)
-                # self.phone_number.append(phone_number.text[2:])
             except NoSuchElementException:
                 phone_number = 'NA'
-                # self.phone_number.append('N/A')
 
             try:
                 email = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]').text[2:]
                 print(email)
-                # self.email.append(email)
             except NoSuchElementException:
                 email = 'N/A'
-                # self.email.append('N/A')
 
             try:
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]').text[2:]
                 print(location)
-                # self.location.append(location)
             except NoSuchElementException:
                 location = 'N/A'
-                # self.location.append('N/A')
 
             if len(self.keywords) > 0:
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
