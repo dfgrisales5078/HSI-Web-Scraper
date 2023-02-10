@@ -23,15 +23,15 @@ if __name__ == '__main__':
         facade = Facade()
 
         if website_selection == '1':
-            facade.initialize_escortalligator_scraper()
+            facade.initialize_escortalligator_scraper(keywordSearchList)
             break
 
         if website_selection == '2':
-            facade.initialize_megapersonals_scraper()
+            facade.initialize_megapersonals_scraper(keywordSearchList)
             break
 
         if website_selection == '3':
-            facade.initialize_skipthegames_scraper()
+            facade.initialize_skipthegames_scraper(keywordSearchList)
             break
 
         if website_selection == '4':
@@ -39,6 +39,6 @@ if __name__ == '__main__':
             break
 
         if website_selection == '5':
-            facade.initialize_eros_scraper()
+            facade.initialize_eros_scraper(keywordSearchList)
             break
 
