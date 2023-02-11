@@ -165,17 +165,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
                 counter += 1
-
-
             print('\n')
-        print(len(self.post_identifier))
-        print(len(self.link))
-        print(len(self.name))
-        print(len(self.phoneNumber))
-        print(len(self.city))
-        print(len(self.location))
-        print(len(self.description))
-        print(len(self.payment_methods_found))
 
     # TODO - move to class that handles data
     def format_data_to_csv(self):
