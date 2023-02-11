@@ -61,6 +61,12 @@ class YesbackpageScraper(ScraperPrototype):
 
         # TODO other info needs to be pulled using regex?
 
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
+
     def initialize(self, keywords):
         # set keywords value
         self.read_keywords(keywords)
