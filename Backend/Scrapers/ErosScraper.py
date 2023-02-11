@@ -173,7 +173,7 @@ class ErosScraper(ScraperPrototype):
             self.capture_screenshot(screenshot_name)
             counter += 1
 
-            if counter > 0:
+            if counter > 10:
                 break
 
     # TODO - move to class than handles data
