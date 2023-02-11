@@ -22,13 +22,24 @@ class Facade:
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
-    @staticmethod
     def initialize_megapersonals_scraper(self, keywords):
         self.megapersonals.initialize(keywords)
 
-    @staticmethod
+    def set_megapersonals_city(self, city):
+        self.megapersonals.set_city(city)
+
+    def get_megapersonals_cities(self):
+        self.megapersonals = MegapersonalsScraper()
+        return self.megapersonals.get_cities()
+
     def initialize_skipthegames_scraper(self, keywords):
         self.skipthegames.initialize(keywords)
+
+    def set_skipthegames_city(self, city):
+        self.skipthegames.set_city(city)
+
+    def get_skipthegames_cities(self):
+        return self.skipthegames.get_cities()
 
     def initialize_yesbackpage_scraper(self, keywords):
         self.yesbackpage.initialize(keywords)
