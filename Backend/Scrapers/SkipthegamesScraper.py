@@ -20,6 +20,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
+        self.keywords = None
 
         # lists to store data and then send to csv file
         self.link = []
@@ -37,7 +38,8 @@ class SkipthegamesScraper(ScraperPrototype):
         # self.payment_method = []
         # self.location = []
 
-    def initialize(self):
+    def initialize(self, keywords):
+        self.read_keywords(keywords)
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19]
         self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
@@ -82,13 +84,9 @@ class SkipthegamesScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
-
-        description = ''
         counter = 0
 
         for link in links:
-            # append link to list
-            self.link.append(link)
             print(link)
 
             # self.driver.implicitly_wait(2)
@@ -98,35 +96,48 @@ class SkipthegamesScraper(ScraperPrototype):
 
             try:
                 about_info = self.driver.find_element(
-                    By.XPATH, '/html/body/div[7]/div/div[2]/div/table/tbody')
-                print(about_info.text)
-                self.about_info.append(about_info.text)
+                    By.XPATH, '/html/body/div[7]/div/div[2]/div/table/tbody').text
+                print(about_info)
             except NoSuchElementException:
-                self.about_info.append('N/A')
+                about_info = 'N/A'
 
             try:
                 services = self.driver.find_element(
-                    By.XPATH, '//*[@id="post-services"]')
-                print(services.text)
-                self.services.append(services.text)
+                    By.XPATH, '//*[@id="post-services"]').text
+                print(services)
             except NoSuchElementException:
-                self.services.append('N/A')
+                services = 'N/A'
 
             try:
                 description = self.driver.find_element(
-                    By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div')
-                print(description.text)
-                self.description.append(description.text)
+                    By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div').text
+                print(description)
             except NoSuchElementException:
-                self.description.append('N/A')
+                description = 'N/A'
 
-            self.check_for_payment_methods(description.text)
-
-            self.post_identifier.append(counter)
-
-            screenshot_name = str(counter) + ".png"
-            self.capture_screenshot(screenshot_name)
-            counter += 1
+            if len(self.keywords) > 0:
+                if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(description):
+                    self.post_identifier.append(counter)
+                    self.link.append(link)
+                    self.about_info.append(about_info)
+                    self.services.append(services)
+                    self.description.append(description)
+                    self.check_for_payment_methods(description)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
+                else:
+                    continue
+            else:
+                self.post_identifier.append(counter)
+                self.link.append(link)
+                self.about_info.append(about_info)
+                self.services.append(services)
+                self.description.append(description)
+                self.check_for_payment_methods(description)
+                screenshot_name = str(counter) + ".png"
+                self.capture_screenshot(screenshot_name)
+                counter += 1
 
             if counter > 5:
                 break
@@ -162,5 +173,11 @@ class SkipthegamesScraper(ScraperPrototype):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
-    def read_keywords(self):
-        pass
+    def read_keywords(self, keywords):
+        self.keywords = keywords
+
+    def check_keywords(self, data):
+        for key in self.keywords:
+            if key in data:
+                return True
+        return False
