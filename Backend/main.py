@@ -23,6 +23,9 @@ if __name__ == '__main__':
         facade = Facade()
 
         if website_selection == '1':
+            print(facade.get_escortalligator_cities())
+            userInput = input("Select city: ")
+            facade.set_escortalligator_city(userInput)
             facade.initialize_escortalligator_scraper(keywordSearchList)
             break
 

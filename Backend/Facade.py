@@ -4,12 +4,13 @@ from Backend.Scrapers.SkipthegamesScraper import SkipthegamesScraper
 from Backend.Scrapers.YesbackpageScraper import YesbackpageScraper
 from Backend.Scrapers.ErosScraper import ErosScraper
 
+
 class Facade:
     def __init__(self):
         pass
         self.eros = None
-        self.escortalligator = None
-        self.yesbackpage = None
+        self.escortalligator = EscortalligatorScraper()  # BUG: instead of None
+        self.yesbackpage = YesbackpageScraper()
 
     def initialize_escortalligator_scraper(self, keywords):
         self.escortalligator.initialize(keywords)
@@ -18,7 +19,6 @@ class Facade:
         self.escortalligator.set_city(city)
 
     def get_escortalligator_cities(self):
-        self.escortalligator = EscortalligatorScraper()
         return self.escortalligator.get_cities()
 
     @staticmethod
