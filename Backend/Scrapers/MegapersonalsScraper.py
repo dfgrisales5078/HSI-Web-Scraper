@@ -91,14 +91,12 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
-
-        description = ''
         counter = 0
 
         for link in links:
-            # append link to list
-            self.link.append(link)
             print(link)
+            if counter > 5:
+                break
 
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -168,8 +166,6 @@ class MegapersonalsScraper(ScraperPrototype):
                 self.capture_screenshot(screenshot_name)
                 counter += 1
 
-            if counter > 5:
-                break
 
             print('\n')
         print(len(self.post_identifier))
