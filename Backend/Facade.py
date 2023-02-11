@@ -10,6 +10,7 @@ class Facade:
         self.eros = None
         self.escortalligator = None
         self.yesbackpage = None
+        megapersonals = None
 
     def initialize_escortalligator_scraper(self):
         self.escortalligator.initialize()
@@ -21,10 +22,15 @@ class Facade:
         self.escortalligator = EscortalligatorScraper()
         return self.escortalligator.get_cities()
 
-    @staticmethod
-    def initialize_megapersonals_scraper():
-        megapersonals = MegapersonalsScraper()
-        megapersonals.initialize()
+    def initialize_megapersonals_scraper(self):
+        self.megapersonals.initialize()
+
+    def set_megapersonals_city(self, city):
+        self.megapersonals.set_city(city)
+
+    def get_megapersonals_cities(self):
+        self.megapersonals = MegapersonalsScraper()
+        return self.megapersonals.get_cities()
 
     @staticmethod
     def initialize_skipthegames_scraper():
