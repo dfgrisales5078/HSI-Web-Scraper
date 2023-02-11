@@ -6,10 +6,11 @@ from Backend.Scrapers.ErosScraper import ErosScraper
 
 class Facade:
     def __init__(self):
-        pass
+        self.megapersonals = None
         self.eros = None
         self.escortalligator = None
         self.yesbackpage = None
+        self.skipthegames = None
 
     def initialize_escortalligator_scraper(self):
         self.escortalligator.initialize()
@@ -21,15 +22,25 @@ class Facade:
         self.escortalligator = EscortalligatorScraper()
         return self.escortalligator.get_cities()
 
-    @staticmethod
-    def initialize_megapersonals_scraper():
-        megapersonals = MegapersonalsScraper()
-        megapersonals.initialize()
+    def initialize_megapersonals_scraper(self):
+        self.megapersonals.initialize()
 
-    @staticmethod
-    def initialize_skipthegames_scraper():
-        skipthegames = SkipthegamesScraper()
-        skipthegames.initialize()
+    def set_megapersonals_city(self, city):
+        self.megapersonals.set_city(city)
+    
+    def get_megapersonals_cities(self):
+        self.megapersonals = MegapersonalsScraper()
+        return self.megapersonals.get_cities()
+
+    def initialize_skipthegames_scraper(self):
+        self.skipthegames.initialize()
+
+    def set_skipthegames_city(self, city):
+        self.skipthegames.set_city(city)
+
+    def get_skipthegames_cities(self):
+        self.skipthegames = SkipthegamesScraper()
+        return self.skipthegames.get_cities()
 
     def initialize_yesbackpage_scraper(self):
         self.yesbackpage.initialize()

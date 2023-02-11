@@ -117,11 +117,6 @@ class MegapersonalsScraper(ScraperPrototype):
         return links
 
     def get_formatted_url(self):
-        while self.city not in self.cities.keys():
-            print(list(self.cities.keys()))
-            self.city = str(input("Enter city to search from above: ")).lower()
-            print(f"city: {self.city}")
-
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
