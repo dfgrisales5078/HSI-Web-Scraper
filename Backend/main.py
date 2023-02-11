@@ -42,6 +42,9 @@ if __name__ == '__main__':
             break
 
         if website_selection == '5':
+            print(facade.get_eros_cities())
+            userInput = input("Select city: ")
+            facade.set_eros_city(userInput)
             facade.initialize_eros_scraper(keywordSearchList)
             break
 

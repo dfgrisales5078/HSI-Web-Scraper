@@ -8,7 +8,7 @@ from Backend.Scrapers.ErosScraper import ErosScraper
 class Facade:
     def __init__(self):
         pass
-        self.eros = None
+        self.eros = ErosScraper()
         self.escortalligator = EscortalligatorScraper()  # BUG: instead of None
         self.yesbackpage = YesbackpageScraper()
 
@@ -38,7 +38,6 @@ class Facade:
         self.yesbackpage.set_city(city)
 
     def get_yesbackpage_cities(self):
-        self.yesbackpage = YesbackpageScraper()
         return self.yesbackpage.get_cities()
 
     def initialize_eros_scraper(self, keywords):
@@ -48,7 +47,6 @@ class Facade:
         self.eros.set_city(city)
 
     def get_eros_cities(self):
-        self.eros = ErosScraper()
         return self.eros.get_cities()
 
     def format_data(self, data):
