@@ -113,13 +113,7 @@ class SkipthegamesScraper(ScraperPrototype):
         print('# of links:', len(set(links)))
         return links
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
-        while self.city not in self.cities.keys():
-            print(list(self.cities.keys()))
-            self.city = str(input("Enter city to search from above: ")).lower()
-            print(f"city: {self.city}")
-
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 

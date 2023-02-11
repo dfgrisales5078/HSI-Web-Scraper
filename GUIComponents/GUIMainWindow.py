@@ -134,6 +134,12 @@ class MainWindow(QMainWindow):
         if self.website_selection == 'yesbackpage':
             self.facade.set_yesbackpage_city(self.location)
 
+        if self.website_selection == 'megapersonals':
+            self.facade.set_megapersonals_city(self.location)
+
+        if self.website_selection == 'skipthegames':
+            self.facade.set_skipthegames_city(self.location)
+
     # initialize locations based on website that is selected
     def initialize_location_dropdown(self):
         self.ui.setlocationDropdown.clear()
@@ -346,10 +352,22 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'escortalligator':
             self.locations = self.facade.get_escortalligator_cities()
+            self.set_location()
             self.initialize_location_dropdown()
 
         if self.website_selection == 'yesbackpage':
             self.locations = self.facade.get_yesbackpage_cities()
+            self.set_location()
+            self.initialize_location_dropdown()
+
+        if self.website_selection == 'megapersonals':
+            self.locations = self.facade.get_megapersonals_cities()
+            self.set_location()
+            self.initialize_location_dropdown()
+
+        if self.website_selection == 'skipthegames':
+            self.locations = self.facade.get_skipthegames_cities()
+            self.set_location()
             self.initialize_location_dropdown()
 
     # TODO - pop up when search button is clicked - show progress bar, status? & cancel button
