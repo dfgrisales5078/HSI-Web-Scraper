@@ -249,7 +249,6 @@ class YesbackpageScraper(ScraperPrototype):
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    # TODO - read keywords from keywords.txt
     def read_keywords(self, keywords):
         self.keywords = keywords
 
