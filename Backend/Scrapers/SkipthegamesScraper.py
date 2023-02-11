@@ -11,8 +11,30 @@ class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.location = 'fort-myers'
-        self.url = f'https://www.skipthegames.com/posts/{self.location}/'
+        self.cities = {
+            "bonita springs": 'https://skipthegames.com/posts/bonita-springs-fl',
+            "bradenton": 'https://skipthegames.com/posts/bradenton',
+            "cape coral": 'https://skipthegames.com/posts/cape-coral-fl',
+            "fort myers": 'https://skipthegames.com/posts/fort-myers',
+            "ocala": 'https://skipthegames.com/posts/ocala',
+            "okaloosa": 'https://skipthegames.com/posts/okaloosa',
+            "orlando": 'https://skipthegames.com/posts/orlando',
+            "palm bay": 'https://skipthegames.com/posts/palmbay',
+            "gainesville": 'https://skipthegames.com/posts/gainesville',
+            "jacksonville": 'https://skipthegames.com/posts/jacksonville',
+            "keys": 'https://skipthegames.com/posts/keys',
+            "miami": 'https://skipthegames.com/posts/miami',
+            "naples": 'https://skipthegames.com/posts/naples-fl',
+            "st. augustine": 'https://skipthegames.com/posts/st-augustine',
+            "tallahassee": 'https://skipthegames.com/posts/tallahassee',
+            "tampa": 'https://skipthegames.com/posts/tampa',
+            "sarasota": 'https://skipthegames.com/posts/sarasota',
+            "space coast": 'https://skipthegames.com/posts/space-coast',
+            "venice": 'https://skipthegames.com/posts/venice-fl',
+            "west palm beach": 'https://skipthegames.com/posts/west-palm-beach'
+        }
+        self.city = ''
+        self.url = ''
 
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
@@ -37,21 +59,36 @@ class SkipthegamesScraper(ScraperPrototype):
         # self.payment_method = []
         # self.location = []
 
+    def get_cities(self):
+        return list(self.cities.keys())
+
+    def set_city(self, city):
+        self.city = city
+
     def initialize(self):
         # set up directories to save screenshots and csv file.
-        self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
+        self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
+
+        # Format website URL based on state and city
+        self.get_formatted_url()
+
+        # Selenium Web Driver setup
+        options = uc.ChromeOptions()
+        options.headless = False
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
+
+        # Open Webpage with URL
+        self.open_webpage()
+
+        # Find links of posts
+        links = self.get_links()
+
+        # create directories for screenshot and csv
         self.main_page_path = f'skipthegames_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
-        options = uc.ChromeOptions()
-        options.headless = True
-        self.driver = uc.Chrome(use_subprocess=True, options=options)
-        self.open_webpage()
-
-        links = self.get_links()
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
@@ -78,7 +115,13 @@ class SkipthegamesScraper(ScraperPrototype):
 
     # TODO - change if location changes?
     def get_formatted_url(self):
-        pass
+        while self.city not in self.cities.keys():
+            print(list(self.cities.keys()))
+            self.city = str(input("Enter city to search from above: ")).lower()
+            print(f"city: {self.city}")
+
+        self.url = self.cities.get(self.city)
+        print(f"link: {self.url}")
 
     def get_data(self, links):
         links = set(links)
