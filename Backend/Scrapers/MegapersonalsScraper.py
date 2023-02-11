@@ -69,8 +69,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.read_keywords(keywords)
 
         # format date
-        self.date_time = str(datetime.today())[0:19]
-        self.date_time = self.date_time.replace(' ', '_').replace(':', '-')
+        self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
         # Format website URL based on state and city
         self.get_formatted_url()
