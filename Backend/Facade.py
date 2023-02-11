@@ -11,6 +11,8 @@ class Facade:
         self.eros = ErosScraper()
         self.escortalligator = EscortalligatorScraper()  # BUG: instead of None
         self.yesbackpage = YesbackpageScraper()
+        self.megapersonals = MegapersonalsScraper()
+        self.skipthegames = SkipthegamesScraper()
 
     def initialize_escortalligator_scraper(self, keywords):
         self.escortalligator.initialize(keywords)
@@ -22,14 +24,12 @@ class Facade:
         return self.escortalligator.get_cities()
 
     @staticmethod
-    def initialize_megapersonals_scraper(keywords):
-        megapersonals = MegapersonalsScraper()
-        megapersonals.initialize(keywords)
+    def initialize_megapersonals_scraper(self, keywords):
+        self.megapersonals.initialize(keywords)
 
     @staticmethod
-    def initialize_skipthegames_scraper(keywords):
-        skipthegames = SkipthegamesScraper()
-        skipthegames.initialize(keywords)
+    def initialize_skipthegames_scraper(self, keywords):
+        self.skipthegames.initialize(keywords)
 
     def initialize_yesbackpage_scraper(self, keywords):
         self.yesbackpage.initialize(keywords)
