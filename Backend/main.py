@@ -30,14 +30,23 @@ if __name__ == '__main__':
             break
 
         if website_selection == '2':
+            print(facade.get_megapersonals_cities())
+            userInput = input("Select city: ")
+            facade.set_megapersonals_city(userInput)
             facade.initialize_megapersonals_scraper(keywordSearchList)
             break
 
         if website_selection == '3':
+            print(facade.get_skipthegames_cities())
+            userInput = input("Select city: ")
+            facade.set_skipthegames_city(userInput)
             facade.initialize_skipthegames_scraper(keywordSearchList)
             break
 
         if website_selection == '4':
+            print(facade.get_yesbackpage_cities())
+            userInput = input("Select city: ")
+            facade.set_yesbackpage_city(userInput)
             facade.initialize_yesbackpage_scraper(keywordSearchList)
             break
 

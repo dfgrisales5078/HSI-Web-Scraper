@@ -51,7 +51,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.description = []
         self.name = []
         self.phoneNumber = []
-        self.city = []
+        self.contentCity = []
         self.location = []
         self.link = []
         self.post_identifier = []
@@ -178,7 +178,7 @@ class MegapersonalsScraper(ScraperPrototype):
                     self.post_identifier.append(counter)
                     self.name.append(name)
                     self.phoneNumber.append(phone_number)
-                    self.city.append(city)
+                    self.contentCity.append(city)
                     self.location.append(location)
                     self.description.append(description)
                     self.check_for_payment_methods(description)
@@ -192,7 +192,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 self.post_identifier.append(counter)
                 self.name.append(name)
                 self.phoneNumber.append(phone_number)
-                self.city.append(city)
+                self.contentCity.append(city)
                 self.location.append(location)
                 self.description.append(description)
                 self.check_for_payment_methods(description)
@@ -209,7 +209,7 @@ class MegapersonalsScraper(ScraperPrototype):
             'Link': self.link,
             'name': self.name,
             'phone-number': self.phoneNumber,
-            'city': self.city,
+            'city': self.contentCity,
             'location': self.location,
             'description': self.description,
             'payment_methods': self.payment_methods_found
