@@ -1,10 +1,12 @@
+import threading
 import time
-
 import qdarkstyle
+from PyQt6.QtCore import Qt
+from PyQt6.uic.properties import QtCore
 
 from Backend.Facade import Facade
 from ui_Scraper import Ui_HSIWebScraper
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox, QAbstractButton
 from Backend.Keywords import Keywords
 from PyQt6 import QtWidgets
 
@@ -29,7 +31,7 @@ class MainWindow(QMainWindow):
 
         # attributes used to handle events
         self.website_selection = ''
-        self.include_payment_method = ''
+        self.include_payment_method = False
         self.search_text = ''
         self.keywords = self.keywords_instance.get_keywords()
         self.keyword_sets = self.keywords_instance.get_set()
@@ -78,7 +80,7 @@ class MainWindow(QMainWindow):
         self.ui.removeKeywordButton.clicked.connect(self.remove_keyword_button_clicked)
 
         # bind addSetButton to add_set_button_clicked function
-        self.ui.addSetButton.clicked.connect(self.add_set_button_clicked)    
+        self.ui.addSetButton.clicked.connect(self.add_set_button_clicked)
 
         # bind removeSetButton to remove_set_button_clicked function
         self.ui.removeSetButton.clicked.connect(self.remove_set_button_clicked)
@@ -289,7 +291,6 @@ class MainWindow(QMainWindow):
     # TODO - add logic to scrape with search text
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
-        print(self.search_text)
 
     # TODO - add logic to scrape with all inclusive keywords
     def keyword_inclusive_check_box(self):
@@ -325,15 +326,15 @@ class MainWindow(QMainWindow):
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
         print(self.keywords_selected)
 
-    # TODO - add logic to scrape with payment method only 
+    # TODO - add logic to scrape with payment method only
     def payment_method_check_box(self):
         if self.ui.paymentMethodcheckBox.isChecked():
             self.ui.paymentMethodcheckBox.setEnabled(True)
-            self.include_payment_method = 'checked'
+            self.include_payment_method = True
             print('payment box checked')
         else:
             self.ui.paymentMethodcheckBox.setEnabled(False)
-            self.include_payment_method = 'checked'
+            self.include_payment_method = False
             print('payment box unchecked')
 
         # enable checkbox after it's unchecked
@@ -375,53 +376,68 @@ class MainWindow(QMainWindow):
     def search_popup_window(website_selection):
         popup = QtWidgets.QMessageBox()
         popup.setWindowTitle("Scraping in Progress")
-        popup.setText(f"Currently Scraping {website_selection}.?")
-        popup.exec()
-        
-        # popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+        popup.setText(f"Scraping {website_selection} in progress...")
+        popup.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel)
 
-        # if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
-        #     return True
-        # else:
-        #     return False        
+        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Cancel:
+            print('scraping interrupted')
+            popup.close()
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
+        # self.search_popup_window(self.website_selection)
+
+        # add input text to self.keywords_selected set
+        print(self.keywords_selected)
+        self.keywords_selected.add(self.search_text)
+        print(self.keywords_selected)
 
         if self.website_selection == 'escortalligator':
             try:
-                self.facade.initialize_escortalligator_scraper(["outcall"])
+                self.facade.initialize_escortalligator_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
             try:
-                self.facade.initialize_megapersonals_scraper(["outcall"])
+                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
-                self.facade.initialize_skipthegames_scraper(["outcall"])
+                self.facade.initialize_skipthegames_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
             try:
-                self.facade.initialize_yesbackpage_scraper(["outcall"])
+                self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'eros':
             try:
-                self.facade.initialize_eros_scraper(["outcall"])
+                # self.run_threads(self.search_popup_window(self.website_selection),
+                #                  self.facade.initialize_eros_scraper(self.keywords_selected))
+                self.facade.initialize_eros_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again.')
             time.sleep(2)
+
+    # TODO
+    # function to run two threads at once
+    # @staticmethod
+    # def run_threads(function1, function2):
+    #     thread1 = threading.Thread(target=function1)
+    #     thread2 = threading.Thread(target=function2)
+    #     thread1.start()
+    #     thread2.start()
+    #     thread2.join()
 
 
 if __name__ == "__main__":
