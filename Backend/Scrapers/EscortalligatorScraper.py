@@ -45,6 +45,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
+        self.keywords = None
 
         # lists to store data and then send to csv file
         self.phone_number = []
@@ -62,16 +63,19 @@ class EscortalligatorScraper(ScraperPrototype):
     def set_city(self, city):
         self.city = city.replace(' ', '').replace('.', '')
 
-    def initialize(self):
+    def initialize(self, keywords):
+        #set the keywords value
+        self.read_keywords(keywords)
+
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
         # Format website URL based on state and city
         self.get_formatted_url()
 
         # Selenium Web Driver setup
-        options = webdriver.FirefoxOptions()
+        options = webdriver.ChromeOptions()
         options.headless = True
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
 
         # Open Webpage with URL
         self.open_webpage()
@@ -123,14 +127,10 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def get_data(self, links):
         links = set(links)
-
-        description = ''
         counter = 0
 
         for link in links:
             print(link)
-            # append link to list
-            self.links.append(link)
 
             # self.driver.implicitly_wait(10)
             # time.sleep(3)
@@ -141,37 +141,50 @@ class EscortalligatorScraper(ScraperPrototype):
                 description = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostbody').text
                 print(description)
-                self.description.append(description)
             except NoSuchElementException:
-                self.description.append('N/A')
-
-            self.check_for_payment_methods(description)
+                description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.CLASS_NAME, 'userInfoContainer').text
                 print(phone_number)
-                self.phone_number.append(phone_number)
             except NoSuchElementException:
-                self.phone_number.append('N/A')
+                phone_number = 'N/A'
 
             try:
                 location_and_age = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostlocationIconBabylon').text
                 print(location_and_age)
-                self.location_and_age.append(location_and_age)
             except NoSuchElementException:
-                self.location_and_age.append('N/A')
+                location_and_age = 'N/A'
 
-            self.post_identifier.append(counter)
+            if len(self.keywords) > 0:
+                if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or self.check_keywords(description):
+                    self.post_identifier.append(counter)
+                    self.phone_number.append(phone_number)
+                    self.links.append(link)
+                    self.location_and_age.append(location_and_age)
+                    self.description.append(description)
+                    self.check_for_payment_methods(description)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
+                else:
+                    continue
+            else:
+                self.post_identifier.append(counter)
+                self.phone_number.append(phone_number)
+                self.links.append(link)
+                self.location_and_age.append(location_and_age)
+                self.description.append(description)
+                self.check_for_payment_methods(description)
+                screenshot_name = str(counter) + ".png"
+                self.capture_screenshot(screenshot_name)
+                counter += 1
 
-            screenshot_name = str(counter) + ".png"
-            self.capture_screenshot(screenshot_name)
-            counter += 1
-
-            if counter > 0:
+            if counter > 5:
                 break
-            time.sleep(1)
+            #time.sleep(1)
 
     # TODO - move to class that handles data
     def format_data_to_csv(self):
@@ -204,5 +217,11 @@ class EscortalligatorScraper(ScraperPrototype):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     # TODO - read keywords from keywords.txt
-    def read_keywords(self):
-        pass
+    def read_keywords(self, keywords):
+        self.keywords = keywords
+
+    def check_keywords(self, data):
+        for key in self.keywords:
+            if key in data:
+                return True
+        return False
