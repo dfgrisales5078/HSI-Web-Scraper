@@ -28,6 +28,7 @@ class ErosScraper(ScraperPrototype):
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
+        self.keywords = None
 
         # lists to store data and then send to csv file
         self.post_identifier = []
@@ -45,7 +46,10 @@ class ErosScraper(ScraperPrototype):
     def set_city(self, city):
         self.city = city
 
-    def initialize(self):
+    def initialize(self, keywords):
+        #set keywords value
+        self.read_keywords(keywords)
+
         # Date and time of search
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
@@ -123,8 +127,6 @@ class ErosScraper(ScraperPrototype):
         counter = 0
 
         for link in links:
-            # append link to list
-            self.link.append(link)
             print(link)
 
             self.driver.implicitly_wait(10)
@@ -133,45 +135,58 @@ class ErosScraper(ScraperPrototype):
 
             try:
                 profile_header = self.driver.find_element(
-                    By.XPATH, '//*[@id="pageone"]/div[1]')
-                print(profile_header.text)
-                self.profile_header.append(profile_header.text)
+                    By.XPATH, '//*[@id="pageone"]/div[1]').text
+                print(profile_header)
             except NoSuchElementException:
-                self.profile_header.append('N/A')
+                profile_header = 'N/A'
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '// *[ @ id = "pageone"] / div[3] / div / div[1] / div[2]').text
                 print(description)
-                self.about_info.append(description)
             except NoSuchElementException:
-                self.about_info.append('N/A')
-
-            self.check_for_payment_methods(description)
+                description = 'N/A'
 
             try:
                 info_details = self.driver.find_element(
-                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[1]/div')
-                print(info_details.text)
-                self.info_details.append(info_details.text)
+                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[1]/div').text
+                print(info_details)
             except NoSuchElementException:
-                self.info_details.append('N/A')
+                info_details = 'N/A'
 
             try:
                 contact_details = self.driver.find_element(
-                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[2]')
-                print(contact_details.text)
-                self.contact_details.append(contact_details.text)
+                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[2]').text
+                print(contact_details)
             except NoSuchElementException:
-                print('N/A')
-                self.contact_details.append('N/A')
+                contact_details = 'N/A'
 
-            # Append post count as unique identifier
-            self.post_identifier.append(counter)
-            # Capture screenshot with unique identifier
-            screenshot_name = str(counter) + ".png"
-            self.capture_screenshot(screenshot_name)
-            counter += 1
+            if len(self.keywords) > 0:
+                if self.check_keywords(profile_header) or self.check_keywords(description) \
+                        or self.check_keywords(info_details) or self.check_keywords(contact_details):
+                    self.post_identifier.append(counter)
+                    self.link.append(link)
+                    self.profile_header.append(profile_header)
+                    self.about_info.append(description)
+                    self.info_details.append(info_details)
+                    self.contact_details.append(contact_details)
+                    self.check_for_payment_methods(description)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
+                else:
+                    continue
+            else:
+                self.post_identifier.append(counter)
+                self.link.append(link)
+                self.profile_header.append(profile_header)
+                self.about_info.append(description)
+                self.info_details.append(info_details)
+                self.contact_details.append(contact_details)
+                self.check_for_payment_methods(description)
+                screenshot_name = str(counter) + ".png"
+                self.capture_screenshot(screenshot_name)
+                counter += 1
 
             if counter > 10:
                 break
@@ -208,6 +223,11 @@ class ErosScraper(ScraperPrototype):
         print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    # TODO - read keywords from keywords.txt
-    def read_keywords(self) -> str:
-        return ' '.join(self.keywords)
+    def read_keywords(self, keywords):
+        self.keywords = keywords
+
+    def check_keywords(self, data):
+        for key in self.keywords:
+            if key in data:
+                return True
+        return False

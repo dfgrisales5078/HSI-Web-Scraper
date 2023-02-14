@@ -390,35 +390,35 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'escortalligator':
             try:
-                self.facade.initialize_escortalligator_scraper()
+                self.facade.initialize_escortalligator_scraper(["outcall"])
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
             try:
-                self.facade.initialize_megapersonals_scraper()
+                self.facade.initialize_megapersonals_scraper(["outcall"])
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
-                self.facade.initialize_skipthegames_scraper()
+                self.facade.initialize_skipthegames_scraper(["outcall"])
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
             try:
-                self.facade.initialize_yesbackpage_scraper()
+                self.facade.initialize_yesbackpage_scraper(["outcall"])
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
 
         if self.website_selection == 'eros':
             try:
-                self.facade.initialize_eros_scraper()
+                self.facade.initialize_eros_scraper(["outcall"])
             except:
                 print('Error occurred, please try again.')
             time.sleep(2)

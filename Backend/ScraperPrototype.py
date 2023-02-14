@@ -12,7 +12,7 @@ class ScraperPrototype(ABC):
         self.text_search = None
 
     @abstractmethod
-    def initialize(self):
+    def initialize(self, keywords):
         pass
 
     @abstractmethod
@@ -40,5 +40,5 @@ class ScraperPrototype(ABC):
         pass
 
     @abstractmethod
-    def read_keywords(self):
+    def read_keywords(self, keywords):
         pass
