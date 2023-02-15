@@ -1,12 +1,10 @@
 import os
 from datetime import datetime
 import pandas as pd
-from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-import undetected_chromedriver as uc
 
 
 class MegapersonalsScraper(ScraperPrototype):
@@ -130,8 +128,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
         for link in links:
             print(link)
-            if counter > 5:
-                break
 
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source

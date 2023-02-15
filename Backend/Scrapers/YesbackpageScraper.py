@@ -208,9 +208,6 @@ class YesbackpageScraper(ScraperPrototype):
 
             print("\n")
 
-            # if counter > 10:
-            #     break
-
     # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {

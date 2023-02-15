@@ -112,6 +112,9 @@ class SkipthegamesScraper(ScraperPrototype):
                              'div.small-16.columns div.clsfds-display-mode.gallery div.day-gallery [href]')
         links = [post.get_attribute('href') for post in posts]
 
+        # remove links that do not start with 'https://skipthegames.com/posts/'
+        links = [link for link in links if link.startswith('https://skipthegames.com/posts/')]
+
         print([link for link in set(links)])
         print('# of links:', len(set(links)))
         return links
@@ -177,9 +180,6 @@ class SkipthegamesScraper(ScraperPrototype):
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
                 counter += 1
-
-            if counter > 5:
-                break
 
     # TODO - move to class than handles data
     def format_data_to_csv(self):
