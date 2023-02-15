@@ -112,7 +112,7 @@ class SkipthegamesScraper(ScraperPrototype):
                              'div.small-16.columns div.clsfds-display-mode.gallery div.day-gallery [href]')
         links = [post.get_attribute('href') for post in posts]
 
-        # remove links that do not start with 'https://skipthegames.com/posts/'
+        # remove sponsored links
         links = [link for link in links if link.startswith('https://skipthegames.com/posts/')]
 
         print([link for link in set(links)])
