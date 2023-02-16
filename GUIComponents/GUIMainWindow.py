@@ -1,14 +1,9 @@
-import threading
 import time
-import qdarkstyle
-from PyQt6.QtCore import Qt
-from PyQt6.uic.properties import QtCore
-
-from Backend.Facade import Facade
-from ui_Scraper import Ui_HSIWebScraper
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox, QAbstractButton
-from Backend.Keywords import Keywords
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from Backend.Facade import Facade
+from Backend.Keywords import Keywords
+from ui_Scraper import Ui_HSIWebScraper
 
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator.

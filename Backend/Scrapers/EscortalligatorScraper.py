@@ -182,10 +182,6 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.capture_screenshot(screenshot_name)
                 counter += 1
 
-            if counter > 5:
-                break
-            #time.sleep(1)
-
     # TODO - move to class that handles data
     def format_data_to_csv(self):
         titled_columns = {
