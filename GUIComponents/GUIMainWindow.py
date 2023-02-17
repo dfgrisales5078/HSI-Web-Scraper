@@ -383,8 +383,8 @@ class MainWindow(QMainWindow):
         # self.search_popup_window(self.website_selection)
 
         # add input text to self.keywords_selected set
-        print(self.keywords_selected)
-        self.keywords_selected.add(self.search_text)
+        if self.search_text:
+            self.keywords_selected.add(self.search_text)
         print(self.keywords_selected)
 
         if self.website_selection == 'escortalligator':

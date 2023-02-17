@@ -38,7 +38,3 @@ class ScraperPrototype(ABC):
     @abstractmethod
     def capture_screenshot(self, screenshot_name):
         pass
-
-    @abstractmethod
-    def read_keywords(self, keywords):
-        pass
