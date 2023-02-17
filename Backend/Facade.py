@@ -8,7 +8,7 @@ from Backend.Scrapers.ErosScraper import ErosScraper
 class Facade:
     def __init__(self):
         self.eros = ErosScraper()
-        self.escortalligator = EscortalligatorScraper()  # BUG: instead of None
+        self.escortalligator = EscortalligatorScraper()
         self.yesbackpage = YesbackpageScraper()
         self.megapersonals = MegapersonalsScraper()
         self.skipthegames = SkipthegamesScraper()

@@ -64,7 +64,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def initialize(self, keywords):
         # set keywords value
-        self.read_keywords(keywords)
+        self.keywords = keywords
 
         # format date
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
@@ -229,9 +229,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
-
-    def read_keywords(self, keywords):
-        self.keywords = keywords
 
     def check_keywords(self, data):
         for key in self.keywords:

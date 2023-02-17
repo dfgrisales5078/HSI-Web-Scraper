@@ -67,7 +67,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.city = city
 
     def initialize(self, keywords):
-        self.read_keywords(keywords)
+        # set keywords value
+        self.keywords = keywords
 
         # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
@@ -210,10 +211,6 @@ class SkipthegamesScraper(ScraperPrototype):
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
-
-    # TODO - read keywords from keywords.txt
-    def read_keywords(self, keywords):
-        self.keywords = keywords
 
     def check_keywords(self, data):
         for key in self.keywords:

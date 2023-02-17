@@ -47,8 +47,8 @@ class ErosScraper(ScraperPrototype):
         self.city = city
 
     def initialize(self, keywords):
-        #set keywords value
-        self.read_keywords(keywords)
+        # set keywords value
+        self.keywords = keywords
 
         # Date and time of search
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
@@ -219,9 +219,6 @@ class ErosScraper(ScraperPrototype):
     def capture_screenshot(self, screenshot_name):
         print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
-
-    def read_keywords(self, keywords):
-        self.keywords = keywords
 
     def check_keywords(self, data):
         for key in self.keywords:

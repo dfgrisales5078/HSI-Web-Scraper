@@ -64,8 +64,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.city = city.replace(' ', '').replace('.', '')
 
     def initialize(self, keywords):
-        #set the keywords value
-        self.read_keywords(keywords)
+        # set keywords value
+        self.keywords = keywords
 
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
@@ -211,10 +211,6 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def capture_screenshot(self, screenshot_name):
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
-
-    # TODO - read keywords from keywords.txt
-    def read_keywords(self, keywords):
-        self.keywords = keywords
 
     def check_keywords(self, data):
         for key in self.keywords:
