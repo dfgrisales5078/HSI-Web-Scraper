@@ -245,7 +245,6 @@ class MainWindow(QMainWindow):
 
     # handle list of keywords to be searched
     def keyword_list_widget(self):
-        # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
             self.manual_keyword_selection.add(item.text())
 
@@ -282,14 +281,14 @@ class MainWindow(QMainWindow):
             elif self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
-        # unselect all keywords in keywordlistWidget keywords_of_selected_set is empty
-        # if not keywords_of_selected_set:
-        #     print('self.manual_keyword_selection: ', self.manual_keyword_selection)
-        #     for i in range(self.ui.keywordlistWidget.count()):
-        #         if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
-        #             self.ui.keywordlistWidget.item(i).setSelected(False)
+        # unselect keywords that are not in selected set
+        if not keywords_of_selected_set:
+            print('self.manual_keyword_selection: ', self.manual_keyword_selection)
+            for i in range(self.ui.keywordlistWidget.count()):
+                if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
+                    self.ui.keywordlistWidget.item(i).setSelected(False)
 
-    # TODO - add logic to scrape with search text
+    # scrape using text box input
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
 
