@@ -32,6 +32,8 @@ class MainWindow(QMainWindow):
         self.keyword_sets = self.keywords_instance.get_set()
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
+        self.manual_keyword_selection = set()
+        self.set_keyword_selection = set()
         self.locations = []
         self.location = ''
 
@@ -243,17 +245,15 @@ class MainWindow(QMainWindow):
 
     # handle list of keywords to be searched
     def keyword_list_widget(self):
-        # print('selected keywords:')
         for item in self.ui.keywordlistWidget.selectedItems():
-            print(item.text())
-            self.keywords_selected.add(item.text())
+            self.manual_keyword_selection.add(item.text())
 
         # if a keyword is unselected, remove it from the set
         for i in range(self.ui.keywordlistWidget.count()):
             if not self.ui.keywordlistWidget.item(i).isSelected():
-                self.keywords_selected.discard(self.ui.keywordlistWidget.item(i).text())
+                self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(i).text())
 
-        print(self.keywords_selected)
+        print(self.manual_keyword_selection)
 
     # handle dropdown menu for keyword sets
     def set_selection_dropdown(self):
@@ -263,27 +263,32 @@ class MainWindow(QMainWindow):
         # if empty set, unselect all keywords
         if selected_set == '':
             for i in range(self.ui.keywordlistWidget.count()):
-                self.ui.keywordlistWidget.item(i).setSelected(False)
+                if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
+                    self.ui.keywordlistWidget.item(i).setSelected(False)
+
             return
 
         # get keywords from selected set from keywords class
-        keyword_in_set = self.keywords_instance.get_set_values(selected_set)
+        keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
 
-        print(keyword_in_set)
+        print('values of keyword selected: ', keywords_of_selected_set)
 
-        # select keyword_in_set in keywordlistWidget
+        # select keywords_of_selected_set in keywordlistWidget
         for i in range(self.ui.keywordlistWidget.count()):
-            if self.ui.keywordlistWidget.item(i).text() in keyword_in_set:
+            if self.ui.keywordlistWidget.item(i).text() in keywords_of_selected_set:
                 self.ui.keywordlistWidget.item(i).setSelected(True)
-            else:
+
+            elif self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
-        # unselect all keywords in keywordlistWidget keyword_in_set is empty
-        if not keyword_in_set:
+        # unselect keywords that are not in selected set
+        if not keywords_of_selected_set:
+            print('self.manual_keyword_selection: ', self.manual_keyword_selection)
             for i in range(self.ui.keywordlistWidget.count()):
-                self.ui.keywordlistWidget.item(i).setSelected(False)
+                if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
+                    self.ui.keywordlistWidget.item(i).setSelected(False)
 
-    # TODO - add logic to scrape with search text
+    # scrape using text box input
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
 
@@ -382,10 +387,20 @@ class MainWindow(QMainWindow):
     def search_button_clicked(self):
         # self.search_popup_window(self.website_selection)
 
+        self.keywords_selected = set()
+
         # add input text to self.keywords_selected set
+        print('text box: ', self.keywords_selected)
+
+        # find keywords selected in keyword list widget
+        for i in range(self.ui.keywordlistWidget.count()):
+            if self.ui.keywordlistWidget.item(i).isSelected():
+                self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
+
         if self.search_text:
             self.keywords_selected.add(self.search_text)
-        print(self.keywords_selected)
+
+        print('list widget keywords: ', self.keywords_selected)
 
         if self.website_selection == 'escortalligator':
             try:
