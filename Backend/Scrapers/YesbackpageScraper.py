@@ -46,6 +46,9 @@ class YesbackpageScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.number_of_keywords_in_post = 0
+        self.keywords_found_in_post = ''
+
         # lists to store data and then send to csv file
 
         # TODO services?
@@ -58,6 +61,9 @@ class YesbackpageScraper(ScraperPrototype):
         self.description = []
         self.post_identifier = []
         self.payment_methods_found = []
+
+        self.number_of_keywords_found = []
+        self.keywords_found = []
 
         # TODO other info needs to be pulled using regex?
 
@@ -134,46 +140,57 @@ class YesbackpageScraper(ScraperPrototype):
 
             try:
                 description = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/tr/td/div/p[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/'
+                              'tr/td/div/p[2]').text
                 print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 name = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[1]/td[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                              'tbody/tr[1]/td[2]').text[2:]
                 print(name)
             except NoSuchElementException:
                 name = 'N/A'
 
             try:
                 sex = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[2]/td[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                              'tbody/tr[2]/td[2]').text[2:]
                 print(sex)
             except NoSuchElementException:
                 sex = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[6]/td[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                              'tbody/tr[6]/td[2]').text[2:]
                 print(phone_number)
             except NoSuchElementException:
                 phone_number = 'NA'
 
             try:
                 email = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[8]/td[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                              'tbody/tr[8]/td[2]').text[2:]
                 print(email)
             except NoSuchElementException:
                 email = 'N/A'
 
             try:
                 location = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/tbody/tr[9]/td[2]').text[2:]
+                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                              'tbody/tr[9]/td[2]').text[2:]
                 print(location)
             except NoSuchElementException:
                 location = 'N/A'
 
+            # reassign variables for each post
+            self.number_of_keywords_in_post = 0
+            self.keywords_found_in_post = ''
+
+            # TODO - add all keywords found to list, currently only first keyword found is added
             if len(self.keywords) > 0:
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                         or self.check_keywords(phone_number) or self.check_keywords(email) \
@@ -189,6 +206,11 @@ class YesbackpageScraper(ScraperPrototype):
                     self.post_identifier.append(counter)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
+
+                    # append keywords found
+                    self.keywords_found.append(self.keywords_found_in_post)
+                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
                     counter += 1
                 else:
                     continue
@@ -204,11 +226,15 @@ class YesbackpageScraper(ScraperPrototype):
                 self.post_identifier.append(counter)
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
+
+                # append N/A if no keywords are found
+                self.keywords_found.append('N/A')
+                self.number_of_keywords_found.append('N/A')
+
                 counter += 1
 
             print("\n")
 
-    # TODO - move to class than handles data
     def format_data_to_csv(self):
         titled_columns = {
             'Post_identifier': self.post_identifier,
@@ -219,7 +245,9 @@ class YesbackpageScraper(ScraperPrototype):
             'Sex': self.sex,
             'E-mail': self.email,
             'Description': self.description,
-            'payment_methods': self.payment_methods_found
+            'payment_methods': self.payment_methods_found,
+            'keywords_found': self.keywords_found,
+            'number_of_keywords_found': self.number_of_keywords_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -230,7 +258,7 @@ class YesbackpageScraper(ScraperPrototype):
         for payment in self.known_payment_methods:
             if payment in description.lower():
                 print('payment method: ', payment)
-                payments += payment + ' '
+                payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -244,5 +272,7 @@ class YesbackpageScraper(ScraperPrototype):
     def check_keywords(self, data):
         for key in self.keywords:
             if key in data:
+                self.keywords_found_in_post += self.keywords_found_in_post + key + '\n'
+                self.number_of_keywords_in_post += 1
                 return True
         return False
