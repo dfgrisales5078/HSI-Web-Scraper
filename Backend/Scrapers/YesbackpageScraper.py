@@ -47,11 +47,10 @@ class YesbackpageScraper(ScraperPrototype):
         self.keywords = None
 
         self.number_of_keywords_in_post = 0
-        self.keywords_found_in_post = ''
+        self.keywords_found_in_post = []
 
         # lists to store data and then send to csv file
 
-        # TODO services?
         self.phone_number = []
         self.link = []
         self.name = []
@@ -61,6 +60,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.description = []
         self.post_identifier = []
         self.payment_methods_found = []
+        self.services = []
 
         self.number_of_keywords_found = []
         self.keywords_found = []
@@ -186,15 +186,32 @@ class YesbackpageScraper(ScraperPrototype):
             except NoSuchElementException:
                 location = 'N/A'
 
+            try:
+                services = self.driver.find_element(
+                    By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
+                              'tbody/tr[5]/td[2]').text[2:]
+                print(services)
+            except NoSuchElementException:
+                services = 'N/A'
+
             # reassign variables for each post
             self.number_of_keywords_in_post = 0
-            self.keywords_found_in_post = ''
+            self.keywords_found_in_post = []
 
-            # TODO - add all keywords found to list, currently only first keyword found is added
             if len(self.keywords) > 0:
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                         or self.check_keywords(phone_number) or self.check_keywords(email) \
-                        or self.check_keywords(location):
+                        or self.check_keywords(location) or self.check_keywords(services):
+
+                    # check for keywords in remaining fields
+                    self.check_and_append_keywords(description)
+                    self.check_and_append_keywords(name)
+                    self.check_and_append_keywords(sex)
+                    self.check_and_append_keywords(phone_number)
+                    self.check_and_append_keywords(email)
+                    self.check_and_append_keywords(location)
+                    self.check_and_append_keywords(services)
+
                     self.description.append(description)
                     self.name.append(name)
                     self.sex.append(sex)
@@ -204,11 +221,19 @@ class YesbackpageScraper(ScraperPrototype):
                     self.check_for_payment_methods(description)
                     self.link.append(link)
                     self.post_identifier.append(counter)
+                    self.services.append(services)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
 
-                    # append keywords found
-                    self.keywords_found.append(self.keywords_found_in_post)
+                    # remove duplicate keywords
+                    # self.keywords_found_in_post = set(self.keywords_found_in_post)
+
+                    # strip elements from keywords_found_in_post list using comma
+                    print('Before joining list to str: ', self.keywords_found_in_post)
+                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                    print('After joining list to str: ', self.keywords_found)
+
+                    # self.keywords_found.append(self.keywords_found_in_post)
                     self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
                     counter += 1
@@ -224,6 +249,7 @@ class YesbackpageScraper(ScraperPrototype):
                 self.check_for_payment_methods(description)
                 self.link.append(link)
                 self.post_identifier.append(counter)
+                self.services.append(services)
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
 
@@ -244,6 +270,7 @@ class YesbackpageScraper(ScraperPrototype):
             'Name': self.name,
             'Sex': self.sex,
             'E-mail': self.email,
+            'Services': self.services,
             'Description': self.description,
             'payment_methods': self.payment_methods_found,
             'keywords_found': self.keywords_found,
@@ -271,8 +298,13 @@ class YesbackpageScraper(ScraperPrototype):
 
     def check_keywords(self, data):
         for key in self.keywords:
-            if key in data:
-                self.keywords_found_in_post += self.keywords_found_in_post + key + '\n'
-                self.number_of_keywords_in_post += 1
+            if key in data.lower():
                 return True
         return False
+
+    def check_and_append_keywords(self, data):
+        for key in self.keywords:
+            if key in data.lower():
+                self.keywords_found_in_post.append(key)
+                print('keyword found: ', key)
+                self.number_of_keywords_in_post += 1
