@@ -30,6 +30,9 @@ class ErosScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.number_of_keywords_in_post = 0
+        self.keywords_found_in_post = []
+
         # lists to store data and then send to csv file
         self.post_identifier = []
         self.link = []
@@ -39,14 +42,17 @@ class ErosScraper(ScraperPrototype):
         self.contact_details = []
         self.payment_methods_found = []
 
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
         # TODO other info needs to be pulled using regex?
-    def get_cities(self):
+    def get_cities(self) -> list:
         return list(self.cities.keys())
 
-    def set_city(self, city):
+    def set_city(self, city) -> None:
         self.city = city
 
-    def initialize(self, keywords):
+    def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
 
@@ -90,7 +96,7 @@ class ErosScraper(ScraperPrototype):
     def close_webpage(self) -> None:
         self.driver.close()
 
-    def get_links(self):
+    def get_links(self) -> set:
         try:
             # Find website agreement
             self.driver.find_element(
@@ -118,11 +124,11 @@ class ErosScraper(ScraperPrototype):
 
         return set(links)
 
-    def get_formatted_url(self):
+    def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
-    def get_data(self, links):
+    def get_data(self, links) -> None:
         description = ''
         counter = 0
 
@@ -161,9 +167,20 @@ class ErosScraper(ScraperPrototype):
             except NoSuchElementException:
                 contact_details = 'N/A'
 
+            # reassign variables for each post
+            self.number_of_keywords_in_post = 0
+            self.keywords_found_in_post = []
+
             if len(self.keywords) > 0:
                 if self.check_keywords(profile_header) or self.check_keywords(description) \
                         or self.check_keywords(info_details) or self.check_keywords(contact_details):
+
+                    # check for keywords and append to lists
+                    self.check_and_append_keywords(profile_header)
+                    self.check_and_append_keywords(description)
+                    self.check_and_append_keywords(info_details)
+                    self.check_and_append_keywords(contact_details)
+
                     self.post_identifier.append(counter)
                     self.link.append(link)
                     self.profile_header.append(profile_header)
@@ -173,6 +190,13 @@ class ErosScraper(ScraperPrototype):
                     self.check_for_payment_methods(description)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
+
+                    # strip elements from keywords_found_in_post list using comma
+                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                    # self.keywords_found.append(self.keywords_found_in_post)
+                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
                     counter += 1
                 else:
                     continue
@@ -186,24 +210,31 @@ class ErosScraper(ScraperPrototype):
                 self.check_for_payment_methods(description)
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
-                counter += 1
 
-    # TODO - move to class than handles data
-    def format_data_to_csv(self):
+                # append N/A if no keywords are found
+                self.keywords_found.append('N/A')
+                self.number_of_keywords_found.append('N/A')
+
+                counter += 1
+            print('\n')
+
+    def format_data_to_csv(self) -> None:
         titled_columns = {
-            'Post_identifier': self.post_identifier,
+            'Post-identifier': self.post_identifier,
             'link': self.link,
-            'profile_header': self.profile_header,
-            'about_info': self.about_info,
-            'info_details': self.info_details,
-            'contact_details': self.contact_details,
-            'payment_methods': self.payment_methods_found
+            'profile-header': self.profile_header,
+            'about-info': self.about_info,
+            'info-details': self.info_details,
+            'contact-details': self.contact_details,
+            'payment-methods': self.payment_methods_found,
+            'keywords-found': self.keywords_found,
+            'number-of-keywords-found': self.number_of_keywords_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
 
-    def check_for_payment_methods(self, description):
+    def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
@@ -216,12 +247,19 @@ class ErosScraper(ScraperPrototype):
             self.payment_methods_found.append('N/A')
             print('N/A')
 
-    def capture_screenshot(self, screenshot_name):
+    def capture_screenshot(self, screenshot_name) -> None:
         print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    def check_keywords(self, data):
+    def check_keywords(self, data) -> bool:
         for key in self.keywords:
             if key in data:
                 return True
         return False
+
+    def check_and_append_keywords(self, data) -> None:
+        for key in self.keywords:
+            if key in data.lower():
+                self.keywords_found_in_post.append(key)
+                print('keyword found: ', key)
+                self.number_of_keywords_in_post += 1

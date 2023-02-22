@@ -44,6 +44,9 @@ class SkipthegamesScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.number_of_keywords_in_post = 0
+        self.keywords_found_in_post = []
+
         # lists to store data and then send to csv file
         self.link = []
         self.about_info = []
@@ -51,6 +54,9 @@ class SkipthegamesScraper(ScraperPrototype):
         self.services = []
         self.post_identifier = []
         self.payment_methods_found = []
+
+        self.number_of_keywords_found = []
+        self.keywords_found = []
 
         # TODO these need to be pulled from about_info, description, or activities using regex?
         # self.phone_number = []
@@ -60,13 +66,13 @@ class SkipthegamesScraper(ScraperPrototype):
         # self.payment_method = []
         # self.location = []
 
-    def get_cities(self):
+    def get_cities(self) -> list:
         return list(self.cities.keys())
 
-    def set_city(self, city):
+    def set_city(self, city) -> None:
         self.city = city
 
-    def initialize(self, keywords):
+    def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
 
@@ -97,16 +103,15 @@ class SkipthegamesScraper(ScraperPrototype):
         self.format_data_to_csv()
         self.close_webpage()
 
-    def open_webpage(self):
+    def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
-    def close_webpage(self):
+    def close_webpage(self) -> None:
         self.driver.close()
 
-    # TODO fix bug to get the correct links
-    def get_links(self):
+    def get_links(self) -> set:
         posts = self.driver.find_elements(
             By.CSS_SELECTOR, 'html.no-js body div table.two-col-wrap tbody tr '
                              'td#gallery_view.listings-with-sidebar.list-search-results.gallery div.full-width '
@@ -118,22 +123,19 @@ class SkipthegamesScraper(ScraperPrototype):
 
         print([link for link in set(links)])
         print('# of links:', len(set(links)))
-        return links
+        return set(links)
 
     # TODO - change if location changes?
-    def get_formatted_url(self):
+    def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
-    def get_data(self, links):
-        links = set(links)
+    def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
             print(link)
 
-            # self.driver.implicitly_wait(2)
-            # time.sleep(1)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -158,8 +160,17 @@ class SkipthegamesScraper(ScraperPrototype):
             except NoSuchElementException:
                 description = 'N/A'
 
+            # reassign variables for each post
+            self.number_of_keywords_in_post = 0
+            self.keywords_found_in_post = []
+
             if len(self.keywords) > 0:
                 if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(description):
+
+                    self.check_and_append_keywords(about_info)
+                    self.check_and_append_keywords(services)
+                    self.check_and_append_keywords(description)
+
                     self.post_identifier.append(counter)
                     self.link.append(link)
                     self.about_info.append(about_info)
@@ -168,6 +179,13 @@ class SkipthegamesScraper(ScraperPrototype):
                     self.check_for_payment_methods(description)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
+
+                    # strip elements from keywords_found_in_post list using comma
+                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                    # self.keywords_found.append(self.keywords_found_in_post)
+                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
                     counter += 1
                 else:
                     continue
@@ -180,23 +198,30 @@ class SkipthegamesScraper(ScraperPrototype):
                 self.check_for_payment_methods(description)
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
-                counter += 1
 
-    # TODO - move to class than handles data
-    def format_data_to_csv(self):
+                # append N/A if no keywords are found
+                self.keywords_found.append('N/A')
+                self.number_of_keywords_found.append('N/A')
+
+                counter += 1
+            print('\n')
+
+    def format_data_to_csv(self) -> None:
         titled_columns = {
-            'Post_identifier': self.post_identifier,
+            'Post-identifier': self.post_identifier,
             'Link': self.link,
             'about-info': self.about_info,
             'services': self.services,
             'Description': self.description,
-            'payment_methods': self.payment_methods_found
+            'payment-methods': self.payment_methods_found,
+            'keywords-found': self.keywords_found,
+            'number-of-keywords-found': self.number_of_keywords_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
 
-    def check_for_payment_methods(self, description):
+    def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
@@ -209,11 +234,18 @@ class SkipthegamesScraper(ScraperPrototype):
             self.payment_methods_found.append('N/A')
             print('N/A')
 
-    def capture_screenshot(self, screenshot_name):
+    def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    def check_keywords(self, data):
+    def check_keywords(self, data) -> bool:
         for key in self.keywords:
             if key in data:
                 return True
         return False
+
+    def check_and_append_keywords(self, data) -> None:
+        for key in self.keywords:
+            if key in data.lower():
+                self.keywords_found_in_post.append(key)
+                print('keyword found: ', key)
+                self.number_of_keywords_in_post += 1
