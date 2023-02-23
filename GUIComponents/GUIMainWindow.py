@@ -3,7 +3,7 @@ from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from Backend.Facade import Facade
 from Backend.Keywords import Keywords
-from ui_Scraper import Ui_HSIWebScraper
+from Scraper import Ui_HSIWebScraper
 
 
 # To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator.

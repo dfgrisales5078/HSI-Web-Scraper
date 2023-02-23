@@ -47,6 +47,9 @@ class EscortalligatorScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.number_of_keywords_in_post = 0
+        self.keywords_found_in_post = []
+
         # lists to store data and then send to csv file
         self.phone_number = []
         self.description = []
@@ -55,15 +58,18 @@ class EscortalligatorScraper(ScraperPrototype):
         self.post_identifier = []
         self.payment_methods_found = []
 
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
         # TODO other info needs to be pulled using regex?
 
-    def get_cities(self):
+    def get_cities(self) -> list:
         return self.cities
 
-    def set_city(self, city):
+    def set_city(self, city) -> None:
         self.city = city.replace(' ', '').replace('.', '')
 
-    def initialize(self, keywords):
+    def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
 
@@ -96,15 +102,15 @@ class EscortalligatorScraper(ScraperPrototype):
         self.close_webpage()
         self.format_data_to_csv()
 
-    def open_webpage(self):
+    def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
         assert "Page not found" not in self.driver.page_source
 
-    def close_webpage(self):
+    def close_webpage(self) -> None:
         self.driver.close()
 
-    def get_links(self):
+    def get_links(self) -> list:
         # click on terms btn
         btn = self.driver.find_element(
             By.CLASS_NAME, 'button')
@@ -121,11 +127,11 @@ class EscortalligatorScraper(ScraperPrototype):
         links = [post.get_attribute('href') for post in posts]
         return links[::3]
 
-    def get_formatted_url(self):
+    def get_formatted_url(self) -> None:
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
         print(f"link: {self.url}")
 
-    def get_data(self, links):
+    def get_data(self, links) -> None:
         links = set(links)
         counter = 0
 
@@ -158,8 +164,19 @@ class EscortalligatorScraper(ScraperPrototype):
             except NoSuchElementException:
                 location_and_age = 'N/A'
 
+            # reassign variables for each post
+            self.number_of_keywords_in_post = 0
+            self.keywords_found_in_post = []
+
             if len(self.keywords) > 0:
-                if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or self.check_keywords(description):
+                if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
+                        self.check_keywords(description):
+
+                    # check for keywords and append to lists
+                    self.check_and_append_keywords(phone_number)
+                    self.check_and_append_keywords(location_and_age)
+                    self.check_and_append_keywords(description)
+
                     self.post_identifier.append(counter)
                     self.phone_number.append(phone_number)
                     self.links.append(link)
@@ -168,6 +185,13 @@ class EscortalligatorScraper(ScraperPrototype):
                     self.check_for_payment_methods(description)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
+
+                    # strip elements from keywords_found_in_post list using comma
+                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                    # self.keywords_found.append(self.keywords_found_in_post)
+                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
                     counter += 1
                 else:
                     continue
@@ -180,23 +204,30 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.check_for_payment_methods(description)
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
-                counter += 1
 
-    # TODO - move to class that handles data
-    def format_data_to_csv(self):
+                # append N/A if no keywords are found
+                self.keywords_found.append('N/A')
+                self.number_of_keywords_found.append('N/A')
+
+                counter += 1
+            print('\n')
+
+    def format_data_to_csv(self) -> None:
         titled_columns = {
-            'Post_identifier': self.post_identifier,
+            'Post-identifier': self.post_identifier,
             'Phone-Number': self.phone_number,
             'Link': self.links,
             'Location/Age': self.location_and_age,
             'Description': self.description,
-            'payment_methods': self.payment_methods_found
+            'payment-methods': self.payment_methods_found,
+            'keywords-found': self.keywords_found,
+            'number-of-keywords-found': self.number_of_keywords_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
 
-    def check_for_payment_methods(self, description):
+    def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
@@ -209,11 +240,18 @@ class EscortalligatorScraper(ScraperPrototype):
             self.payment_methods_found.append('N/A')
             print('N/A')
 
-    def capture_screenshot(self, screenshot_name):
+    def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
-    def check_keywords(self, data):
+    def check_keywords(self, data) -> bool:
         for key in self.keywords:
             if key in data:
                 return True
         return False
+
+    def check_and_append_keywords(self, data) -> None:
+        for key in self.keywords:
+            if key in data.lower():
+                self.keywords_found_in_post.append(key)
+                print('keyword found: ', key)
+                self.number_of_keywords_in_post += 1
