@@ -83,9 +83,9 @@ class YesbackpageScraper(ScraperPrototype):
         # Format website URL based on state and city
         self.get_formatted_url()
 
-        # Selenium Web Driver setup
-        options = ChromeOptions()
-        options.headless = False
+        options = webdriver.ChromeOptions()
+        # TODO - uncomment this line to run headless
+        # options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=options)
 
         # Open Webpage with URL
@@ -109,6 +109,7 @@ class YesbackpageScraper(ScraperPrototype):
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
+        self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
 
     def close_webpage(self) -> None:
