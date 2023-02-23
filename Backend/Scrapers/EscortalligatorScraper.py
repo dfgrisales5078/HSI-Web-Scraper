@@ -80,8 +80,9 @@ class EscortalligatorScraper(ScraperPrototype):
 
         # Selenium Web Driver setup
         options = webdriver.ChromeOptions()
-        options.headless = True
-        self.driver = webdriver.Chrome()
+        # TODO - uncomment this to run headless
+        # options.add_argument('--headless')
+        self.driver = webdriver.Chrome(options=options)
 
         # Open Webpage with URL
         self.open_webpage()
@@ -105,6 +106,7 @@ class EscortalligatorScraper(ScraperPrototype):
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
+        self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
 
     def close_webpage(self) -> None:

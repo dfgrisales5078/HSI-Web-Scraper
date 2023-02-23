@@ -84,7 +84,8 @@ class SkipthegamesScraper(ScraperPrototype):
 
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
-        options.headless = False
+        # TODO - uncomment this to run headless
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -106,6 +107,7 @@ class SkipthegamesScraper(ScraperPrototype):
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
         self.driver.get(self.url)
+        self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
 
     def close_webpage(self) -> None:
