@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         # attributes used to handle events
         self.website_selection = ''
         self.include_payment_method = False
+        self.inclusive_search = False
         self.search_text = ''
         self.keywords = self.keywords_instance.get_keywords()
         self.keyword_sets = self.keywords_instance.get_set()
@@ -295,14 +296,12 @@ class MainWindow(QMainWindow):
     # TODO - add logic to scrape with all inclusive keywords
     def keyword_inclusive_check_box(self):
         if self.ui.keywordInclusivecheckBox.isChecked():
-            self.ui.keywordInclusivecheckBox.setEnabled(True)
+            self.inclusive_search = True
             print('keyword inclusive box checked')
         else:
-            self.ui.keywordInclusivecheckBox.setEnabled(False)
+            self.inclusive_search = False
             print('keyword inclusive box unchecked')
 
-        # enable checkbox after it's unchecked
-        self.ui.keywordInclusivecheckBox.setEnabled(True)
 
     # if checked, select all items in list widget
     def select_all_keywords_check_box(self):
@@ -404,6 +403,8 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'escortalligator':
             try:
+                if self.inclusive_search:
+                    self.facade.set_escortalligator_join_keywords()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
@@ -411,6 +412,8 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'megapersonals':
             try:
+                if self.inclusive_search:
+                    self.facade.set_megapersonals_join_keywords()
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
@@ -418,6 +421,8 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'skipthegames':
             try:
+                if self.inclusive_search:
+                    self.facade.set_skipthegames_join_keywords()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again. ')
@@ -425,7 +430,10 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'yesbackpage':
             try:
+                if self.inclusive_search:
+                    self.facade.set_yesbackpage_join_keywords()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
+
             except:
                 print('Error occurred, please try again. ')
             time.sleep(2)
@@ -434,10 +442,14 @@ class MainWindow(QMainWindow):
             try:
                 # self.run_threads(self.search_popup_window(self.website_selection),
                 #                  self.facade.initialize_eros_scraper(self.keywords_selected))
+                if self.inclusive_search:
+                    self.facade.set_eros_join_keywords()
                 self.facade.initialize_eros_scraper(self.keywords_selected)
             except:
                 print('Error occurred, please try again.')
             time.sleep(2)
+
+        self.ui.keywordInclusivecheckBox.setChecked(False)
 
     # TODO
     # function to run two threads at once

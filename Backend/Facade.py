@@ -19,6 +19,9 @@ class Facade:
     def set_escortalligator_city(self, city):
         self.escortalligator.set_city(city)
 
+    def set_escortalligator_join_keywords(self):
+        self.escortalligator.set_join_keywords()
+
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
@@ -27,6 +30,9 @@ class Facade:
 
     def set_megapersonals_city(self, city):
         self.megapersonals.set_city(city)
+
+    def set_megapersonals_join_keywords(self):
+        self.megapersonals.set_join_keywords()
 
     def get_megapersonals_cities(self):
         self.megapersonals = MegapersonalsScraper()
@@ -38,6 +44,9 @@ class Facade:
     def set_skipthegames_city(self, city):
         self.skipthegames.set_city(city)
 
+    def set_skipthegames_join_keywords(self):
+        self.skipthegames.set_join_keywords()
+
     def get_skipthegames_cities(self):
         return self.skipthegames.get_cities()
 
@@ -47,6 +56,9 @@ class Facade:
     def set_yesbackpage_city(self, city):
         self.yesbackpage.set_city(city)
 
+    def set_yesbackpage_join_keywords(self):
+        self.yesbackpage.set_join_keywords()
+
     def get_yesbackpage_cities(self):
         return self.yesbackpage.get_cities()
 
@@ -55,6 +67,9 @@ class Facade:
 
     def set_eros_city(self, city):
         self.eros.set_city(city)
+
+    def set_eros_join_keywords(self):
+        self.eros.set_join_keywords()
 
     def get_eros_cities(self):
         return self.eros.get_cities()
