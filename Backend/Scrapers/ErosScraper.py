@@ -30,6 +30,8 @@ class ErosScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.join_keywords = False
+
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
 
@@ -51,6 +53,9 @@ class ErosScraper(ScraperPrototype):
 
     def set_city(self, city) -> None:
         self.city = city
+
+    def set_join_keywords(self) -> None:
+        self.join_keywords = True
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -183,33 +188,39 @@ class ErosScraper(ScraperPrototype):
                     self.check_and_append_keywords(info_details)
                     self.check_and_append_keywords(contact_details)
 
-                    self.post_identifier.append(counter)
-                    self.link.append(link)
-                    self.profile_header.append(profile_header)
-                    self.about_info.append(description)
-                    self.info_details.append(info_details)
-                    self.contact_details.append(contact_details)
-                    self.check_for_payment_methods(description)
-                    screenshot_name = str(counter) + ".png"
-                    self.capture_screenshot(screenshot_name)
+                    if self.join_keywords:
+                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
 
-                    # strip elements from keywords_found_in_post list using comma
-                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                            self.append_data(contact_details, counter, description, info_details, link, profile_header)
 
-                    # self.keywords_found.append(self.keywords_found_in_post)
-                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+                            screenshot_name = str(counter) + ".png"
+                            self.capture_screenshot(screenshot_name)
 
-                    counter += 1
+                            # strip elements from keywords_found_in_post list using comma
+                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                            # self.keywords_found.append(self.keywords_found_in_post)
+                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                            counter += 1
+                        else:
+                            continue
+                    else:
+                        self.append_data(contact_details, counter, description, info_details, link, profile_header)
+
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
+
+                        # strip elements from keywords_found_in_post list using comma
+                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                        # self.keywords_found.append(self.keywords_found_in_post)
+                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                        counter += 1
                 else:
                     continue
             else:
-                self.post_identifier.append(counter)
-                self.link.append(link)
-                self.profile_header.append(profile_header)
-                self.about_info.append(description)
-                self.info_details.append(info_details)
-                self.contact_details.append(contact_details)
-                self.check_for_payment_methods(description)
+                self.append_data(contact_details, counter, description, info_details, link, profile_header)
+
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
 
@@ -219,6 +230,17 @@ class ErosScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
+
+        self.join_keywords = False
+
+    def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
+        self.post_identifier.append(counter)
+        self.link.append(link)
+        self.profile_header.append(profile_header)
+        self.about_info.append(description)
+        self.info_details.append(info_details)
+        self.contact_details.append(contact_details)
+        self.check_for_payment_methods(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
