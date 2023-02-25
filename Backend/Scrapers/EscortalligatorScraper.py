@@ -47,6 +47,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.join_keywords = False
+
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
 
@@ -68,6 +70,9 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def set_city(self, city) -> None:
         self.city = city.replace(' ', '').replace('.', '')
+
+    def set_join_keywords(self) -> None:
+        self.join_keywords = True
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -179,31 +184,40 @@ class EscortalligatorScraper(ScraperPrototype):
                     self.check_and_append_keywords(location_and_age)
                     self.check_and_append_keywords(description)
 
-                    self.post_identifier.append(counter)
-                    self.phone_number.append(phone_number)
-                    self.links.append(link)
-                    self.location_and_age.append(location_and_age)
-                    self.description.append(description)
-                    self.check_for_payment_methods(description)
-                    screenshot_name = str(counter) + ".png"
-                    self.capture_screenshot(screenshot_name)
+                    if self.join_keywords:
+                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
 
-                    # strip elements from keywords_found_in_post list using comma
-                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                            self.append_data(counter, description, link, location_and_age, phone_number)
 
-                    # self.keywords_found.append(self.keywords_found_in_post)
-                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+                            screenshot_name = str(counter) + ".png"
+                            self.capture_screenshot(screenshot_name)
 
-                    counter += 1
+                            # strip elements from keywords_found_in_post list using comma
+                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                            # self.keywords_found.append(self.keywords_found_in_post)
+                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                            counter += 1
+                        else:
+                            continue
+                    else:
+                        self.append_data(counter, description, link, location_and_age, phone_number)
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
+
+                        # strip elements from keywords_found_in_post list using comma
+                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                        # self.keywords_found.append(self.keywords_found_in_post)
+                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                        counter += 1
                 else:
                     continue
             else:
-                self.post_identifier.append(counter)
-                self.phone_number.append(phone_number)
-                self.links.append(link)
-                self.location_and_age.append(location_and_age)
-                self.description.append(description)
-                self.check_for_payment_methods(description)
+                self.append_data(counter, description, link, location_and_age, phone_number)
+
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
 
@@ -212,7 +226,17 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
+
+                print(counter)
             print('\n')
+
+    def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
+        self.post_identifier.append(counter)
+        self.phone_number.append(phone_number)
+        self.links.append(link)
+        self.location_and_age.append(location_and_age)
+        self.description.append(description)
+        self.check_for_payment_methods(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
