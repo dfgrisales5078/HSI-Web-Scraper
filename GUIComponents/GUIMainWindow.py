@@ -6,7 +6,7 @@ from Backend.Keywords import Keywords
 from Scraper import Ui_HSIWebScraper
 
 
-# To make changes to UI do NOT edit MainWindow_ui.py, instead make changes to UI using Qt Creator.
+# To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 
 class MainWindow(QMainWindow):
 
@@ -301,7 +301,6 @@ class MainWindow(QMainWindow):
         else:
             self.inclusive_search = False
             print('keyword inclusive box unchecked')
-
 
     # if checked, select all items in list widget
     def select_all_keywords_check_box(self):
