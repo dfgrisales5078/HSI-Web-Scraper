@@ -230,6 +230,8 @@ class EscortalligatorScraper(ScraperPrototype):
                 print(counter)
             print('\n')
 
+        self.join_keywords = False
+
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
         self.post_identifier.append(counter)
         self.phone_number.append(phone_number)
