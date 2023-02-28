@@ -59,6 +59,9 @@ class Facade:
     def set_yesbackpage_join_keywords(self):
         self.yesbackpage.set_join_keywords()
 
+    def set_yesbackpage_only_posts_with_payment_methods(self):
+        self.yesbackpage.set_only_posts_with_payment_methods()
+
     def get_yesbackpage_cities(self):
         return self.yesbackpage.get_cities()
 
