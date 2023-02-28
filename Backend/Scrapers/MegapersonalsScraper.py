@@ -45,6 +45,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.screenshot_directory = None
         self.keywords = None
 
+        self.join_keywords = False
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
 
@@ -67,6 +68,9 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def set_city(self, city) -> None:
         self.city = city
+
+    def set_join_keywords(self) -> None:
+        self.join_keywords = True
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -190,35 +194,40 @@ class MegapersonalsScraper(ScraperPrototype):
                     self.check_and_append_keywords(city)
                     self.check_and_append_keywords(location)
 
-                    self.post_identifier.append(counter)
-                    self.name.append(name)
-                    self.phoneNumber.append(phone_number)
-                    self.contentCity.append(city)
-                    self.location.append(location)
-                    self.description.append(description)
-                    self.check_for_payment_methods(description)
-                    self.link.append(link)
-                    screenshot_name = str(counter) + ".png"
-                    self.capture_screenshot(screenshot_name)
+                    if self.join_keywords:
+                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+                            self.append_data(city, counter, description, link, location, name, phone_number)
 
-                    # strip elements from keywords_found_in_post list using comma
-                    self.keywords_found.append(', '.join(self.keywords_found_in_post))
+                            screenshot_name = str(counter) + ".png"
+                            self.capture_screenshot(screenshot_name)
 
-                    # self.keywords_found.append(self.keywords_found_in_post)
-                    self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+                            # strip elements from keywords_found_in_post list using comma
+                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
 
-                    counter += 1
+                            # self.keywords_found.append(self.keywords_found_in_post)
+                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                            counter += 1
+                        else:
+                            continue
+                    else:
+                        self.append_data(city, counter, description, link, location, name, phone_number)
+
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
+
+                        # strip elements from keywords_found_in_post list using comma
+                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                        # self.keywords_found.append(self.keywords_found_in_post)
+                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+
+                        counter += 1
                 else:
                     continue
             else:
-                self.post_identifier.append(counter)
-                self.name.append(name)
-                self.phoneNumber.append(phone_number)
-                self.contentCity.append(city)
-                self.location.append(location)
-                self.description.append(description)
-                self.check_for_payment_methods(description)
-                self.link.append(link)
+                self.append_data(city, counter, description, link, location, name, phone_number)
+
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
 
@@ -228,6 +237,18 @@ class MegapersonalsScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
+
+        self.join_keywords = False
+
+    def append_data(self, city, counter, description, link, location, name, phone_number):
+        self.post_identifier.append(counter)
+        self.name.append(name)
+        self.phoneNumber.append(phone_number)
+        self.contentCity.append(city)
+        self.location.append(location)
+        self.description.append(description)
+        self.check_for_payment_methods(description)
+        self.link.append(link)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
