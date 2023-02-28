@@ -39,7 +39,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
@@ -49,6 +50,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.join_keywords = False
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
+
+        self.only_posts_with_payment_methods = False
 
         # lists to store data and then send to csv file
 
@@ -76,6 +79,9 @@ class YesbackpageScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -216,10 +222,28 @@ class YesbackpageScraper(ScraperPrototype):
                     self.check_and_append_keywords(location)
                     self.check_and_append_keywords(services)
 
+                    # find only posts with payment methods
+                    if self.only_posts_with_payment_methods and self.check_for_payment_methods(description):
+                        self.append_data(counter, description, email, link, location, name, phone_number, services,
+                                         sex)
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
+
+                        # strip elements from keywords_found_in_post list using comma
+                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
+
+                        # self.keywords_found.append(self.keywords_found_in_post)
+                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+                        counter += 1
+
+                    else:
+                        continue
+
                     if self.join_keywords:
                         if len(self.keywords) == len(set(self.keywords_found_in_post)):
                             self.append_data(counter, description, email, link, location, name, phone_number, services,
                                              sex)
+
                             screenshot_name = str(counter) + ".png"
                             self.capture_screenshot(screenshot_name)
 
@@ -247,6 +271,7 @@ class YesbackpageScraper(ScraperPrototype):
                         counter += 1
                 else:
                     continue
+
             else:
                 self.append_data(counter, description, email, link, location, name, phone_number, services,
                                  sex)
@@ -262,7 +287,6 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.join_keywords = False
 
-
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
         self.description.append(description)
         self.name.append(name)
@@ -270,7 +294,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.phone_number.append(phone_number)
         self.email.append(email)
         self.location.append(location)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
         self.link.append(link)
         self.post_identifier.append(counter)
         self.services.append(services)
@@ -294,7 +318,14 @@ class YesbackpageScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                print('payment method: ', payment)
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
