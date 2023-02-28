@@ -66,6 +66,7 @@ class MainWindow(QMainWindow):
         self.ui.keywordlistWidget.itemClicked.connect(self.keyword_list_widget)
 
         # bind keywordInclusivecheckBox to keyword_inclusive_check_box function
+        self.ui.keywordInclusivecheckBox.setEnabled(False)
         self.ui.keywordInclusivecheckBox.stateChanged.connect(self.keyword_inclusive_check_box)
 
         # bind setSelectionDropdown to set_selection_dropdown function
@@ -187,7 +188,6 @@ class MainWindow(QMainWindow):
         else:
             return False
 
-    # TODO BUG - last item clicked on is deleted even if not selected
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
@@ -249,10 +249,18 @@ class MainWindow(QMainWindow):
         for item in self.ui.keywordlistWidget.selectedItems():
             self.manual_keyword_selection.add(item.text())
 
+        # if keywords are selected, enable inclusive checkbox
+        if self.manual_keyword_selection:
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+
         # if a keyword is unselected, remove it from the set
         for i in range(self.ui.keywordlistWidget.count()):
             if not self.ui.keywordlistWidget.item(i).isSelected():
                 self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(i).text())
+
+        # if no keywords are selected, disable inclusive checkbox
+        if not self.manual_keyword_selection:
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
 
         print(self.manual_keyword_selection)
 
@@ -271,6 +279,9 @@ class MainWindow(QMainWindow):
 
         # get keywords from selected set from keywords class
         keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
+
+        if keywords_of_selected_set:
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
 
         print('values of keyword selected: ', keywords_of_selected_set)
 
@@ -293,8 +304,14 @@ class MainWindow(QMainWindow):
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
 
-    # TODO - add logic to scrape with all inclusive keywords
+        # if search text is not empty, enable search button
+        if self.search_text != '':
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+        else:
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
+
     def keyword_inclusive_check_box(self):
+        # disable checkbox if no keywords are selected
         if self.ui.keywordInclusivecheckBox.isChecked():
             self.inclusive_search = True
             print('keyword inclusive box checked')
@@ -312,6 +329,9 @@ class MainWindow(QMainWindow):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
                 print(self.ui.keywordlistWidget.item(i).text())
                 self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
+
+            # enable keyword inclusive checkbox
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
             print('select all keywords box unchecked')
@@ -320,23 +340,20 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
+            # disable keyword inclusive checkbox
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
+
         # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
         print(self.keywords_selected)
 
-    # TODO - add logic to scrape with payment method only
     def payment_method_check_box(self):
         if self.ui.paymentMethodcheckBox.isChecked():
-            self.ui.paymentMethodcheckBox.setEnabled(True)
             self.include_payment_method = True
             print('payment box checked')
         else:
-            self.ui.paymentMethodcheckBox.setEnabled(False)
             self.include_payment_method = False
             print('payment box unchecked')
-
-        # enable checkbox after it's unchecked
-        self.ui.paymentMethodcheckBox.setEnabled(True)
 
     # handle dropdown menu for payment method
     def website_selection_dropdown(self):
@@ -431,6 +448,10 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_yesbackpage_only_posts_with_payment_methods()
+
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
 
             except:
@@ -449,6 +470,7 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
+        self.ui.paymentMethodcheckBox.setChecked(False)
 
     # TODO
     # function to run two threads at once
