@@ -8,7 +8,11 @@ from Backend.Keywords import Keywords
 from Scraper import Ui_HSIWebScraper
 
 
-# To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
+'''
+To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator, 
+then run the following command in the terminal to convert the .ui file to .py file:
+pyuic6 Scraper.ui -o Scraper.py
+'''
 
 class MainWindow(QMainWindow):
 
