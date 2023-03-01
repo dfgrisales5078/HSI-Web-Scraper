@@ -40,7 +40,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
