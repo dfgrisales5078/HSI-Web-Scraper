@@ -24,7 +24,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>17</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="currentIndex">
@@ -48,7 +48,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="selectionMode">
@@ -66,7 +66,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -89,7 +89,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -107,7 +107,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -125,7 +125,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -143,7 +143,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -161,7 +161,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -173,13 +173,13 @@
       <rect>
        <x>410</x>
        <y>40</y>
-       <width>291</width>
-       <height>61</height>
+       <width>351</width>
+       <height>81</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>36</pointsize>
+       <pointsize>31</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -198,7 +198,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -246,7 +246,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -264,7 +264,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -285,7 +285,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -303,7 +303,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -321,7 +321,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -339,7 +339,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="text">
@@ -499,13 +499,13 @@
       <rect>
        <x>130</x>
        <y>449</y>
-       <width>351</width>
-       <height>20</height>
+       <width>361</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>12</pointsize>
        <bold>true</bold>
       </font>
      </property>
