@@ -213,36 +213,40 @@ class YesbackpageScraper(ScraperPrototype):
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                         or self.check_keywords(phone_number) or self.check_keywords(email) \
                         or self.check_keywords(location) or self.check_keywords(services):
-
                     self.check_keywords_found(description, name, sex, phone_number, email, location, services)
-                    counter = self.join_with_payment_methods(counter, description, email, link, location, name, phone_number, services, sex)
-
+                    counter = self.join_with_payment_methods(counter, description, email, link, location, name,
+                                                             phone_number, services, sex)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print("elif l220")
+                print("elif l221")
                 if self.join_keywords:
+                    print("if join_keywords l223")
                     if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                             or self.check_keywords(phone_number) or self.check_keywords(email) \
                             or self.check_keywords(location) or self.check_keywords(services):
-
                         self.check_keywords_found(description, name, sex, phone_number, email, location, services)
-                        self.join_inclusive(counter, description, email, link, location, name, phone_number, services, sex)
-                        counter += 1
+                        counter = self.join_inclusive(counter, description, email, link, location, name, phone_number,
+                                                      services, sex)
 
                 elif self.only_posts_with_payment_methods:
-                    print("else l230")
+                    print("elif only_payment_methods l232")
                     if len(self.keywords) > 0:
+                        print('l234')
                         if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                                 or self.check_keywords(phone_number) or self.check_keywords(email) \
                                 or self.check_keywords(location) or self.check_keywords(services):
-
                             self.check_keywords_found(description, name, sex, phone_number, email, location, services)
 
-                    self.payment_methods_only(counter, description, email, link, location, name, phone_number, services, sex)
+                    else:
+                        print('l245')
+                        self.keywords_found_in_post.append("N/A")
+
+                    counter = self.payment_methods_only(counter, description, email, link, location, name,
+                                                        phone_number, services, sex)
             else:
                 # run if keywords
                 if len(self.keywords) > 0:
-                    print(f"if l241, {self.keywords}")
+                    print(f"if l241")
                     if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                             or self.check_keywords(phone_number) or self.check_keywords(email) \
                             or self.check_keywords(location) or self.check_keywords(services):
@@ -268,7 +272,8 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.join_keywords = False
 
-    def join_with_payment_methods(self, counter, description, email, link, location, name, phone_number, services, sex):
+    def join_with_payment_methods(self, counter, description, email, link, location, name, phone_number,
+                                  services, sex) -> int:
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
             self.append_data(counter, description, email, link, location, name, phone_number, services,
                              sex)
@@ -283,7 +288,7 @@ class YesbackpageScraper(ScraperPrototype):
             return counter + 1
         return counter
 
-    def check_keywords_found(self, description, name, sex, phone_number, email, location, services):
+    def check_keywords_found(self, description, name, sex, phone_number, email, location, services) -> None:
         self.check_and_append_keywords(description)
         self.check_and_append_keywords(name)
         self.check_and_append_keywords(sex)
@@ -292,7 +297,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.check_and_append_keywords(location)
         self.check_and_append_keywords(services)
 
-    def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
+    def append_data(self, counter, description, email, link, location, name, phone_number, services, sex) -> None:
+        print(f"append_data {counter}")
         self.description.append(description)
         self.name.append(name)
         self.sex.append(sex)
@@ -359,7 +365,7 @@ class YesbackpageScraper(ScraperPrototype):
                 print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
-    def join_inclusive(self, counter, description, email, link, location, name, phone_number, services, sex):
+    def join_inclusive(self, counter, description, email, link, location, name, phone_number, services, sex) -> int:
         if len(self.keywords) == len(set(self.keywords_found_in_post)):
             self.append_data(counter, description, email, link, location, name, phone_number, services,
                              sex)
@@ -372,8 +378,14 @@ class YesbackpageScraper(ScraperPrototype):
             # self.keywords_found.append(self.keywords_found_in_post)
             self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
-    def payment_methods_only(self, counter, description, email, link, location, name, phone_number, services, sex):
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, counter, description, email, link, location, name, phone_number,
+                             services, sex) -> int:
+
         if self.check_for_payment_methods(description):
+            print('l382 if')
             self.append_data(counter, description, email, link, location, name, phone_number, services,
                              sex)
             screenshot_name = str(counter) + ".png"
@@ -384,4 +396,6 @@ class YesbackpageScraper(ScraperPrototype):
 
             # self.keywords_found.append(self.keywords_found_in_post)
             self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-            counter += 1
+
+            return counter + 1
+        return counter
