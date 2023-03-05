@@ -145,7 +145,6 @@ class YesbackpageScraper(ScraperPrototype):
         for link in links:
             print(link)
 
-            # self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
