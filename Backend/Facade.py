@@ -47,6 +47,9 @@ class Facade:
     def set_skipthegames_join_keywords(self):
         self.skipthegames.set_join_keywords()
 
+    def set_skipthegames_only_posts_with_payment_methods(self):
+        self.skipthegames.set_only_posts_with_payment_methods()
+
     def get_skipthegames_cities(self):
         return self.skipthegames.get_cities()
 
