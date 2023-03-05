@@ -114,6 +114,7 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.get_data(links)
         self.format_data_to_csv()
+        self.reset_variables()
         self.close_webpage()
 
     def open_webpage(self) -> None:
@@ -144,7 +145,7 @@ class YesbackpageScraper(ScraperPrototype):
         for link in links:
             print(link)
 
-            self.driver.implicitly_wait(10)
+            # self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
@@ -328,6 +329,21 @@ class YesbackpageScraper(ScraperPrototype):
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
+
+    def reset_variables(self) -> None:
+        self.post_identifier = []
+        self.phone_number = []
+        self.link = []
+        self.location = []
+        self.name = []
+        self.sex = []
+        self.email = []
+        self.services = []
+        self.description = []
+        self.payment_methods_found = []
+        self.keywords_found = []
+        self.number_of_keywords_found = []
+
 
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
