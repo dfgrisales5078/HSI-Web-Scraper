@@ -189,7 +189,7 @@ class SkipthegamesScraper(ScraperPrototype):
                     if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
                             description):
                         self.check_keywords_found(about_info, services, description)
-                        counter = self.join_with_payment_methods(about_info, counter, description, link, services)
+                        counter = self.join_inclusive(about_info, counter, description, link, services)
                 elif self.only_posts_with_payment_methods:
                     print("elif only_payment_methods l194")
                     if len(self.keywords) > 0:
@@ -200,7 +200,7 @@ class SkipthegamesScraper(ScraperPrototype):
                     else:
                         print('l200')
                         self.keywords_found_in_post.append("N/A")
-                    counter = self.join_with_payment_methods(about_info, counter, description, link, services)
+                    counter = self.payment_methods_only(about_info, counter, description, link, services)
             else:
                 print("else l204")
                 if len(self.keywords) > 0:
