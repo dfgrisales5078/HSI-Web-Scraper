@@ -1,46 +1,29 @@
-import os
+from files.ScraperPrototype import ScraperPrototype
 import time
 from datetime import datetime
-import pandas as pd
-from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from Backend.ScraperPrototype import ScraperPrototype
+import pandas as pd
+import undetected_chromedriver as uc
+import os
 
 
-class EscortalligatorScraper(ScraperPrototype):
+class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
 
-        self.cities = [
-            "daytona",
-            "fort lauderdale",
-            "fort myers",
-            "gainesville",
-            "jacksonville",
-            "keys",
-            "miami",
-            "ocala",
-            "okaloosa",
-            "orlando",
-            "palm bay",
-            "panama city",
-            "pensacola",
-            "bradenton",
-            "space coast",
-            "st. augustine",
-            "tallahassee",
-            "tampa",
-            "treasure coast",
-            "west palm beach",
-            "jacksonville"
-        ]
+        self.cities = {
+            "miami": 'https://www.eros.com/florida/miami/sections/miami_escorts.htm',
+            "naples": 'https://www.eros.com/florida/naples/sections/naples_escorts.htm',
+            "north florida": 'https://www.eros.com/florida/north_florida/sections/north_florida_escorts.htm',
+            "orlando": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm',
+            "tampa": 'https://www.eros.com/florida/tampa/sections/tampa_escorts.htm'
+        }
         self.city = ''
-        self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.scraper_directory = None
@@ -53,23 +36,23 @@ class EscortalligatorScraper(ScraperPrototype):
         self.keywords_found_in_post = []
 
         # lists to store data and then send to csv file
-        self.phone_number = []
-        self.description = []
-        self.location_and_age = []
-        self.links = []
         self.post_identifier = []
+        self.link = []
+        self.profile_header = []
+        self.about_info = []
+        self.info_details = []
+        self.contact_details = []
         self.payment_methods_found = []
 
         self.number_of_keywords_found = []
         self.keywords_found = []
 
         # TODO other info needs to be pulled using regex?
-
     def get_cities(self) -> list:
-        return self.cities
+        return list(self.cities.keys())
 
     def set_city(self, city) -> None:
-        self.city = city.replace(' ', '').replace('.', '')
+        self.city = city
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
@@ -78,25 +61,27 @@ class EscortalligatorScraper(ScraperPrototype):
         # set keywords value
         self.keywords = keywords
 
+        # Date and time of search
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
         # Format website URL based on state and city
         self.get_formatted_url()
 
         # Selenium Web Driver setup
-        options = webdriver.ChromeOptions()
-        # TODO - uncomment this to run headless
+        options = uc.ChromeOptions()
+        # TODO - uncomment to run headless
         # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
         self.open_webpage()
+        time.sleep(10)
 
         # Find links of posts
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'escortalligator_{self.date_time}'
+        self.scraper_directory = f'eros_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -113,88 +98,106 @@ class EscortalligatorScraper(ScraperPrototype):
         self.driver.get(self.url)
         self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
+        # self.driver.maximize_window()
 
     def close_webpage(self) -> None:
         self.driver.close()
 
-    def get_links(self) -> list:
-        # click on terms btn
-        btn = self.driver.find_element(
-            By.CLASS_NAME, 'button')
-        btn.click()
+    def get_links(self) -> set:
+        try:
+            # Find website agreement
+            self.driver.find_element(
+                By.XPATH, '//*[@id="agree_enter_website"]').click()
+            self.driver.find_element(
+                By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
+        except NoSuchElementException:
+            print("There was a problem with finding the website.")
+            exit(1)
 
-        time.sleep(2)
-        # click on 2nd terms btn
-        btn = self.driver.find_element(
-            By.CLASS_NAME, 'footer')
-        btn.click()
+        try:
+            # Find all profile links
+            posts = self.driver.find_elements(
+                By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
+        except NoSuchElementException:
+            print("There was a problem finding posts.")
+            exit(1)
 
-        posts = self.driver.find_elements(
-            By.CSS_SELECTOR, '#list [href]')
-        links = [post.get_attribute('href') for post in posts]
-        return links[::3]
+        if posts:
+            links = [post.get_attribute('href') for post in posts]
+            print(set(links))
+        else:
+            print("No posts found.")
+            exit(1)
+
+        return set(links)
 
     def get_formatted_url(self) -> None:
-        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
+        self.url = self.cities.get(self.city)
         print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
-        links = set(links)
+        description = ''
         counter = 0
 
         for link in links:
             print(link)
 
-            # self.driver.implicitly_wait(10)
-            # time.sleep(3)
+            self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
+                profile_header = self.driver.find_element(
+                    By.XPATH, '//*[@id="pageone"]/div[1]').text
+                print(profile_header)
+            except NoSuchElementException:
+                profile_header = 'N/A'
+
+            try:
                 description = self.driver.find_element(
-                    By.CLASS_NAME, 'viewpostbody').text
+                    By.XPATH, '// *[ @ id = "pageone"] / div[3] / div / div[1] / div[2]').text
                 print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
-                phone_number = self.driver.find_element(
-                    By.CLASS_NAME, 'userInfoContainer').text
-                print(phone_number)
+                info_details = self.driver.find_element(
+                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[1]/div').text
+                print(info_details)
             except NoSuchElementException:
-                phone_number = 'N/A'
+                info_details = 'N/A'
 
             try:
-                location_and_age = self.driver.find_element(
-                    By.CLASS_NAME, 'viewpostlocationIconBabylon').text
-                print(location_and_age)
+                contact_details = self.driver.find_element(
+                    By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[2]').text
+                print(contact_details)
             except NoSuchElementException:
-                location_and_age = 'N/A'
+                contact_details = 'N/A'
 
             # reassign variables for each post
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
             if len(self.keywords) > 0:
-                if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
-                        self.check_keywords(description):
+                if self.check_keywords(profile_header) or self.check_keywords(description) \
+                        or self.check_keywords(info_details) or self.check_keywords(contact_details):
 
                     # check for keywords and append to lists
-                    self.check_and_append_keywords(phone_number)
-                    self.check_and_append_keywords(location_and_age)
+                    self.check_and_append_keywords(profile_header)
                     self.check_and_append_keywords(description)
+                    self.check_and_append_keywords(info_details)
+                    self.check_and_append_keywords(contact_details)
 
                     if self.join_keywords:
                         if len(self.keywords) == len(set(self.keywords_found_in_post)):
 
-                            self.append_data(counter, description, link, location_and_age, phone_number)
+                            self.append_data(contact_details, counter, description, info_details, link, profile_header)
 
                             screenshot_name = str(counter) + ".png"
                             self.capture_screenshot(screenshot_name)
 
                             # strip elements from keywords_found_in_post list using comma
                             self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
                             # self.keywords_found.append(self.keywords_found_in_post)
                             self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
@@ -202,13 +205,13 @@ class EscortalligatorScraper(ScraperPrototype):
                         else:
                             continue
                     else:
-                        self.append_data(counter, description, link, location_and_age, phone_number)
+                        self.append_data(contact_details, counter, description, info_details, link, profile_header)
+
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
 
                         # strip elements from keywords_found_in_post list using comma
                         self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
                         # self.keywords_found.append(self.keywords_found_in_post)
                         self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
@@ -216,7 +219,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 else:
                     continue
             else:
-                self.append_data(counter, description, link, location_and_age, phone_number)
+                self.append_data(contact_details, counter, description, info_details, link, profile_header)
 
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
@@ -226,34 +229,34 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
-                print(counter)
             print('\n')
 
         self.join_keywords = False
 
-    def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
+    def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
         self.post_identifier.append(counter)
-        self.phone_number.append(phone_number)
-        self.links.append(link)
-        self.location_and_age.append(location_and_age)
-        self.description.append(description)
+        self.link.append(link)
+        self.profile_header.append(profile_header)
+        self.about_info.append(description)
+        self.info_details.append(info_details)
+        self.contact_details.append(contact_details)
         self.check_for_payment_methods(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
             'Post-identifier': self.post_identifier,
-            'Phone-Number': self.phone_number,
-            'Link': self.links,
-            'Location/Age': self.location_and_age,
-            'Description': self.description,
+            'link': self.link,
+            'profile-header': self.profile_header,
+            'about-info': self.about_info,
+            'info-details': self.info_details,
+            'contact-details': self.contact_details,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
             'number-of-keywords-found': self.number_of_keywords_found
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -269,6 +272,7 @@ class EscortalligatorScraper(ScraperPrototype):
             print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
+        print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     def check_keywords(self, data) -> bool:

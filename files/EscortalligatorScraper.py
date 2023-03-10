@@ -1,45 +1,46 @@
 import os
+import time
 from datetime import datetime
 import pandas as pd
 from selenium import webdriver
 from selenium.common import NoSuchElementException
-from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
-from Backend.ScraperPrototype import ScraperPrototype
+from files.ScraperPrototype import ScraperPrototype
 
 
-class YesbackpageScraper(ScraperPrototype):
-
+class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
         self.driver = None
-        self.cities = {
-            "florida": 'https://www.yesbackpage.com/-10/posts/8-Adult/',
-            "broward": 'https://www.yesbackpage.com/70/posts/8-Adult/',
-            "daytona beach": 'https://www.yesbackpage.com/71/posts/8-Adult/',
-            "florida keys": 'https://www.yesbackpage.com/67/posts/8-Adult/',
-            "ft myers-sw florida": 'https://www.yesbackpage.com/68/posts/8-Adult/',
-            "gainesville": 'https://www.yesbackpage.com/72/posts/8-Adult/',
-            "jacksonville": 'https://www.yesbackpage.com/73/posts/8-Adult/',
-            "lakeland": 'https://www.yesbackpage.com/74/posts/8-Adult/',
-            "miami": 'https://www.yesbackpage.com/75/posts/8-Adult/',
-            "ocala": 'https://www.yesbackpage.com/76/posts/8-Adult/',
-            "orlando": 'https://www.yesbackpage.com/77/posts/8-Adult/',
-            "palm beach": 'https://www.yesbackpage.com/69/posts/8-Adult/',
-            "panama city": 'https://www.yesbackpage.com/78/posts/8-Adult/',
-            "pensacola-panhandle": 'https://www.yesbackpage.com/79/posts/8-Adult/',
-            "sarasota-brandenton": 'https://www.yesbackpage.com/80/posts/8-Adult/',
-            "space coast": 'https://www.yesbackpage.com/81/posts/8-Adult/',
-            "st augustine": 'https://www.yesbackpage.com/82/posts/8-Adult/',
-            "tallahassee": 'https://www.yesbackpage.com/83/posts/8-Adult/',
-            "tampa bay area": 'https://www.yesbackpage.com/84/posts/8-Adult/',
-            "treasure coast": 'https://www.yesbackpage.com/85/posts/8-Adult/',
-            "west palm beach": 'https://www.yesbackpage.com/679/posts/8-Adult/'
-        }
+
+        self.cities = [
+            "daytona",
+            "fort lauderdale",
+            "fort myers",
+            "gainesville",
+            "jacksonville",
+            "keys",
+            "miami",
+            "ocala",
+            "okaloosa",
+            "orlando",
+            "palm bay",
+            "panama city",
+            "pensacola",
+            "bradenton",
+            "space coast",
+            "st. augustine",
+            "tallahassee",
+            "tampa",
+            "treasure coast",
+            "west palm beach",
+            "jacksonville"
+        ]
         self.city = ''
+        self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
 
         self.date_time = None
         self.scraper_directory = None
@@ -47,21 +48,17 @@ class YesbackpageScraper(ScraperPrototype):
         self.keywords = None
 
         self.join_keywords = False
+
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
 
         # lists to store data and then send to csv file
-
         self.phone_number = []
-        self.link = []
-        self.name = []
-        self.sex = []
-        self.email = []
-        self.location = []
         self.description = []
+        self.location_and_age = []
+        self.links = []
         self.post_identifier = []
         self.payment_methods_found = []
-        self.services = []
 
         self.number_of_keywords_found = []
         self.keywords_found = []
@@ -69,10 +66,10 @@ class YesbackpageScraper(ScraperPrototype):
         # TODO other info needs to be pulled using regex?
 
     def get_cities(self) -> list:
-        return list(self.cities.keys())
+        return self.cities
 
     def set_city(self, city) -> None:
-        self.city = city
+        self.city = city.replace(' ', '').replace('.', '')
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
@@ -81,14 +78,14 @@ class YesbackpageScraper(ScraperPrototype):
         # set keywords value
         self.keywords = keywords
 
-        # set up directories to save screenshots and csv file.
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
         # Format website URL based on state and city
         self.get_formatted_url()
 
+        # Selenium Web Driver setup
         options = webdriver.ChromeOptions()
-        # TODO - uncomment this line to run headless
+        # TODO - uncomment this to run headless
         # options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=options)
 
@@ -99,16 +96,17 @@ class YesbackpageScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'yesbackpage_{self.date_time}'
+        self.scraper_directory = f'escortalligator_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
         self.screenshot_directory = f'{self.scraper_directory}/screenshots'
         os.mkdir(self.screenshot_directory)
 
+        # Get data from posts
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
+        self.format_data_to_csv()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -120,106 +118,77 @@ class YesbackpageScraper(ScraperPrototype):
         self.driver.close()
 
     def get_links(self) -> list:
+        # click on terms btn
+        btn = self.driver.find_element(
+            By.CLASS_NAME, 'button')
+        btn.click()
+
+        time.sleep(2)
+        # click on 2nd terms btn
+        btn = self.driver.find_element(
+            By.CLASS_NAME, 'footer')
+        btn.click()
+
         posts = self.driver.find_elements(
-            By.CLASS_NAME, 'posttitle')
+            By.CSS_SELECTOR, '#list [href]')
         links = [post.get_attribute('href') for post in posts]
-        print(links)
-        return links[2:]
+        return links[::3]
 
     def get_formatted_url(self) -> None:
-        self.url = self.cities.get(self.city)
+        self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
         print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
-        links = links
-
+        links = set(links)
         counter = 0
 
         for link in links:
             print(link)
 
-            self.driver.implicitly_wait(10)
+            # self.driver.implicitly_wait(10)
+            # time.sleep(3)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 description = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/'
-                              'tr/td/div/p[2]').text
+                    By.CLASS_NAME, 'viewpostbody').text
                 print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
-                name = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[1]/td[2]').text[2:]
-                print(name)
-            except NoSuchElementException:
-                name = 'N/A'
-
-            try:
-                sex = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[2]/td[2]').text[2:]
-                print(sex)
-            except NoSuchElementException:
-                sex = 'N/A'
-
-            try:
                 phone_number = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[6]/td[2]').text[2:]
+                    By.CLASS_NAME, 'userInfoContainer').text
                 print(phone_number)
             except NoSuchElementException:
-                phone_number = 'NA'
+                phone_number = 'N/A'
 
             try:
-                email = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[8]/td[2]').text[2:]
-                print(email)
+                location_and_age = self.driver.find_element(
+                    By.CLASS_NAME, 'viewpostlocationIconBabylon').text
+                print(location_and_age)
             except NoSuchElementException:
-                email = 'N/A'
-
-            try:
-                location = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[9]/td[2]').text[2:]
-                print(location)
-            except NoSuchElementException:
-                location = 'N/A'
-
-            try:
-                services = self.driver.find_element(
-                    By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
-                              'tbody/tr[5]/td[2]').text[2:]
-                print(services)
-            except NoSuchElementException:
-                services = 'N/A'
+                location_and_age = 'N/A'
 
             # reassign variables for each post
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
             if len(self.keywords) > 0:
-                if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
-                        or self.check_keywords(phone_number) or self.check_keywords(email) \
-                        or self.check_keywords(location) or self.check_keywords(services):
+                if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
+                        self.check_keywords(description):
 
                     # check for keywords and append to lists
-                    self.check_and_append_keywords(description)
-                    self.check_and_append_keywords(name)
-                    self.check_and_append_keywords(sex)
                     self.check_and_append_keywords(phone_number)
-                    self.check_and_append_keywords(email)
-                    self.check_and_append_keywords(location)
-                    self.check_and_append_keywords(services)
+                    self.check_and_append_keywords(location_and_age)
+                    self.check_and_append_keywords(description)
 
                     if self.join_keywords:
                         if len(self.keywords) == len(set(self.keywords_found_in_post)):
-                            self.append_data(counter, description, email, link, location, name, phone_number, services,
-                                             sex)
+
+                            self.append_data(counter, description, link, location_and_age, phone_number)
+
                             screenshot_name = str(counter) + ".png"
                             self.capture_screenshot(screenshot_name)
 
@@ -233,8 +202,7 @@ class YesbackpageScraper(ScraperPrototype):
                         else:
                             continue
                     else:
-                        self.append_data(counter, description, email, link, location, name, phone_number, services,
-                                         sex)
+                        self.append_data(counter, description, link, location_and_age, phone_number)
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
 
@@ -248,8 +216,8 @@ class YesbackpageScraper(ScraperPrototype):
                 else:
                     continue
             else:
-                self.append_data(counter, description, email, link, location, name, phone_number, services,
-                                 sex)
+                self.append_data(counter, description, link, location_and_age, phone_number)
+
                 screenshot_name = str(counter) + ".png"
                 self.capture_screenshot(screenshot_name)
 
@@ -258,33 +226,26 @@ class YesbackpageScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print("\n")
+
+                print(counter)
+            print('\n')
 
         self.join_keywords = False
 
-
-    def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
-        self.description.append(description)
-        self.name.append(name)
-        self.sex.append(sex)
-        self.phone_number.append(phone_number)
-        self.email.append(email)
-        self.location.append(location)
-        self.check_for_payment_methods(description)
-        self.link.append(link)
+    def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
         self.post_identifier.append(counter)
-        self.services.append(services)
+        self.phone_number.append(phone_number)
+        self.links.append(link)
+        self.location_and_age.append(location_and_age)
+        self.description.append(description)
+        self.check_for_payment_methods(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Phone-Number': self.phone_number,
-            'Link': self.link,
-            'Location': self.location,
-            'Name': self.name,
-            'Sex': self.sex,
-            'E-mail': self.email,
-            'Services': self.services,
+            'Link': self.links,
+            'Location/Age': self.location_and_age,
             'Description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
@@ -292,14 +253,14 @@ class YesbackpageScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.scraper_directory}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
                 print('payment method: ', payment)
-                payments += payment + '\n'
+                payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -312,7 +273,7 @@ class YesbackpageScraper(ScraperPrototype):
 
     def check_keywords(self, data) -> bool:
         for key in self.keywords:
-            if key in data.lower():
+            if key in data:
                 return True
         return False
 

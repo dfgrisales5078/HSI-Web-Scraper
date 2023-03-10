@@ -4,7 +4,7 @@ import pandas as pd
 import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from Backend.ScraperPrototype import ScraperPrototype
+from files.ScraperPrototype import ScraperPrototype
 
 
 class MegapersonalsScraper(ScraperPrototype):
