@@ -65,6 +65,7 @@ class YesbackpageScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "florida": 'https://www.yesbackpage.com/-10/posts/8-Adult/',
@@ -130,6 +131,9 @@ class YesbackpageScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -152,7 +156,7 @@ class YesbackpageScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'yesbackpage_{self.date_time}'
+        self.scraper_directory = f'{self.path}/yesbackpage_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -1671,6 +1675,10 @@ class Facade:
     def format_data(self, data):
         pass
 
+    def set_storage_path(self, file_storage_path):
+        if file_storage_path != '':
+            self.yesbackpage.set_path(file_storage_path)
+
 
 # ---------------------------- Scraper (created using .ui file) ----------------------------
 # Form implementation generated from reading ui file 'Scraper.ui'
@@ -2009,6 +2017,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", f"Selected path: {save_path}")
             self.file_storage_path = save_path
             print('self.file_storage_path: ', self.file_storage_path)
+            self.facade.set_storage_path(self.file_storage_path)
 
     def keyword_file_selection_button_clicked(self):
         file_dialog = QFileDialog()
