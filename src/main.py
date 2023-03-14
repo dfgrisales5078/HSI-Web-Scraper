@@ -166,6 +166,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -350,6 +351,20 @@ class YesbackpageScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.phone_number = []
+        self.link = []
+        self.name = []
+        self.sex = []
+        self.email = []
+        self.location = []
+        self.description = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.services = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
@@ -486,6 +501,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -625,6 +641,16 @@ class SkipthegamesScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.link = []
+        self.about_info = []
+        self.description = []
+        self.services = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
@@ -758,6 +784,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -924,6 +951,18 @@ class MegapersonalsScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.description = []
+        self.name = []
+        self.phoneNumber = []
+        self.contentCity = []
+        self.location = []
+        self.link = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
@@ -1059,6 +1098,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.get_data(links)
         self.close_webpage()
         self.format_data_to_csv()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -1207,6 +1247,16 @@ class EscortalligatorScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.phone_number = []
+        self.description = []
+        self.location_and_age = []
+        self.links = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
@@ -1328,6 +1378,7 @@ class ErosScraper(ScraperPrototype):
         self.get_data(links)
         self.close_webpage()
         self.format_data_to_csv()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -1466,6 +1517,8 @@ class ErosScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
+            if counter == 3:
+                break
 
         self.join_keywords = False
 
@@ -1493,6 +1546,17 @@ class ErosScraper(ScraperPrototype):
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
+
+    def reset_variables(self) -> None:
+        self.post_identifier = []
+        self.link = []
+        self.profile_header = []
+        self.about_info = []
+        self.info_details = []
+        self.contact_details = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
