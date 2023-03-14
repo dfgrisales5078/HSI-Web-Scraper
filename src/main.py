@@ -385,6 +385,7 @@ class YesbackpageScraper(ScraperPrototype):
 class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "bonita springs": 'https://skipthegames.com/posts/bonita-springs-fl',
@@ -451,6 +452,9 @@ class SkipthegamesScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -474,7 +478,7 @@ class SkipthegamesScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'skipthegames_{self.date_time}'
+        self.main_page_path = f'{self.path}/skipthegames_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
@@ -657,6 +661,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "daytona": 'https://megapersonals.eu/public/post_list/109/1/1',
@@ -719,6 +724,9 @@ class MegapersonalsScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -742,7 +750,7 @@ class MegapersonalsScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'megapersonals_{self.date_time}'
+        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
@@ -884,6 +892,8 @@ class MegapersonalsScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
+            if counter == 3:
+                break
 
         self.join_keywords = False
 
@@ -1678,6 +1688,8 @@ class Facade:
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
             self.yesbackpage.set_path(file_storage_path)
+            self.skipthegames.set_path(file_storage_path)
+            self.megapersonals.set_path(file_storage_path)
 
 
 # ---------------------------- Scraper (created using .ui file) ----------------------------
