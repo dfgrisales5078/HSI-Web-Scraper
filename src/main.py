@@ -1443,9 +1443,6 @@ class ErosScraper(ScraperPrototype):
                 counter += 1
             print('\n')
 
-            if counter == 5:
-                break
-
         self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
