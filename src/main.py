@@ -959,6 +959,7 @@ class MegapersonalsScraper(ScraperPrototype):
 class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
 
         self.cities = [
@@ -1022,6 +1023,9 @@ class EscortalligatorScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -1044,7 +1048,7 @@ class EscortalligatorScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'escortalligator_{self.date_time}'
+        self.scraper_directory = f'{self.path}/escortalligator_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -1238,6 +1242,7 @@ class EscortalligatorScraper(ScraperPrototype):
 class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
 
         self.cities = {
@@ -1285,6 +1290,9 @@ class ErosScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -1309,7 +1317,7 @@ class ErosScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'eros_{self.date_time}'
+        self.scraper_directory = f'{self.path}/eros_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -1690,6 +1698,8 @@ class Facade:
             self.yesbackpage.set_path(file_storage_path)
             self.skipthegames.set_path(file_storage_path)
             self.megapersonals.set_path(file_storage_path)
+            self.escortalligator.set_path(file_storage_path)
+            self.eros.set_path(file_storage_path)
 
 
 # ---------------------------- Scraper (created using .ui file) ----------------------------
