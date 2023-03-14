@@ -440,13 +440,17 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            try:
-                if self.inclusive_search:
-                    self.facade.set_megapersonals_join_keywords()
-                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-            except:
-                print('Error occurred, please try again. ')
-            time.sleep(2)
+            #try:
+            if self.inclusive_search:
+                self.facade.set_megapersonals_join_keywords()
+
+            if self.include_payment_method:
+                self.facade.set_megapersonal_only_posts_with_payment_methods()
+
+            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+            # except:
+            #     print('Error occurred, please try again. ')
+            # time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             # try:

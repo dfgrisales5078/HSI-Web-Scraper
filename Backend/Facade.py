@@ -28,6 +28,9 @@ class Facade:
     def initialize_megapersonals_scraper(self, keywords):
         self.megapersonals.initialize(keywords)
 
+    def set_megapersonal_only_posts_with_payment_methods(self):
+        self.megapersonals.set_only_posts_with_payment_methods()
+
     def set_megapersonals_city(self, city):
         self.megapersonals.set_city(city)
 
