@@ -1,5 +1,4 @@
 import json
-
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from abc import ABC, abstractmethod
 import time
@@ -892,8 +891,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
-            if counter == 3:
-                break
 
         self.join_keywords = False
 
@@ -2028,7 +2025,15 @@ class MainWindow(QMainWindow):
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
+        # disable QtabWidget indices 1 and 2 until file paths are selected
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(2, False)
+
     ''' Functions used to handle events: '''
+    def enable_tabs(self):
+        if self.keyword_file_path != '' and self.keyword_sets_file_path != '' and self.file_storage_path != '':
+            self.ui.tabWidget.setTabEnabled(1, True)
+            self.ui.tabWidget.setTabEnabled(2, True)
 
     def storage_path_selection_button_clicked(self):
         file_dialog = QFileDialog()
@@ -2038,6 +2043,7 @@ class MainWindow(QMainWindow):
             # Do something with the selected path, e.g. save a file there
             QMessageBox.information(self, "Success", f"Selected path: {save_path}")
             self.file_storage_path = save_path
+            self.enable_tabs()
             print('self.file_storage_path: ', self.file_storage_path)
             self.facade.set_storage_path(self.file_storage_path)
 
@@ -2049,6 +2055,7 @@ class MainWindow(QMainWindow):
             file_path = file_dialog.selectedFiles()[0]
             if 'keywords.txt' in file_path:
                 self.keyword_file_path = file_path
+                self.enable_tabs()
                 print('self.keyword_file_path: ', self.keyword_file_path)
                 self.keywords_instance.set_keywords_path(self.keyword_file_path)
                 self.keywords = self.keywords_instance.get_keywords()
@@ -2064,6 +2071,7 @@ class MainWindow(QMainWindow):
             file_path = file_dialog.selectedFiles()[0]
             if 'keyword_sets.txt' in file_path:
                 self.keyword_sets_file_path = file_path
+                self.enable_tabs()
                 print('self.set_file_path: ', self.keyword_sets_file_path)
                 self.keywords_instance.set_keywords_sets_path(self.keyword_sets_file_path)
                 self.keyword_sets = self.keywords_instance.get_set()
