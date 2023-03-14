@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from abc import ABC, abstractmethod
 import time
 from selenium import webdriver
@@ -1443,6 +1443,9 @@ class ErosScraper(ScraperPrototype):
                 counter += 1
             print('\n')
 
+            if counter == 5:
+                break
+
         self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
@@ -2376,7 +2379,13 @@ class MainWindow(QMainWindow):
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
-        # self.search_popup_window(self.website_selection)
+        # success/fail message box
+        parent = QWidget()
+        parent_width = parent.frameGeometry().width()
+        parent_height = parent.frameGeometry().height()
+        screen_width = QApplication.primaryScreen().availableGeometry().width()
+        screen_height = QApplication.primaryScreen().availableGeometry().height()
+        parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
 
         self.keywords_selected = set()
 
@@ -2398,8 +2407,10 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_escortalligator_join_keywords()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
                 print('Error occurred, please try again. ')
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
@@ -2407,8 +2418,10 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_megapersonals_join_keywords()
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
                 print('Error occurred, please try again. ')
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
@@ -2416,8 +2429,10 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_skipthegames_join_keywords()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
                 print('Error occurred, please try again. ')
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
@@ -2425,9 +2440,10 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
-
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
                 print('Error occurred, please try again. ')
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'eros':
@@ -2437,8 +2453,10 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_eros_join_keywords()
                 self.facade.initialize_eros_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
                 print('Error occurred, please try again.')
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
