@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from abc import ABC, abstractmethod
 import time
 from selenium import webdriver
@@ -8,6 +8,7 @@ import pandas as pd
 import undetected_chromedriver as uc
 import os
 from datetime import datetime
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 # ---------------------------- ScraperPrototype ----------------------------
@@ -56,8 +57,8 @@ class ScraperPrototype(ABC):
     def check_and_append_keywords(self, text):
         pass
 
-# ---------------------------- YesBackPage ----------------------------
 
+# ---------------------------- YesBackPage ----------------------------
 class YesbackpageScraper(ScraperPrototype):
 
     def __init__(self):
@@ -139,7 +140,7 @@ class YesbackpageScraper(ScraperPrototype):
 
         options = webdriver.ChromeOptions()
         # TODO - uncomment this line to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=options)
 
         # Open Webpage with URL
@@ -312,7 +313,6 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.join_keywords = False
 
-
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
         self.description.append(description)
         self.name.append(name)
@@ -458,7 +458,7 @@ class SkipthegamesScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -646,7 +646,9 @@ class SkipthegamesScraper(ScraperPrototype):
 
 
 # ---------------------------- Megapersonals ----------------------------
+
 class MegapersonalsScraper(ScraperPrototype):
+
     def __init__(self):
         super().__init__()
         self.driver = None
@@ -700,7 +702,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-    # TODO other info needs to be pulled using regex?
+        # TODO other info needs to be pulled using regex?
+
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -723,7 +726,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1015,7 +1018,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = webdriver.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=options)
 
         # Open Webpage with URL
@@ -1215,6 +1218,7 @@ class EscortalligatorScraper(ScraperPrototype):
 
 
 # ---------------------------- Eros ----------------------------
+
 class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
@@ -1255,6 +1259,7 @@ class ErosScraper(ScraperPrototype):
         self.keywords_found = []
 
         # TODO other info needs to be pulled using regex?
+
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -1277,7 +1282,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1305,6 +1310,7 @@ class ErosScraper(ScraperPrototype):
         self.driver.get(self.url)
         self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
+        # self.driver.maximize_window()
 
     def close_webpage(self) -> None:
         self.driver.close()
@@ -1636,6 +1642,7 @@ class Keywords:
         # with open("../keyword_sets.txt", "w") as writefile:
         #     json.dump(self.sets, writefile)
 
+
 # ---------------------------- Facade ----------------------------
 class Facade:
     def __init__(self):
@@ -1710,17 +1717,12 @@ class Facade:
         pass
 
 
-# ---------------------------- Scraper ----------------------------
+# ---------------------------- Scraper (created using .ui file) ----------------------------
 # Form implementation generated from reading ui file 'Scraper.ui'
-#
 # Created by: PyQt6 UI code generator 6.4.2
-#
-# WARNING: Any manual changes made to this file will be lost when pyuic6 is
-# run again.  Do not edit this file unless you know what you are doing.
 
-
-from PyQt6 import QtCore, QtGui, QtWidgets
-
+'''WARNING: Any manual changes made to this file will be lost when pyuic6 is
+run again.  Do not edit this file unless you know what you are doing.'''
 
 class Ui_HSIWebScraper(object):
     def setupUi(self, HSIWebScraper):
@@ -1729,23 +1731,41 @@ class Ui_HSIWebScraper(object):
         self.tabWidget = QtWidgets.QTabWidget(parent=HSIWebScraper)
         self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1131, 691))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.tabWidget.setFont(font)
         self.tabWidget.setObjectName("tabWidget")
+        self.tab = QtWidgets.QWidget()
+        self.tab.setObjectName("tab")
+        self.setFileSelectionButton = QtWidgets.QPushButton(parent=self.tab)
+        self.setFileSelectionButton.setGeometry(QtCore.QRect(440, 240, 221, 41))
+        self.setFileSelectionButton.setObjectName("setFileSelectionButton")
+        self.keywordfileSelectionButton = QtWidgets.QPushButton(parent=self.tab)
+        self.keywordfileSelectionButton.setGeometry(QtCore.QRect(440, 190, 221, 41))
+        self.keywordfileSelectionButton.setObjectName("keywordfileSelectionButton")
+        self.selectKeywordFilesLabel = QtWidgets.QLabel(parent=self.tab)
+        self.selectKeywordFilesLabel.setGeometry(QtCore.QRect(470, 150, 221, 21))
+        self.selectKeywordFilesLabel.setObjectName("selectKeywordFilesLabel")
+        self.label = QtWidgets.QLabel(parent=self.tab)
+        self.label.setGeometry(QtCore.QRect(390, 350, 381, 16))
+        self.label.setObjectName("label")
+        self.storagePathSelectionButton = QtWidgets.QPushButton(parent=self.tab)
+        self.storagePathSelectionButton.setGeometry(QtCore.QRect(440, 380, 221, 41))
+        self.storagePathSelectionButton.setObjectName("storagePathSelectionButton")
+        self.tabWidget.addTab(self.tab, "")
         self.MainScraper = QtWidgets.QWidget()
         self.MainScraper.setToolTipDuration(-1)
         self.MainScraper.setObjectName("MainScraper")
         self.keywordlistWidget = QtWidgets.QListWidget(parent=self.MainScraper)
         self.keywordlistWidget.setGeometry(QtCore.QRect(610, 180, 321, 221))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.keywordlistWidget.setFont(font)
         self.keywordlistWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
         self.keywordlistWidget.setObjectName("keywordlistWidget")
         self.setSelectionDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
         self.setSelectionDropdown.setGeometry(QtCore.QRect(200, 330, 191, 41))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.setSelectionDropdown.setFont(font)
         self.setSelectionDropdown.setCurrentText("")
         self.setSelectionDropdown.setObjectName("setSelectionDropdown")
@@ -1754,44 +1774,44 @@ class Ui_HSIWebScraper(object):
         self.setSelectionLabel = QtWidgets.QLabel(parent=self.MainScraper)
         self.setSelectionLabel.setGeometry(QtCore.QRect(200, 310, 261, 16))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.setSelectionLabel.setFont(font)
         self.setSelectionLabel.setObjectName("setSelectionLabel")
         self.keywordListLabel = QtWidgets.QLabel(parent=self.MainScraper)
         self.keywordListLabel.setGeometry(QtCore.QRect(610, 160, 161, 16))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.keywordListLabel.setFont(font)
         self.keywordListLabel.setObjectName("keywordListLabel")
         self.searchButton = QtWidgets.QPushButton(parent=self.MainScraper)
         self.searchButton.setGeometry(QtCore.QRect(500, 550, 80, 24))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.searchButton.setFont(font)
         self.searchButton.setObjectName("searchButton")
         self.keywordInclusivecheckBox = QtWidgets.QCheckBox(parent=self.MainScraper)
         self.keywordInclusivecheckBox.setGeometry(QtCore.QRect(610, 480, 301, 22))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.keywordInclusivecheckBox.setFont(font)
         self.keywordInclusivecheckBox.setObjectName("keywordInclusivecheckBox")
         self.textSearchLabel = QtWidgets.QLabel(parent=self.MainScraper)
         self.textSearchLabel.setGeometry(QtCore.QRect(200, 400, 241, 16))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.textSearchLabel.setFont(font)
         self.textSearchLabel.setObjectName("textSearchLabel")
         self.HSIScraperlabel = QtWidgets.QLabel(parent=self.MainScraper)
-        self.HSIScraperlabel.setGeometry(QtCore.QRect(410, 40, 351, 81))
+        self.HSIScraperlabel.setGeometry(QtCore.QRect(410, 40, 291, 61))
         font = QtGui.QFont()
-        font.setPointSize(31)
+        font.setPointSize(36)
         font.setBold(True)
         self.HSIScraperlabel.setFont(font)
         self.HSIScraperlabel.setObjectName("HSIScraperlabel")
         self.websiteSelectionDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
         self.websiteSelectionDropdown.setGeometry(QtCore.QRect(200, 190, 191, 41))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.websiteSelectionDropdown.setFont(font)
         self.websiteSelectionDropdown.setCurrentText("")
         self.websiteSelectionDropdown.setObjectName("websiteSelectionDropdown")
@@ -1805,39 +1825,39 @@ class Ui_HSIWebScraper(object):
         self.websiteSelectionLabel = QtWidgets.QLabel(parent=self.MainScraper)
         self.websiteSelectionLabel.setGeometry(QtCore.QRect(200, 170, 211, 16))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.websiteSelectionLabel.setFont(font)
         self.websiteSelectionLabel.setObjectName("websiteSelectionLabel")
         self.searchTextBox = QtWidgets.QLineEdit(parent=self.MainScraper)
         self.searchTextBox.setGeometry(QtCore.QRect(210, 420, 161, 31))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.searchTextBox.setFont(font)
         self.searchTextBox.setText("")
         self.searchTextBox.setObjectName("searchTextBox")
         self.selectAllKeywordscheckBox = QtWidgets.QCheckBox(parent=self.MainScraper)
         self.selectAllKeywordscheckBox.setGeometry(QtCore.QRect(610, 420, 241, 22))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.selectAllKeywordscheckBox.setFont(font)
         self.selectAllKeywordscheckBox.setObjectName("selectAllKeywordscheckBox")
         self.paymentMethodcheckBox = QtWidgets.QCheckBox(parent=self.MainScraper)
         self.paymentMethodcheckBox.setGeometry(QtCore.QRect(610, 450, 331, 22))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.paymentMethodcheckBox.setFont(font)
         self.paymentMethodcheckBox.setObjectName("paymentMethodcheckBox")
         self.setlocationDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
         self.setlocationDropdown.setGeometry(QtCore.QRect(200, 260, 191, 41))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.setlocationDropdown.setFont(font)
         self.setlocationDropdown.setCurrentText("")
         self.setlocationDropdown.setObjectName("setlocationDropdown")
         self.setLocationLabel = QtWidgets.QLabel(parent=self.MainScraper)
         self.setLocationLabel.setGeometry(QtCore.QRect(200, 240, 201, 16))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         self.setLocationLabel.setFont(font)
         self.setLocationLabel.setObjectName("setLocationLabel")
         self.tabWidget.addTab(self.MainScraper, "")
@@ -1879,9 +1899,9 @@ class Ui_HSIWebScraper(object):
         self.newSetLabel_2.setGeometry(QtCore.QRect(660, 149, 271, 16))
         self.newSetLabel_2.setObjectName("newSetLabel_2")
         self.label_2 = QtWidgets.QLabel(parent=self.EditKeywords)
-        self.label_2.setGeometry(QtCore.QRect(130, 449, 361, 31))
+        self.label_2.setGeometry(QtCore.QRect(130, 449, 351, 20))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(17)
         font.setBold(True)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
@@ -1894,6 +1914,12 @@ class Ui_HSIWebScraper(object):
     def retranslateUi(self, HSIWebScraper):
         _translate = QtCore.QCoreApplication.translate
         HSIWebScraper.setWindowTitle(_translate("HSIWebScraper", "HSI Web Scraper"))
+        self.setFileSelectionButton.setText(_translate("HSIWebScraper", "Select keyword_sets.txt file"))
+        self.keywordfileSelectionButton.setText(_translate("HSIWebScraper", "Select keywords.text file"))
+        self.selectKeywordFilesLabel.setText(_translate("HSIWebScraper", "Select keyword files:"))
+        self.label.setText(_translate("HSIWebScraper", "Select location to store screenshot and csv file:"))
+        self.storagePathSelectionButton.setText(_translate("HSIWebScraper", "Select path to store files"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("HSIWebScraper", "Settings"))
         self.setSelectionLabel.setText(_translate("HSIWebScraper", "  Select set of keywords (optional):"))
         self.keywordListLabel.setText(_translate("HSIWebScraper", "List of keywords:"))
         self.searchButton.setText(_translate("HSIWebScraper", "Search"))
@@ -1924,10 +1950,10 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
-# ---------------------------- GUI ----------------------------
-# To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
-# Then run the following command to convert the .ui file to .py:
-# pyuic6 Scraper.ui -o Scraper.py
+# ---------------------------- GUI Logic ----------------------------
+'''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
+Then run the following command to convert the .ui file to .py:
+pyuic6 Scraper.ui -o Scraper.py'''
 
 class MainWindow(QMainWindow):
 
@@ -2007,7 +2033,53 @@ class MainWindow(QMainWindow):
         # bind locationTextBox to location_text_box function
         self.ui.setlocationDropdown.currentIndexChanged.connect(self.set_location)
 
+        # bind setFileSelectionButton to set_file_selection_button_clicked function
+        self.set_file_path = ''
+        self.ui.setFileSelectionButton.clicked.connect(self.set_file_selection_button_clicked)
+
+        # bind keywordfileSelectionButton to keyword_file_selection_button_clicked function
+        self.keyword_file_path = ''
+        self.ui.keywordfileSelectionButton.clicked.connect(self.keyword_file_selection_button_clicked)
+
+        # bind storagePathSelectionButton to storage_path_selection_button_clicked function
+        self.file_storage_path = ''
+        self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
+
     ''' Functions used to handle events: '''
+
+    def storage_path_selection_button_clicked(self):
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.Directory)
+        if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
+            save_path = file_dialog.selectedFiles()[0]
+            # Do something with the selected path, e.g. save a file there
+            QMessageBox.information(self, "Success", f"Selected path: {save_path}")
+            self.file_storage_path = save_path
+            print('self.file_storage_path: ', self.file_storage_path)
+
+    def keyword_file_selection_button_clicked(self):
+        file_dialog = QFileDialog()
+        file_dialog.setNameFilter("Text files (*.txt)")
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
+            file_path = file_dialog.selectedFiles()[0]
+            if 'keywords.txt' in file_path:
+                self.keyword_file_path = file_path
+                print('self.keyword_file_path: ', self.keyword_file_path)
+            else:
+                QMessageBox.warning(self, "Error", "Please select 'keywords.txt'.")
+
+    def set_file_selection_button_clicked(self):
+        file_dialog = QFileDialog()
+        file_dialog.setNameFilter("Text files (*.txt)")
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
+            file_path = file_dialog.selectedFiles()[0]
+            if 'keyword_sets.txt' in file_path:
+                self.keyword_file_path = file_path
+                print('self.set_file_path: ', self.set_file_path)
+            else:
+                QMessageBox.warning(self, "Error", "Please select 'keyword_sets.txt'.")
 
     # popup to confirm set removal
     @staticmethod
@@ -2331,13 +2403,13 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            # try:
-            if self.inclusive_search:
-                self.facade.set_megapersonals_join_keywords()
-            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-            # except:
-            #     print('Error occurred, please try again. ')
-            # time.sleep(2)
+            try:
+                if self.inclusive_search:
+                    self.facade.set_megapersonals_join_keywords()
+                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+            except:
+                print('Error occurred, please try again. ')
+            time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
@@ -2381,7 +2453,8 @@ class MainWindow(QMainWindow):
     #     thread2.start()
     #     thread2.join()
 
-# ---------------------------- GUI ----------------------------
+
+# ---------------------------- GUI Main ----------------------------
 
 
 if __name__ == "__main__":
