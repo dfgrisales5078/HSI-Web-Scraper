@@ -1,5 +1,4 @@
 import json
-
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from abc import ABC, abstractmethod
 import time
@@ -919,8 +918,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
                 counter += 1
             print('\n')
-            if counter == 3:
-                break
 
         self.join_keywords = False
 
@@ -1786,20 +1783,55 @@ class Ui_HSIWebScraper(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.setFileSelectionButton = QtWidgets.QPushButton(parent=self.tab)
-        self.setFileSelectionButton.setGeometry(QtCore.QRect(440, 240, 221, 41))
+        self.setFileSelectionButton.setGeometry(QtCore.QRect(440, 370, 221, 41))
         self.setFileSelectionButton.setObjectName("setFileSelectionButton")
         self.keywordfileSelectionButton = QtWidgets.QPushButton(parent=self.tab)
-        self.keywordfileSelectionButton.setGeometry(QtCore.QRect(440, 190, 221, 41))
+        self.keywordfileSelectionButton.setGeometry(QtCore.QRect(440, 230, 221, 41))
         self.keywordfileSelectionButton.setObjectName("keywordfileSelectionButton")
         self.selectKeywordFilesLabel = QtWidgets.QLabel(parent=self.tab)
-        self.selectKeywordFilesLabel.setGeometry(QtCore.QRect(470, 150, 221, 21))
+        self.selectKeywordFilesLabel.setGeometry(QtCore.QRect(440, 160, 221, 21))
+        self.selectKeywordFilesLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.selectKeywordFilesLabel.setObjectName("selectKeywordFilesLabel")
         self.label = QtWidgets.QLabel(parent=self.tab)
-        self.label.setGeometry(QtCore.QRect(390, 350, 381, 16))
+        self.label.setGeometry(QtCore.QRect(360, 440, 381, 16))
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
         self.storagePathSelectionButton = QtWidgets.QPushButton(parent=self.tab)
-        self.storagePathSelectionButton.setGeometry(QtCore.QRect(440, 380, 221, 41))
+        self.storagePathSelectionButton.setGeometry(QtCore.QRect(440, 510, 221, 41))
         self.storagePathSelectionButton.setObjectName("storagePathSelectionButton")
+        self.keywordFilePathOutput = QtWidgets.QTextBrowser(parent=self.tab)
+        self.keywordFilePathOutput.setGeometry(QtCore.QRect(440, 190, 221, 31))
+        self.keywordFilePathOutput.setObjectName("keywordFilePathOutput")
+        self.keywordSetsPathOutput = QtWidgets.QTextBrowser(parent=self.tab)
+        self.keywordSetsPathOutput.setGeometry(QtCore.QRect(440, 330, 221, 31))
+        self.keywordSetsPathOutput.setObjectName("keywordSetsPathOutput")
+        self.textBrowser_3 = QtWidgets.QTextBrowser(parent=self.tab)
+        self.textBrowser_3.setGeometry(QtCore.QRect(440, 470, 221, 31))
+        self.textBrowser_3.setObjectName("textBrowser_3")
+        self.label_3 = QtWidgets.QLabel(parent=self.tab)
+        self.label_3.setGeometry(QtCore.QRect(320, 30, 461, 61))
+        font = QtGui.QFont()
+        font.setPointSize(25)
+        font.setBold(True)
+        self.label_3.setFont(font)
+        self.label_3.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        self.selectKeywordFilesLabel_2 = QtWidgets.QLabel(parent=self.tab)
+        self.selectKeywordFilesLabel_2.setGeometry(QtCore.QRect(440, 300, 221, 21))
+        self.selectKeywordFilesLabel_2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.selectKeywordFilesLabel_2.setObjectName("selectKeywordFilesLabel_2")
+        self.KeywordFileProgressBar = QtWidgets.QProgressBar(parent=self.tab)
+        self.KeywordFileProgressBar.setGeometry(QtCore.QRect(440, 260, 221, 23))
+        self.KeywordFileProgressBar.setProperty("value", 0)
+        self.KeywordFileProgressBar.setObjectName("KeywordFileProgressBar")
+        self.keywordSetsProgressBar = QtWidgets.QProgressBar(parent=self.tab)
+        self.keywordSetsProgressBar.setGeometry(QtCore.QRect(440, 400, 221, 23))
+        self.keywordSetsProgressBar.setProperty("value", 0)
+        self.keywordSetsProgressBar.setObjectName("keywordSetsProgressBar")
+        self.storagePathProgressBar = QtWidgets.QProgressBar(parent=self.tab)
+        self.storagePathProgressBar.setGeometry(QtCore.QRect(440, 540, 221, 23))
+        self.storagePathProgressBar.setProperty("value", 0)
+        self.storagePathProgressBar.setObjectName("storagePathProgressBar")
         self.tabWidget.addTab(self.tab, "")
         self.MainScraper = QtWidgets.QWidget()
         self.MainScraper.setToolTipDuration(-1)
@@ -1851,11 +1883,12 @@ class Ui_HSIWebScraper(object):
         self.textSearchLabel.setFont(font)
         self.textSearchLabel.setObjectName("textSearchLabel")
         self.HSIScraperlabel = QtWidgets.QLabel(parent=self.MainScraper)
-        self.HSIScraperlabel.setGeometry(QtCore.QRect(410, 40, 291, 61))
+        self.HSIScraperlabel.setGeometry(QtCore.QRect(390, 20, 331, 91))
         font = QtGui.QFont()
         font.setPointSize(36)
         font.setBold(True)
         self.HSIScraperlabel.setFont(font)
+        self.HSIScraperlabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.HSIScraperlabel.setObjectName("HSIScraperlabel")
         self.websiteSelectionDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
         self.websiteSelectionDropdown.setGeometry(QtCore.QRect(200, 190, 191, 41))
@@ -1954,6 +1987,14 @@ class Ui_HSIWebScraper(object):
         font.setBold(True)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
+        self.label_4 = QtWidgets.QLabel(parent=self.EditKeywords)
+        self.label_4.setGeometry(QtCore.QRect(350, 10, 431, 81))
+        font = QtGui.QFont()
+        font.setPointSize(25)
+        font.setBold(True)
+        self.label_4.setFont(font)
+        self.label_4.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label_4.setObjectName("label_4")
         self.tabWidget.addTab(self.EditKeywords, "")
 
         self.retranslateUi(HSIWebScraper)
@@ -1965,9 +2006,14 @@ class Ui_HSIWebScraper(object):
         HSIWebScraper.setWindowTitle(_translate("HSIWebScraper", "HSI Web Scraper"))
         self.setFileSelectionButton.setText(_translate("HSIWebScraper", "Select keyword_sets.txt file"))
         self.keywordfileSelectionButton.setText(_translate("HSIWebScraper", "Select keywords.txt file"))
-        self.selectKeywordFilesLabel.setText(_translate("HSIWebScraper", "Select keyword files:"))
+        self.selectKeywordFilesLabel.setText(_translate("HSIWebScraper", "Select keyword file:"))
         self.label.setText(_translate("HSIWebScraper", "Select location to store screenshot and csv file:"))
         self.storagePathSelectionButton.setText(_translate("HSIWebScraper", "Select path to store files"))
+        self.keywordFilePathOutput.setPlaceholderText(_translate("HSIWebScraper", "No file chosen"))
+        self.keywordSetsPathOutput.setPlaceholderText(_translate("HSIWebScraper", "No file chosen"))
+        self.textBrowser_3.setPlaceholderText(_translate("HSIWebScraper", "No path chosen"))
+        self.label_3.setText(_translate("HSIWebScraper", "Choose file settings for scraper."))
+        self.selectKeywordFilesLabel_2.setText(_translate("HSIWebScraper", "Select keyword sets file:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("HSIWebScraper", "Settings"))
         self.setSelectionLabel.setText(_translate("HSIWebScraper", "  Select set of keywords (optional):"))
         self.keywordListLabel.setText(_translate("HSIWebScraper", "List of keywords:"))
@@ -1996,6 +2042,7 @@ class Ui_HSIWebScraper(object):
         self.removeSetButton.setText(_translate("HSIWebScraper", "Remove selected set"))
         self.newSetLabel_2.setText(_translate("HSIWebScraper", "Select keywords from list on the left."))
         self.label_2.setText(_translate("HSIWebScraper", "Warning: Remove only one keyword at a time."))
+        self.label_4.setText(_translate("HSIWebScraper", "Edit keywords and sets for scraper."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
@@ -2092,7 +2139,15 @@ class MainWindow(QMainWindow):
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
+        # disable QtabWidget indices 1 and 2 until file paths are selected
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(2, False)
+
     ''' Functions used to handle events: '''
+    def enable_tabs(self):
+        if self.keyword_file_path != '' and self.keyword_sets_file_path != '' and self.file_storage_path != '':
+            self.ui.tabWidget.setTabEnabled(1, True)
+            self.ui.tabWidget.setTabEnabled(2, True)
 
     def storage_path_selection_button_clicked(self):
         file_dialog = QFileDialog()
@@ -2102,6 +2157,7 @@ class MainWindow(QMainWindow):
             # Do something with the selected path, e.g. save a file there
             QMessageBox.information(self, "Success", f"Selected path: {save_path}")
             self.file_storage_path = save_path
+            self.enable_tabs()
             print('self.file_storage_path: ', self.file_storage_path)
             self.facade.set_storage_path(self.file_storage_path)
 
@@ -2113,6 +2169,7 @@ class MainWindow(QMainWindow):
             file_path = file_dialog.selectedFiles()[0]
             if 'keywords.txt' in file_path:
                 self.keyword_file_path = file_path
+                self.enable_tabs()
                 print('self.keyword_file_path: ', self.keyword_file_path)
                 self.keywords_instance.set_keywords_path(self.keyword_file_path)
                 self.keywords = self.keywords_instance.get_keywords()
@@ -2128,6 +2185,7 @@ class MainWindow(QMainWindow):
             file_path = file_dialog.selectedFiles()[0]
             if 'keyword_sets.txt' in file_path:
                 self.keyword_sets_file_path = file_path
+                self.enable_tabs()
                 print('self.set_file_path: ', self.keyword_sets_file_path)
                 self.keywords_instance.set_keywords_sets_path(self.keyword_sets_file_path)
                 self.keyword_sets = self.keywords_instance.get_set()
