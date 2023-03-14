@@ -1,3 +1,5 @@
+import json
+
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from abc import ABC, abstractmethod
 import time
@@ -1504,143 +1506,96 @@ class ErosScraper(ScraperPrototype):
 # ---------------------------- Keywords ----------------------------
 class Keywords:
     def __init__(self):
-        self.keywords = ['car rental',
-                         'travel',
-                         'hotels',
-                         'sex shops',
-                         'fast food',
-                         'condoms',
-                         'lubricant',
-                         'costumes/lingerie',
-                         'taxi/uber/rail',
-                         'fedex',
-                         'airlines',
-                         'different phones',
-                         'bars/clubs',
-                         'traphouse',
-                         'unicorn herd/unicorn herder',
-                         'lola/loli/lolita group',
-                         'cheese pizza',
-                         'hotdog',
-                         'cheese',
-                         'ice cream',
-                         'mac & cheese',
-                         'fashion show',
-                         'pos',
-                         'pir',
-                         'p911',
-                         'paw',
-                         'pal',
-                         'pthc',
-                         'kpc',
-                         'magic kingdom',
-                         'thanks for the show',
-                         'money for video',
-                         'webcam show',
-                         'well done honey',
-                         'cutie',
-                         'baby pussy',
-                         'angel',
-                         'precious',
-                         'complete fashion show',
-                         'this is payment for the job you just finished',
-                         'outcall',
-                         'incall',
-                         'new asian ladies',
-                         'independent',
-                         'sweet and real young girl',
-                         'totally independent',
-                         'agency',
-                         'serve many cities',
-                         'carcall']
+        self.keywords = []
+        self.sets = {}
+        self.keywords_path = ''
+        self.keywords_set_path = ''
 
-        self.sets = {"working keywords": ["outcall", "incall", "new asian ladies", "independent",
-                                          "sweet and real young girl", "agency", "serve many cities"],
-                     "child trafficking trends": ["thanks for the show", "money for video", "webcam show",
-                                                  "well done honey", "cutie", "baby pussy", "angel", "precious",
-                                                  "complete fashion show",
-                                                  "this is payment for the job you just finished"],
-                     "child trafficker darknet code words": ["unicorn herder", "unicorn herd", "lola", "loli",
-                                                             "lolita", "cheese pizza", "hotdog", "cheese", "ice cream",
-                                                             "mac & cheese", "fashion show", "pos", "pir", "p911",
-                                                             "paw", "pal", "pthc", "kpc", "magic kingdom"],
-                     "adult trafficking": ["traphouse", "bars", "clubs", "different phones", "airlines",
-                                           "fedex", "taxi", "uber", "rail", "lingerie", "costumes",
-                                           "lubricant", "condoms", "fast food", "sex shops", "hotels",
-                                           "travel", "car rental"]
-                     }
+    def set_keywords_path(self, keyword_file_path):
+        self.keywords_path = keyword_file_path
+
+    def set_keywords_sets_path(self, keyword_sets_file_path):
+        self.keywords_set_path = keyword_sets_file_path
 
     def add_keywords(self, keyword):
-        self.keywords.append(keyword)
-
-        # with open("../keywords.txt", "r+") as filename:
-        #     content_set = filename.read().splitlines()
-        #     if keyword not in content_set:
-        #         filename.write("\n" + keyword.lower())
-        #     else:
-        #         print("Keyword already in file")
+        # self.keywords.append(keyword)
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r+") as filename:
+                content_set = filename.read().splitlines()
+                if keyword not in content_set:
+                    filename.write("\n" + keyword.lower())
+                else:
+                    print("Keyword already in file")
 
     def remove_keywords(self, keyword):
-        self.keywords.remove(keyword)
+        # self.keywords.remove(keyword)
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r") as filename:
+                content_set = filename.read().splitlines()
+                index = content_set.index(keyword.lower())
 
-        # with open("../keywords.txt", "r") as filename:
-        #     content_set = filename.read().splitlines()
-        #     index = content_set.index(keyword.lower())
-        #
-        #     content_set.remove(content_set[index])
-        #
-        # with open("../keywords.txt", "w") as filename:
-        #     filename.write("\n".join(content_set))
+                content_set.remove(content_set[index])
+
+            with open(self.keywords_path, "w") as filename:
+                filename.write("\n".join(content_set))
 
     def create_set(self, set_name, keywords_list):
-        self.sets[set_name.lower()] = keywords_list
-
-        # with open("../keyword_sets.txt", "r") as readfile:
-        #     read = readfile.read()
-        #     if read != '':
-        #         self.sets = json.loads(read)
         # self.sets[set_name.lower()] = keywords_list
-        # with open("../keyword_sets.txt", "w") as writefile:
-        #     json.dump(self.sets, writefile)
+
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                read = readfile.read()
+                if read != '':
+                    self.sets = json.loads(read)
+            self.sets[set_name.lower()] = keywords_list
+            with open(self.keywords_set_path, "w") as writefile:
+                json.dump(self.sets, writefile)
 
     def remove_set(self, set_name):
-        del self.sets[set_name.lower()]
-
-        # with open("../keyword_sets.txt", "r") as readfile:
-        #     self.sets = json.loads(readfile.read())
-        #
         # del self.sets[set_name.lower()]
-        #
-        # with open('../keyword_sets.txt', 'w') as writefile:
-        #     json.dump(self.sets, writefile)
+
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
+
+            del self.sets[set_name.lower()]
+
+            with open(self.keywords_set_path, 'w') as writefile:
+                json.dump(self.sets, writefile)
 
     def get_set_values(self, set_name):
-        # with open("../keyword_sets.txt", "r") as readfile:
-        #     self.sets = json.loads(readfile.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
 
-        return self.sets[set_name.lower()]
+            return self.sets[set_name.lower()]
 
     def get_keywords(self):
-        # with open("../keywords.txt", "r") as filename:
-        #     self.keywords = filename.read().splitlines()
-        return self.keywords
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r") as filename:
+                self.keywords = filename.read().splitlines()
+
+            return self.keywords
 
     def get_set(self):
-        # with open("../keyword_sets.txt", "r") as filename:
-        #     self.sets = json.loads(filename.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as filename:
+                self.sets = json.loads(filename.read())
 
-        return self.sets
+            return self.sets
 
     def remove_keyword_from_set(self, keyword, set_name):
-        # with open("../keyword_sets.txt", "r") as readfile:
-        #     self.sets = json.loads(readfile.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
 
-        list_value = list(self.sets[set_name])
-        list_value.remove(keyword)
-        self.sets[set_name] = list_value
+            list_value = list(self.sets[set_name])
+            list_value.remove(keyword)
+            self.sets[set_name] = list_value
 
-        # with open("../keyword_sets.txt", "w") as writefile:
-        #     json.dump(self.sets, writefile)
+            with open(self.keywords_set_path, "w") as writefile:
+                json.dump(self.sets, writefile)
+
 
 
 # ---------------------------- Facade ----------------------------
@@ -1976,17 +1931,14 @@ class MainWindow(QMainWindow):
         self.include_payment_method = False
         self.inclusive_search = False
         self.search_text = ''
-        self.keywords = self.keywords_instance.get_keywords()
-        self.keyword_sets = self.keywords_instance.get_set()
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
         self.manual_keyword_selection = set()
         self.set_keyword_selection = set()
         self.locations = []
         self.location = ''
-
-        self.initialize_keywords(self.keywords)
-        self.initialize_keyword_sets(self.keyword_sets)
+        self.keywords = ''
+        self.keyword_sets = ''
 
         # dark mode
         # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
@@ -2034,7 +1986,7 @@ class MainWindow(QMainWindow):
         self.ui.setlocationDropdown.currentIndexChanged.connect(self.set_location)
 
         # bind setFileSelectionButton to set_file_selection_button_clicked function
-        self.set_file_path = ''
+        self.keyword_sets_file_path = ''
         self.ui.setFileSelectionButton.clicked.connect(self.set_file_selection_button_clicked)
 
         # bind keywordfileSelectionButton to keyword_file_selection_button_clicked function
@@ -2044,6 +1996,7 @@ class MainWindow(QMainWindow):
         # bind storagePathSelectionButton to storage_path_selection_button_clicked function
         self.file_storage_path = ''
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
+        # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
     ''' Functions used to handle events: '''
 
@@ -2066,6 +2019,9 @@ class MainWindow(QMainWindow):
             if 'keywords.txt' in file_path:
                 self.keyword_file_path = file_path
                 print('self.keyword_file_path: ', self.keyword_file_path)
+                self.keywords_instance.set_keywords_path(self.keyword_file_path)
+                self.keywords = self.keywords_instance.get_keywords()
+                self.initialize_keywords(self.keywords)
             else:
                 QMessageBox.warning(self, "Error", "Please select 'keywords.txt'.")
 
@@ -2076,8 +2032,11 @@ class MainWindow(QMainWindow):
         if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
             file_path = file_dialog.selectedFiles()[0]
             if 'keyword_sets.txt' in file_path:
-                self.set_file_path = file_path
-                print('self.set_file_path: ', self.set_file_path)
+                self.keyword_sets_file_path = file_path
+                print('self.set_file_path: ', self.keyword_sets_file_path)
+                self.keywords_instance.set_keywords_sets_path(self.keyword_sets_file_path)
+                self.keyword_sets = self.keywords_instance.get_set()
+                self.initialize_keyword_sets(self.keyword_sets)
             else:
                 QMessageBox.warning(self, "Error", "Please select 'keyword_sets.txt'.")
 
