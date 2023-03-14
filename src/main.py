@@ -2076,7 +2076,7 @@ class MainWindow(QMainWindow):
         if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
             file_path = file_dialog.selectedFiles()[0]
             if 'keyword_sets.txt' in file_path:
-                self.keyword_file_path = file_path
+                self.set_file_path = file_path
                 print('self.set_file_path: ', self.set_file_path)
             else:
                 QMessageBox.warning(self, "Error", "Please select 'keyword_sets.txt'.")
