@@ -1915,7 +1915,7 @@ class Ui_HSIWebScraper(object):
         _translate = QtCore.QCoreApplication.translate
         HSIWebScraper.setWindowTitle(_translate("HSIWebScraper", "HSI Web Scraper"))
         self.setFileSelectionButton.setText(_translate("HSIWebScraper", "Select keyword_sets.txt file"))
-        self.keywordfileSelectionButton.setText(_translate("HSIWebScraper", "Select keywords.text file"))
+        self.keywordfileSelectionButton.setText(_translate("HSIWebScraper", "Select keywords.txt file"))
         self.selectKeywordFilesLabel.setText(_translate("HSIWebScraper", "Select keyword files:"))
         self.label.setText(_translate("HSIWebScraper", "Select location to store screenshot and csv file:"))
         self.storagePathSelectionButton.setText(_translate("HSIWebScraper", "Select path to store files"))
