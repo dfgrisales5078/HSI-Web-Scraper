@@ -144,7 +144,7 @@ class YesbackpageScraper(ScraperPrototype):
         options = uc.ChromeOptions()
         # TODO - uncomment this line to run headless
         options.add_argument('--headless')
-        self.driver = uc.Chrome(options=options)
+        self.driver = uc.Chrome(subprocress=True, options=options)
 
         # Open Webpage with URL
         self.open_webpage()
@@ -1017,7 +1017,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
