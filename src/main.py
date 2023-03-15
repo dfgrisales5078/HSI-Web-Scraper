@@ -2190,7 +2190,7 @@ class MainWindow(QMainWindow):
             if 'keywords.txt' in file_path:
                 self.keyword_file_path = file_path
                 self.enable_tabs()
-
+                QMessageBox.information(self, "Success", f"Selected file: {self.keyword_file_path}")
                 self.ui.keywordFilePathOutput.setText(self.keyword_file_path)
                 self.ui.keywordFileProgressBar.setValue(100)
 
@@ -2210,6 +2210,7 @@ class MainWindow(QMainWindow):
             if 'keyword_sets.txt' in file_path:
                 self.keyword_sets_file_path = file_path
                 self.enable_tabs()
+                QMessageBox.information(self, "Success", f"Selected file: {self.keyword_sets_file_path}")
 
                 self.ui.keywordSetsPathOutput.setText(self.keyword_sets_file_path)
                 self.ui.keywordSetsProgressBar.setValue(100)
