@@ -1,5 +1,5 @@
 import json
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QStyleFactory
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from abc import ABC, abstractmethod
 import time
 from selenium import webdriver
@@ -11,6 +11,13 @@ import os
 from datetime import datetime
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+# ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
+try:
+    from ctypes import windll
+    myappid = 'hsi.scraper.version1.0'
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+except:
+    pass
 
 # ---------------------------- ScraperPrototype ----------------------------
 class ScraperPrototype(ABC):
@@ -2538,7 +2545,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    app.setStyleSheet(QStyleFactory.create('Plastique'))
+    app.setWindowIcon(QtGui.QIcon('hsi.ico'))
     window = MainWindow()
     window.show()
     app.exec()
