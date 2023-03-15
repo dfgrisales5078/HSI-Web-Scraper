@@ -1,5 +1,5 @@
 import json
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QStyleFactory
 from abc import ABC, abstractmethod
 import time
 from selenium import webdriver
@@ -92,8 +92,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.scraper_directory = None
@@ -119,8 +118,6 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
-
-        # TODO other info needs to be pulled using regex?
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -181,12 +178,10 @@ class YesbackpageScraper(ScraperPrototype):
         posts = self.driver.find_elements(
             By.CLASS_NAME, 'posttitle')
         links = [post.get_attribute('href') for post in posts]
-        print(links)
         return links[2:]
 
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         links = links
@@ -194,8 +189,6 @@ class YesbackpageScraper(ScraperPrototype):
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -204,7 +197,6 @@ class YesbackpageScraper(ScraperPrototype):
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/'
                               'tr/td/div/p[2]').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
@@ -212,7 +204,6 @@ class YesbackpageScraper(ScraperPrototype):
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[1]/td[2]').text[2:]
-                print(name)
             except NoSuchElementException:
                 name = 'N/A'
 
@@ -220,7 +211,6 @@ class YesbackpageScraper(ScraperPrototype):
                 sex = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[2]/td[2]').text[2:]
-                print(sex)
             except NoSuchElementException:
                 sex = 'N/A'
 
@@ -228,7 +218,6 @@ class YesbackpageScraper(ScraperPrototype):
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[6]/td[2]').text[2:]
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'NA'
 
@@ -236,7 +225,6 @@ class YesbackpageScraper(ScraperPrototype):
                 email = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[8]/td[2]').text[2:]
-                print(email)
             except NoSuchElementException:
                 email = 'N/A'
 
@@ -244,7 +232,6 @@ class YesbackpageScraper(ScraperPrototype):
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[9]/td[2]').text[2:]
-                print(location)
             except NoSuchElementException:
                 location = 'N/A'
 
@@ -252,7 +239,6 @@ class YesbackpageScraper(ScraperPrototype):
                 services = self.driver.find_element(
                     By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
                               'tbody/tr[5]/td[2]').text[2:]
-                print(services)
             except NoSuchElementException:
                 services = 'N/A'
 
@@ -316,7 +302,6 @@ class YesbackpageScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print("\n")
 
         self.join_keywords = False
 
@@ -369,14 +354,12 @@ class YesbackpageScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -391,7 +374,6 @@ class YesbackpageScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
 
@@ -428,8 +410,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.url = ''
 
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.main_page_path = None
@@ -450,14 +431,6 @@ class SkipthegamesScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
-
-        # TODO these need to be pulled from about_info, description, or activities using regex?
-        # self.phone_number = []
-        # self.name = []
-        # self.sex = []
-        # self.email = []
-        # self.payment_method = []
-        # self.location = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -522,43 +495,33 @@ class SkipthegamesScraper(ScraperPrototype):
 
         # remove sponsored links
         links = [link for link in links if link.startswith('https://skipthegames.com/posts/')]
-
-        print([link for link in set(links)])
-        print('# of links:', len(set(links)))
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 about_info = self.driver.find_element(
                     By.XPATH, '/html/body/div[7]/div/div[2]/div/table/tbody').text
-                print(about_info)
             except NoSuchElementException:
                 about_info = 'N/A'
 
             try:
                 services = self.driver.find_element(
                     By.XPATH, '//*[@id="post-services"]').text
-                print(services)
             except NoSuchElementException:
                 services = 'N/A'
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
@@ -615,7 +578,6 @@ class SkipthegamesScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print('\n')
 
         self.join_keywords = False
 
@@ -656,14 +618,12 @@ class SkipthegamesScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -678,7 +638,6 @@ class SkipthegamesScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
 
@@ -688,7 +647,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
-        self.storage_path = None
+        self.path = None
         self.driver = None
         self.cities = {
             "daytona": 'https://megapersonals.eu/public/post_list/109/1/1',
@@ -715,8 +674,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         # set date variables and path
         self.date_time = None
@@ -741,8 +699,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO other info needs to be pulled using regex?
-
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -753,8 +709,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.join_keywords = True
 
     def set_path(self, path) -> None:
-        self.storage_path = path
-        print('from megapersonals set_path(): ', self.storage_path)
+        self.path = path
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -778,12 +733,9 @@ class MegapersonalsScraper(ScraperPrototype):
         # Find links of posts
         links = self.get_links()
 
-        # TODO - BUG when running megapersonals using path selection
         # create directories for screenshot and csv
-        print('from megapersonals initialize(): ', self.storage_path)
-        self.main_page_path = f'{self.storage_path}/megapersonals_{self.date_time}'
+        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
-
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
@@ -816,52 +768,43 @@ class MegapersonalsScraper(ScraperPrototype):
             links.append(person.find_element(By.TAG_NAME, "a").get_attribute("href"))
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/span').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/div[1]/span').text
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'N/A'
 
             try:
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[2]').text[5:]
-                print(name)
             except NoSuchElementException:
                 name = 'N/A'
 
             try:
                 city = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[1]').text[5:]
-                print(city)
             except NoSuchElementException:
                 city = 'N/A'
 
             try:
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[2]').text[9:]
-                print(location)
             except NoSuchElementException:
                 location = 'N/A'
 
@@ -923,7 +866,6 @@ class MegapersonalsScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print('\n')
 
         self.join_keywords = False
 
@@ -970,14 +912,12 @@ class MegapersonalsScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -992,7 +932,6 @@ class MegapersonalsScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
 
@@ -1031,8 +970,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
 
         self.date_time = None
         self.scraper_directory = None
@@ -1054,8 +992,6 @@ class EscortalligatorScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
-
-        # TODO other info needs to be pulled using regex?
 
     def get_cities(self) -> list:
         return self.cities
@@ -1132,38 +1068,30 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def get_formatted_url(self) -> None:
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         links = set(links)
         counter = 0
 
         for link in links:
-            print(link)
-
-            # self.driver.implicitly_wait(10)
-            # time.sleep(3)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 description = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostbody').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.CLASS_NAME, 'userInfoContainer').text
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'N/A'
 
             try:
                 location_and_age = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostlocationIconBabylon').text
-                print(location_and_age)
             except NoSuchElementException:
                 location_and_age = 'N/A'
 
@@ -1223,9 +1151,6 @@ class EscortalligatorScraper(ScraperPrototype):
 
                 counter += 1
 
-                print(counter)
-            print('\n')
-
         self.join_keywords = False
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
@@ -1265,14 +1190,12 @@ class EscortalligatorScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -1287,7 +1210,6 @@ class EscortalligatorScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
 
@@ -1309,8 +1231,7 @@ class ErosScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
 
         self.date_time = None
         self.scraper_directory = None
@@ -1333,8 +1254,6 @@ class ErosScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
-
-        # TODO other info needs to be pulled using regex?
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -1366,7 +1285,7 @@ class ErosScraper(ScraperPrototype):
 
         # Open Webpage with URL
         self.open_webpage()
-        time.sleep(4)
+        time.sleep(10)
 
         # Find links of posts
         links = self.get_links()
@@ -1403,7 +1322,6 @@ class ErosScraper(ScraperPrototype):
             self.driver.find_element(
                 By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
         except NoSuchElementException:
-            print("There was a problem with finding the website.")
             exit(1)
 
         try:
@@ -1411,29 +1329,23 @@ class ErosScraper(ScraperPrototype):
             posts = self.driver.find_elements(
                 By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
         except NoSuchElementException:
-            print("There was a problem finding posts.")
             exit(1)
 
         if posts:
             links = [post.get_attribute('href') for post in posts]
-            print(set(links))
         else:
-            print("No posts found.")
             exit(1)
 
         return set(links)
 
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         description = ''
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -1441,28 +1353,24 @@ class ErosScraper(ScraperPrototype):
             try:
                 profile_header = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[1]').text
-                print(profile_header)
             except NoSuchElementException:
                 profile_header = 'N/A'
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '// *[ @ id = "pageone"] / div[3] / div / div[1] / div[2]').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 info_details = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[1]/div').text
-                print(info_details)
             except NoSuchElementException:
                 info_details = 'N/A'
 
             try:
                 contact_details = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[2]').text
-                print(contact_details)
             except NoSuchElementException:
                 contact_details = 'N/A'
 
@@ -1521,7 +1429,6 @@ class ErosScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print('\n')
             if counter == 3:
                 break
 
@@ -1567,17 +1474,14 @@ class ErosScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
-        print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     def check_keywords(self, data) -> bool:
@@ -1590,7 +1494,6 @@ class ErosScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
 
@@ -1615,8 +1518,6 @@ class Keywords:
                 content_set = filename.read().splitlines()
                 if keyword not in content_set:
                     filename.write("\n" + keyword.lower())
-                else:
-                    print("Keyword already in file")
 
     def remove_keywords(self, keyword):
         # self.keywords.remove(keyword)
@@ -1709,8 +1610,7 @@ class Facade:
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
-    def initialize_megapersonals_scraper(self, keywords, storage_path):
-        self.megapersonals.set_path(storage_path)
+    def initialize_megapersonals_scraper(self, keywords):
         self.megapersonals.initialize(keywords)
 
     def set_megapersonals_city(self, city):
@@ -1759,6 +1659,9 @@ class Facade:
     def get_eros_cities(self):
         return self.eros.get_cities()
 
+    def format_data(self, data):
+        pass
+
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
             self.yesbackpage.set_path(file_storage_path)
@@ -1766,7 +1669,6 @@ class Facade:
             self.megapersonals.set_path(file_storage_path)
             self.escortalligator.set_path(file_storage_path)
             self.eros.set_path(file_storage_path)
-            print('from facade: ', file_storage_path)
 
 
 # ---------------------------- Scraper (created using .ui file) ----------------------------
@@ -2116,7 +2018,7 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
-# ---------------------------- MainWindow (GUI) ----------------------------
+# ---------------------------- GUI Logic ----------------------------
 '''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
 pyuic6 Scraper.ui -o Scraper.py
@@ -2134,13 +2036,6 @@ class MainWindow(QMainWindow):
         self.keywords_instance = Keywords()
         self.facade = Facade()
 
-        # TODO - center app when screen maximized
-        # self.central_widget = QWidget(self)
-        # self.layout = QVBoxLayout(self.central_widget)
-        # self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.setCentralWidget(self.central_widget)
-        # self.showMaximized()
-
         # attributes used to handle events
         self.website_selection = ''
         self.include_payment_method = False
@@ -2155,6 +2050,7 @@ class MainWindow(QMainWindow):
         self.keywords = ''
         self.keyword_sets = ''
 
+        # TODO set dark mode?
         # dark mode
         # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
 
@@ -2230,7 +2126,7 @@ class MainWindow(QMainWindow):
         if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
             save_path = file_dialog.selectedFiles()[0]
 
-            QMessageBox.information(self, "Success", f"Files will be stored in: {save_path}")
+            QMessageBox.information(self, "Success", f"Selected path: {save_path}")
             self.file_storage_path = save_path
             self.enable_tabs()
 
@@ -2238,7 +2134,6 @@ class MainWindow(QMainWindow):
             self.ui.storagePathProgressBar.setValue(100)
 
             self.facade.set_storage_path(self.file_storage_path)
-            print('from gui: ', self.file_storage_path)
 
     def keyword_file_selection_button_clicked(self):
         file_dialog = QFileDialog()
@@ -2249,11 +2144,9 @@ class MainWindow(QMainWindow):
             if 'keywords.txt' in file_path:
                 self.keyword_file_path = file_path
                 self.enable_tabs()
-                # QMessageBox.information(self, "Success", f"Selected file: {self.keyword_file_path}")
                 self.ui.keywordFilePathOutput.setText(self.keyword_file_path)
                 self.ui.keywordFileProgressBar.setValue(100)
 
-                print('self.keyword_file_path: ', self.keyword_file_path)
                 self.keywords_instance.set_keywords_path(self.keyword_file_path)
                 self.keywords = self.keywords_instance.get_keywords()
                 self.initialize_keywords(self.keywords)
@@ -2269,12 +2162,10 @@ class MainWindow(QMainWindow):
             if 'keyword_sets.txt' in file_path:
                 self.keyword_sets_file_path = file_path
                 self.enable_tabs()
-                # QMessageBox.information(self, "Success", f"Selected file: {self.keyword_sets_file_path}")
 
                 self.ui.keywordSetsPathOutput.setText(self.keyword_sets_file_path)
                 self.ui.keywordSetsProgressBar.setValue(100)
 
-                print('self.set_file_path: ', self.keyword_sets_file_path)
                 self.keywords_instance.set_keywords_sets_path(self.keyword_sets_file_path)
                 self.keyword_sets = self.keywords_instance.get_set()
                 self.initialize_keyword_sets(self.keyword_sets)
@@ -2447,12 +2338,9 @@ class MainWindow(QMainWindow):
             if not self.ui.keywordlistWidget.item(i).isSelected():
                 self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(i).text())
 
-        print(self.manual_keyword_selection)
-
     # handle dropdown menu for keyword sets
     def set_selection_dropdown(self):
         selected_set = self.ui.setSelectionDropdown.currentText()
-        print(selected_set)
 
         # if empty set, unselect all keywords
         if selected_set == '':
@@ -2465,8 +2353,6 @@ class MainWindow(QMainWindow):
         # get keywords from selected set from keywords class
         keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
 
-        print('values of keyword selected: ', keywords_of_selected_set)
-
         # select keywords_of_selected_set in keywordlistWidget
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).text() in keywords_of_selected_set:
@@ -2477,7 +2363,6 @@ class MainWindow(QMainWindow):
 
         # unselect keywords that are not in selected set
         if not keywords_of_selected_set:
-            print('self.manual_keyword_selection: ', self.manual_keyword_selection)
             for i in range(self.ui.keywordlistWidget.count()):
                 if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                     self.ui.keywordlistWidget.item(i).setSelected(False)
@@ -2486,28 +2371,22 @@ class MainWindow(QMainWindow):
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
 
-    # TODO - add logic to scrape with all inclusive keywords
     def keyword_inclusive_check_box(self):
         if self.ui.keywordInclusivecheckBox.isChecked():
             self.inclusive_search = True
-            print('keyword inclusive box checked')
         else:
             self.inclusive_search = False
-            print('keyword inclusive box unchecked')
 
     # if checked, select all items in list widget
     def select_all_keywords_check_box(self):
         if self.ui.selectAllKeywordscheckBox.isChecked():
             self.ui.selectAllKeywordscheckBox.setEnabled(True)
-            print('select all keywords box checked')
             # select all items in list widget
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
-                print(self.ui.keywordlistWidget.item(i).text())
                 self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
-            print('select all keywords box unchecked')
             self.keywords_selected = set()
             # deselect all items in list widget
             for i in range(self.ui.keywordlistWidget.count()):
@@ -2515,18 +2394,14 @@ class MainWindow(QMainWindow):
 
         # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
-        print(self.keywords_selected)
 
-    # TODO - add logic to scrape with payment method only
     def payment_method_check_box(self):
         if self.ui.paymentMethodcheckBox.isChecked():
             self.ui.paymentMethodcheckBox.setEnabled(True)
             self.include_payment_method = True
-            print('payment box checked')
         else:
             self.ui.paymentMethodcheckBox.setEnabled(False)
             self.include_payment_method = False
-            print('payment box unchecked')
 
         # enable checkbox after it's unchecked
         self.ui.paymentMethodcheckBox.setEnabled(True)
@@ -2534,7 +2409,6 @@ class MainWindow(QMainWindow):
     # handle dropdown menu for payment method
     def website_selection_dropdown(self):
         self.website_selection = self.ui.websiteSelectionDropdown.currentText()
-        print(self.ui.websiteSelectionDropdown.currentText())
         self.ui.searchButton.setEnabled(True)
 
         if self.website_selection == 'eros':
@@ -2571,7 +2445,6 @@ class MainWindow(QMainWindow):
         popup.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel)
 
         if popup.exec() == QtWidgets.QMessageBox.StandardButton.Cancel:
-            print('scraping interrupted')
             popup.close()
 
     # scrape website selected when search button is clicked
@@ -2587,7 +2460,6 @@ class MainWindow(QMainWindow):
         self.keywords_selected = set()
 
         # add input text to self.keywords_selected set
-        print('text box: ', self.keywords_selected)
 
         # find keywords selected in keyword list widget
         for i in range(self.ui.keywordlistWidget.count()):
@@ -2597,8 +2469,6 @@ class MainWindow(QMainWindow):
         if self.search_text:
             self.keywords_selected.add(self.search_text)
 
-        print('list widget keywords: ', self.keywords_selected)
-
         if self.website_selection == 'escortalligator':
             try:
                 if self.inclusive_search:
@@ -2606,20 +2476,18 @@ class MainWindow(QMainWindow):
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
-                print('Error occurred, please try again. ')
                 QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            # try:
-            if self.inclusive_search:
-                self.facade.set_megapersonals_join_keywords()
-            self.facade.initialize_megapersonals_scraper(self.keywords_selected, self.file_storage_path)
-            QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-            # except:
-            #     print('Error occurred, please try again. ')
-            #     QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-            # time.sleep(2)
+            try:
+                if self.inclusive_search:
+                    self.facade.set_megapersonals_join_keywords()
+                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+            except:
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+            time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
@@ -2628,7 +2496,6 @@ class MainWindow(QMainWindow):
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
-                print('Error occurred, please try again. ')
                 QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
@@ -2639,7 +2506,6 @@ class MainWindow(QMainWindow):
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
-                print('Error occurred, please try again. ')
                 QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
@@ -2652,13 +2518,12 @@ class MainWindow(QMainWindow):
                 self.facade.initialize_eros_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
-                print('Error occurred, please try again.')
                 QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
 
-    # TODO
+    # TODO - function two run threads simultaneously
     # function to run two threads at once
     # @staticmethod
     # def run_threads(function1, function2):
@@ -2673,6 +2538,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
+    app.setStyleSheet(QStyleFactory.create('Plastique'))
     window = MainWindow()
     window.show()
     app.exec()
