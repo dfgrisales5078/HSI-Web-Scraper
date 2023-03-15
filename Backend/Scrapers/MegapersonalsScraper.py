@@ -208,7 +208,7 @@ class MegapersonalsScraper(ScraperPrototype):
                             or self.check_keywords(location):
                         self.check_keywords_found(city, description, location, name, phone_number)
                         counter = self.join_inclusive(city, counter, description, link, location, name,
-                                                                 phone_number)
+                                                      phone_number)
 
                 elif self.only_posts_with_payment_methods:
                     print("elif only_payment_method l213")
@@ -223,7 +223,7 @@ class MegapersonalsScraper(ScraperPrototype):
                             self.keywords_found_in_post.append("N/A")
 
                         counter = self.payment_methods_only(city, counter, description, link, location, name,
-                                                                 phone_number)
+                                                            phone_number)
             else:
                 if len(self.keywords) > 0:
                     if self.check_keywords(description) or self.check_keywords(name) \
@@ -231,6 +231,8 @@ class MegapersonalsScraper(ScraperPrototype):
                             or self.check_keywords(location):
                         self.check_keywords_found(city, description, location, name, phone_number)
                         self.append_data(city, counter, description, link, location, name, phone_number)
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
                         counter += 1
                     else:
                         print("else l249")
@@ -248,7 +250,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
         self.join_keywords = False
 
-
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
             print("are you in here")
@@ -256,11 +257,6 @@ class MegapersonalsScraper(ScraperPrototype):
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
 
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
             return counter + 1
         return counter
 
@@ -280,6 +276,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.description.append(description)
         self.check_for_payment_methods(description)
         self.link.append(link)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post))
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -309,7 +307,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.keywords_found = []
         self.number_of_keywords_found = []
-
 
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
@@ -353,12 +350,6 @@ class MegapersonalsScraper(ScraperPrototype):
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
 
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
             return counter + 1
         return counter
 
@@ -366,15 +357,9 @@ class MegapersonalsScraper(ScraperPrototype):
 
         if self.check_for_payment_methods(description):
             print('l382 if')
-            self.append_data(self, city, counter, description, link, location, name, phone_number)
+            self.append_data(city, counter, description, link, location, name, phone_number)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
-
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
             return counter + 1
         return counter

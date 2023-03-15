@@ -199,15 +199,14 @@ class SkipthegamesScraper(ScraperPrototype):
                             self.check_keywords_found(about_info, services, description)
                     else:
                         print('l200')
-                        self.keywords_found.append("N/A")
-                        self.number_of_keywords_found.append("N/A")
+
                     counter = self.payment_methods_only(about_info, counter, description, link, services)
             else:
                 print("else l204")
                 if len(self.keywords) > 0:
                     if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
                             description):
-                        print("heree ------>>>>>")
+                        print("here ------>>>>>")
                         self.check_keywords_found(about_info, services, description)
                         self.append_data(about_info, counter, description, link, services)
                         screenshot_name = str(counter) + ".png"
@@ -216,8 +215,6 @@ class SkipthegamesScraper(ScraperPrototype):
                 else:
                     print("else l211")
                     self.append_data(about_info, counter, description, link, services)
-                    self.keywords_found.append("N/A")
-                    self.number_of_keywords_found.append("N/A")
 
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
@@ -260,8 +257,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.services.append(services)
         self.description.append(description)
         self.check_and_append_payment_methods(description)
-        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
         print(len(self.post_identifier))
