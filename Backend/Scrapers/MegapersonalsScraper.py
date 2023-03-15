@@ -240,10 +240,6 @@ class MegapersonalsScraper(ScraperPrototype):
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
 
-                        # append N/A if no keywords are found
-                        self.keywords_found.append('N/A')
-                        self.number_of_keywords_found.append('N/A')
-
                         counter += 1
 
             print('\n')
@@ -276,8 +272,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.description.append(description)
         self.check_for_payment_methods(description)
         self.link.append(link)
-        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
