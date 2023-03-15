@@ -92,7 +92,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
@@ -427,7 +428,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.url = ''
 
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.main_page_path = None
@@ -686,7 +688,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
-        self.path = None
+        self.storage_path = None
         self.driver = None
         self.cities = {
             "daytona": 'https://megapersonals.eu/public/post_list/109/1/1',
@@ -713,7 +715,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         # set date variables and path
         self.date_time = None
@@ -750,7 +753,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.join_keywords = True
 
     def set_path(self, path) -> None:
-        self.path = path
+        self.storage_path = path
+        print('from megapersonals set_path(): ', self.storage_path)
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -776,8 +780,10 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # TODO - BUG when running megapersonals using path selection
         # create directories for screenshot and csv
-        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
+        print('from megapersonals initialize(): ', self.storage_path)
+        self.main_page_path = f'{self.storage_path}/megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
+
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
 
@@ -1025,7 +1031,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
@@ -1302,7 +1309,8 @@ class ErosScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
@@ -1358,7 +1366,7 @@ class ErosScraper(ScraperPrototype):
 
         # Open Webpage with URL
         self.open_webpage()
-        time.sleep(10)
+        time.sleep(4)
 
         # Find links of posts
         links = self.get_links()
@@ -1701,7 +1709,8 @@ class Facade:
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
-    def initialize_megapersonals_scraper(self, keywords):
+    def initialize_megapersonals_scraper(self, keywords, storage_path):
+        self.megapersonals.set_path(storage_path)
         self.megapersonals.initialize(keywords)
 
     def set_megapersonals_city(self, city):
@@ -1750,9 +1759,6 @@ class Facade:
     def get_eros_cities(self):
         return self.eros.get_cities()
 
-    def format_data(self, data):
-        pass
-
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
             self.yesbackpage.set_path(file_storage_path)
@@ -1760,6 +1766,7 @@ class Facade:
             self.megapersonals.set_path(file_storage_path)
             self.escortalligator.set_path(file_storage_path)
             self.eros.set_path(file_storage_path)
+            print('from facade: ', file_storage_path)
 
 
 # ---------------------------- Scraper (created using .ui file) ----------------------------
@@ -2109,7 +2116,7 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
-# ---------------------------- GUI Logic ----------------------------
+# ---------------------------- MainWindow (GUI) ----------------------------
 '''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
 pyuic6 Scraper.ui -o Scraper.py
@@ -2223,15 +2230,15 @@ class MainWindow(QMainWindow):
         if file_dialog.exec() == QFileDialog.DialogCode.Accepted:
             save_path = file_dialog.selectedFiles()[0]
 
-            QMessageBox.information(self, "Success", f"Selected path: {save_path}")
+            QMessageBox.information(self, "Success", f"Files will be stored in: {save_path}")
             self.file_storage_path = save_path
             self.enable_tabs()
 
             self.ui.storagePathOutput.setText(self.file_storage_path)
             self.ui.storagePathProgressBar.setValue(100)
 
-            print('self.file_storage_path: ', self.file_storage_path)
             self.facade.set_storage_path(self.file_storage_path)
+            print('from gui: ', self.file_storage_path)
 
     def keyword_file_selection_button_clicked(self):
         file_dialog = QFileDialog()
@@ -2607,7 +2614,7 @@ class MainWindow(QMainWindow):
             # try:
             if self.inclusive_search:
                 self.facade.set_megapersonals_join_keywords()
-            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+            self.facade.initialize_megapersonals_scraper(self.keywords_selected, self.file_storage_path)
             QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             # except:
             #     print('Error occurred, please try again. ')
