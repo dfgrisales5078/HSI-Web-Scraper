@@ -141,10 +141,10 @@ class YesbackpageScraper(ScraperPrototype):
         # Format website URL based on state and city
         self.get_formatted_url()
 
-        options = webdriver.ChromeOptions()
+        options = uc.ChromeOptions()
         # TODO - uncomment this line to run headless
-        # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(options=options)
+        options.add_argument('--headless')
+        self.driver = uc.Chrome(options=options)
 
         # Open Webpage with URL
         self.open_webpage()
@@ -1015,10 +1015,10 @@ class EscortalligatorScraper(ScraperPrototype):
         self.get_formatted_url()
 
         # Selenium Web Driver setup
-        options = webdriver.ChromeOptions()
+        options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(options=options)
+        options.add_argument('--headless')
+        self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
         self.open_webpage()
