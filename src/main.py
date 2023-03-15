@@ -12,6 +12,8 @@ from datetime import datetime
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 # ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
+
+basedir = os.path.dirname(__file__)
 try:
     from ctypes import windll
     myappid = 'hsi.scraper.version1.0'
@@ -2545,7 +2547,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    app.setWindowIcon(QtGui.QIcon('hsi.ico'))
+    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "hsi.ico")))
     window = MainWindow()
     window.show()
     app.exec()
