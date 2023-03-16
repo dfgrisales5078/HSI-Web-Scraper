@@ -95,9 +95,10 @@ class ErosScraper(ScraperPrototype):
 
         # Get data from posts
         self.get_data(links)
-        self.reset_variables()
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
+
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -213,6 +214,7 @@ class ErosScraper(ScraperPrototype):
             else:
                 print('214')
                 if len(self.keywords) > 0:
+                    print('line 216')
                     if self.check_keywords(profile_header) or self.check_keywords(description) \
                             or self.check_keywords(info_details) or self.check_keywords(contact_details):
                         self.check_keywords_found(contact_details, description, info_details, profile_header)
@@ -258,13 +260,18 @@ class ErosScraper(ScraperPrototype):
         self.number_of_keywords_found = []
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
+        print('Append the dam data --->>>>')
+
         self.post_identifier.append(counter)
         self.link.append(link)
         self.profile_header.append(profile_header)
         self.about_info.append(description)
         self.info_details.append(info_details)
         self.contact_details.append(contact_details)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
+
 
     def format_data_to_csv(self) -> None:
         print(len(self.post_identifier))
@@ -338,10 +345,10 @@ class ErosScraper(ScraperPrototype):
             return counter + 1
         return counter
 
-    def payment_methods_only(self, about_info, counter, description, link, services) -> int:
+    def payment_methods_only(self, about_info, counter, description, link, services, profile_header) -> int:
         if self.check_for_payment_methods(description):
             print('l382 if')
-            self.append_data(about_info, counter, description, link, services)
+            self.append_data(about_info, counter, description, link, services, profile_header)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
 
