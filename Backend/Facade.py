@@ -25,6 +25,10 @@ class Facade:
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
+    def set_escortalligator_only_posts_with_payment_methods(self):
+        self.escortalligator.set_only_posts_with_payment_methods()
+
+
     def initialize_megapersonals_scraper(self, keywords):
         self.megapersonals.initialize(keywords)
 
