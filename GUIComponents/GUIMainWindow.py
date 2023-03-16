@@ -431,13 +431,16 @@ class MainWindow(QMainWindow):
         print('list widget keywords: ', self.keywords_selected)
 
         if self.website_selection == 'escortalligator':
-            try:
-                if self.inclusive_search:
-                    self.facade.set_escortalligator_join_keywords()
-                self.facade.initialize_escortalligator_scraper(self.keywords_selected)
-            except:
-                print('Error occurred, please try again. ')
-            time.sleep(2)
+
+            if self.inclusive_search:
+                self.facade.set_escortalligator_join_keywords()
+
+            if self.include_payment_method:
+                self.facade.set_escortalligator_only_posts_with_payment_methods()
+            self.facade.initialize_escortalligator_scraper(self.keywords_selected)
+
+            # print('Error occurred, please try again. ')
+            # time.sleep(2)
 
         if self.website_selection == 'megapersonals':
             #try:

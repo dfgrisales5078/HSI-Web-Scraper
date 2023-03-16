@@ -47,6 +47,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
+        self.only_posts_with_payment_methods = False
 
         self.join_keywords = False
 
@@ -74,6 +75,10 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
+
 
     def initialize(self, keywords) -> None:
         # set keywords value
