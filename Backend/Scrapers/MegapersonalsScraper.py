@@ -234,13 +234,12 @@ class MegapersonalsScraper(ScraperPrototype):
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
                         counter += 1
-                    else:
-                        print("else l249")
-                        self.append_data(city, counter, description, link, location, name, phone_number)
-                        screenshot_name = str(counter) + ".png"
-                        self.capture_screenshot(screenshot_name)
-
-                        counter += 1
+                else:
+                    print("else l249")
+                    self.append_data(city, counter, description, link, location, name, phone_number)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
 
             print('\n')
 
@@ -270,12 +269,21 @@ class MegapersonalsScraper(ScraperPrototype):
         self.contentCity.append(city)
         self.location.append(location)
         self.description.append(description)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
         self.link.append(link)
         self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
+        print(len(self.post_identifier))
+        print(len(self.name))
+        print(len(self.phoneNumber))
+        print(len(self.contentCity))
+        print(len(self.location))
+        print(len(self.description))
+        print(len(self.payment_methods_found))
+        print(len(self.keywords_found))
+        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Link': self.link,
