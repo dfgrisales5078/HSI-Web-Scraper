@@ -1,8 +1,9 @@
 import json
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
+import qdarkstyle as qdarkstyle
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget
 from abc import ABC, abstractmethod
 import time
-from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import pandas as pd
@@ -2027,7 +2028,7 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
-# ---------------------------- GUI Logic ----------------------------
+# ---------------------------- MainWindow - GUI Logic ----------------------------
 '''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
 pyuic6 Scraper.ui -o Scraper.py
@@ -2044,6 +2045,11 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.keywords_instance = Keywords()
         self.facade = Facade()
+
+        # TODO - center widgets when screen is maximized
+        self.central_widget = self.ui.tabWidget
+        self.setCentralWidget(self.ui.tabWidget)
+        # self.showMaximized()
 
         # attributes used to handle events
         self.website_selection = ''
