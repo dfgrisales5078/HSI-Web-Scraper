@@ -35,6 +35,7 @@ class ErosScraper(ScraperPrototype):
 
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
+        self.only_posts_with_payment_methods = False
 
         # lists to store data and then send to csv file
         self.post_identifier = []
@@ -57,6 +58,9 @@ class ErosScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -91,8 +95,9 @@ class ErosScraper(ScraperPrototype):
 
         # Get data from posts
         self.get_data(links)
-        self.close_webpage()
+        self.reset_variables()
         self.format_data_to_csv()
+        self.close_webpage()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -137,7 +142,6 @@ class ErosScraper(ScraperPrototype):
         print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
-        description = ''
         counter = 0
 
         for link in links:

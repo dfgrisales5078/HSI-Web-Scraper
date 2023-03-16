@@ -7,12 +7,12 @@ from Backend.Facade import Facade
 from Backend.Keywords import Keywords
 from Scraper import Ui_HSIWebScraper
 
-
 '''
 To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator, 
 then run the following command in the terminal to convert the .ui file to .py file:
 pyuic6 Scraper.ui -o Scraper.py
 '''
+
 
 class MainWindow(QMainWindow):
 
@@ -443,7 +443,7 @@ class MainWindow(QMainWindow):
             # time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            #try:
+            # try:
             if self.inclusive_search:
                 self.facade.set_megapersonals_join_keywords()
 
@@ -484,15 +484,18 @@ class MainWindow(QMainWindow):
             # time.sleep(2)
 
         if self.website_selection == 'eros':
-            try:
-                # self.run_threads(self.search_popup_window(self.website_selection),
-                #                  self.facade.initialize_eros_scraper(self.keywords_selected))
-                if self.inclusive_search:
-                    self.facade.set_eros_join_keywords()
-                self.facade.initialize_eros_scraper(self.keywords_selected)
-            except:
-                print('Error occurred, please try again.')
-            time.sleep(2)
+            # self.run_threads(self.search_popup_window(self.website_selection),
+            #                  self.facade.initialize_eros_scraper(self.keywords_selected))
+            if self.inclusive_search:
+                self.facade.set_eros_join_keywords()
+
+            if self.include_payment_method:
+                self.facade.set_eros_only_posts_with_payment_methods()
+
+            self.facade.initialize_eros_scraper(self.keywords_selected)
+            # except:
+            #     print('Error occurred, please try again.')
+            # time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
         self.ui.paymentMethodcheckBox.setChecked(False)

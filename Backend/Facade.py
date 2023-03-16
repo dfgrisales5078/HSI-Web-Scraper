@@ -87,5 +87,8 @@ class Facade:
     def get_eros_cities(self):
         return self.eros.get_cities()
 
+    def set_eros_only_posts_with_payment_methods(self):
+        self.eros.set_only_posts_with_payment_methods()
+
     def format_data(self, data):
         pass
