@@ -1,6 +1,5 @@
 import json
 import qdarkstyle as qdarkstyle
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget
 from abc import ABC, abstractmethod
 import time
@@ -17,10 +16,12 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 basedir = os.path.dirname(__file__)
 try:
     from ctypes import windll
+
     myappid = 'hsi.scraper.version1.0'
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except:
     pass
+
 
 # ---------------------------- ScraperPrototype ----------------------------
 class ScraperPrototype(ABC):
@@ -1724,7 +1725,7 @@ class Ui_HSIWebScraper(object):
         self.selectKeywordFilesLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.selectKeywordFilesLabel.setObjectName("selectKeywordFilesLabel")
         self.label = QtWidgets.QLabel(parent=self.tab)
-        self.label.setGeometry(QtCore.QRect(300, 430, 511, 41))
+        self.label.setGeometry(QtCore.QRect(300, 420, 511, 41))
         self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
         self.storagePathSelectionButton = QtWidgets.QPushButton(parent=self.tab)
@@ -1767,7 +1768,7 @@ class Ui_HSIWebScraper(object):
         self.label_3.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.selectKeywordFilesLabel_2 = QtWidgets.QLabel(parent=self.tab)
-        self.selectKeywordFilesLabel_2.setGeometry(QtCore.QRect(410, 270, 291, 41))
+        self.selectKeywordFilesLabel_2.setGeometry(QtCore.QRect(410, 260, 291, 41))
         self.selectKeywordFilesLabel_2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.selectKeywordFilesLabel_2.setObjectName("selectKeywordFilesLabel_2")
         self.keywordFileProgressBar = QtWidgets.QProgressBar(parent=self.tab)
@@ -1794,6 +1795,13 @@ class Ui_HSIWebScraper(object):
         self.storagePathProgressBar.setProperty("value", 0)
         self.storagePathProgressBar.setTextVisible(False)
         self.storagePathProgressBar.setObjectName("storagePathProgressBar")
+        self.label_5 = QtWidgets.QLabel(parent=self.tab)
+        self.label_5.setGeometry(QtCore.QRect(1000, 600, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(False)
+        self.label_5.setFont(font)
+        self.label_5.setObjectName("label_5")
         self.tabWidget.addTab(self.tab, "")
         self.MainScraper = QtWidgets.QWidget()
         self.MainScraper.setToolTipDuration(-1)
@@ -1806,16 +1814,16 @@ class Ui_HSIWebScraper(object):
         self.keywordlistWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
         self.keywordlistWidget.setObjectName("keywordlistWidget")
         self.setSelectionDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
-        self.setSelectionDropdown.setGeometry(QtCore.QRect(200, 360, 191, 41))
+        self.setSelectionDropdown.setGeometry(QtCore.QRect(200, 370, 231, 41))
         font = QtGui.QFont()
-        font.setPointSize(17)
+        font.setPointSize(14)
         self.setSelectionDropdown.setFont(font)
         self.setSelectionDropdown.setCurrentText("")
         self.setSelectionDropdown.setObjectName("setSelectionDropdown")
         self.setSelectionDropdown.addItem("")
         self.setSelectionDropdown.setItemText(0, "")
         self.setSelectionLabel = QtWidgets.QLabel(parent=self.MainScraper)
-        self.setSelectionLabel.setGeometry(QtCore.QRect(190, 320, 361, 41))
+        self.setSelectionLabel.setGeometry(QtCore.QRect(190, 330, 361, 31))
         font = QtGui.QFont()
         font.setPointSize(17)
         self.setSelectionLabel.setFont(font)
@@ -1840,7 +1848,7 @@ class Ui_HSIWebScraper(object):
         self.keywordInclusivecheckBox.setFont(font)
         self.keywordInclusivecheckBox.setObjectName("keywordInclusivecheckBox")
         self.textSearchLabel = QtWidgets.QLabel(parent=self.MainScraper)
-        self.textSearchLabel.setGeometry(QtCore.QRect(180, 410, 331, 41))
+        self.textSearchLabel.setGeometry(QtCore.QRect(180, 420, 331, 41))
         font = QtGui.QFont()
         font.setPointSize(17)
         self.textSearchLabel.setFont(font)
@@ -1854,9 +1862,9 @@ class Ui_HSIWebScraper(object):
         self.HSIScraperlabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.HSIScraperlabel.setObjectName("HSIScraperlabel")
         self.websiteSelectionDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
-        self.websiteSelectionDropdown.setGeometry(QtCore.QRect(200, 190, 191, 41))
+        self.websiteSelectionDropdown.setGeometry(QtCore.QRect(200, 190, 231, 41))
         font = QtGui.QFont()
-        font.setPointSize(17)
+        font.setPointSize(14)
         self.websiteSelectionDropdown.setFont(font)
         self.websiteSelectionDropdown.setCurrentText("")
         self.websiteSelectionDropdown.setObjectName("websiteSelectionDropdown")
@@ -1874,7 +1882,7 @@ class Ui_HSIWebScraper(object):
         self.websiteSelectionLabel.setFont(font)
         self.websiteSelectionLabel.setObjectName("websiteSelectionLabel")
         self.searchTextBox = QtWidgets.QLineEdit(parent=self.MainScraper)
-        self.searchTextBox.setGeometry(QtCore.QRect(200, 450, 231, 41))
+        self.searchTextBox.setGeometry(QtCore.QRect(200, 460, 231, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.searchTextBox.setFont(font)
@@ -1893,9 +1901,9 @@ class Ui_HSIWebScraper(object):
         self.paymentMethodcheckBox.setFont(font)
         self.paymentMethodcheckBox.setObjectName("paymentMethodcheckBox")
         self.setlocationDropdown = QtWidgets.QComboBox(parent=self.MainScraper)
-        self.setlocationDropdown.setGeometry(QtCore.QRect(200, 270, 191, 41))
+        self.setlocationDropdown.setGeometry(QtCore.QRect(200, 280, 231, 41))
         font = QtGui.QFont()
-        font.setPointSize(17)
+        font.setPointSize(14)
         self.setlocationDropdown.setFont(font)
         self.setlocationDropdown.setCurrentText("")
         self.setlocationDropdown.setObjectName("setlocationDropdown")
@@ -1905,18 +1913,25 @@ class Ui_HSIWebScraper(object):
         font.setPointSize(17)
         self.setLocationLabel.setFont(font)
         self.setLocationLabel.setObjectName("setLocationLabel")
+        self.label_6 = QtWidgets.QLabel(parent=self.MainScraper)
+        self.label_6.setGeometry(QtCore.QRect(1000, 600, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(False)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
         self.tabWidget.addTab(self.MainScraper, "")
         self.EditKeywords = QtWidgets.QWidget()
         self.EditKeywords.setObjectName("EditKeywords")
         self.setList = QtWidgets.QListWidget(parent=self.EditKeywords)
-        self.setList.setGeometry(QtCore.QRect(660, 230, 271, 181))
+        self.setList.setGeometry(QtCore.QRect(660, 230, 311, 181))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.setList.setFont(font)
         self.setList.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
         self.setList.setObjectName("setList")
         self.newSetTextBox = QtWidgets.QLineEdit(parent=self.EditKeywords)
-        self.newSetTextBox.setGeometry(QtCore.QRect(660, 189, 161, 31))
+        self.newSetTextBox.setGeometry(QtCore.QRect(660, 189, 191, 31))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.newSetTextBox.setFont(font)
@@ -1941,7 +1956,7 @@ class Ui_HSIWebScraper(object):
         self.keywordList.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
         self.keywordList.setObjectName("keywordList")
         self.removeKeywordButton = QtWidgets.QPushButton(parent=self.EditKeywords)
-        self.removeKeywordButton.setGeometry(QtCore.QRect(200, 419, 211, 32))
+        self.removeKeywordButton.setGeometry(QtCore.QRect(200, 420, 221, 31))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.removeKeywordButton.setFont(font)
@@ -1953,13 +1968,13 @@ class Ui_HSIWebScraper(object):
         self.newSetLabel.setGeometry(QtCore.QRect(660, 154, 261, 31))
         self.newSetLabel.setObjectName("newSetLabel")
         self.addSetButton = QtWidgets.QPushButton(parent=self.EditKeywords)
-        self.addSetButton.setGeometry(QtCore.QRect(830, 189, 101, 32))
+        self.addSetButton.setGeometry(QtCore.QRect(870, 189, 101, 32))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.addSetButton.setFont(font)
         self.addSetButton.setObjectName("addSetButton")
         self.removeSetButton = QtWidgets.QPushButton(parent=self.EditKeywords)
-        self.removeSetButton.setGeometry(QtCore.QRect(690, 419, 191, 32))
+        self.removeSetButton.setGeometry(QtCore.QRect(720, 419, 191, 32))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.removeSetButton.setFont(font)
@@ -1968,7 +1983,7 @@ class Ui_HSIWebScraper(object):
         self.newSetLabel_2.setGeometry(QtCore.QRect(660, 120, 411, 31))
         self.newSetLabel_2.setObjectName("newSetLabel_2")
         self.label_2 = QtWidgets.QLabel(parent=self.EditKeywords)
-        self.label_2.setGeometry(QtCore.QRect(90, 440, 451, 61))
+        self.label_2.setGeometry(QtCore.QRect(90, 470, 451, 61))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
@@ -1982,15 +1997,22 @@ class Ui_HSIWebScraper(object):
         self.label_4.setFont(font)
         self.label_4.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_4.setObjectName("label_4")
+        self.label_7 = QtWidgets.QLabel(parent=self.EditKeywords)
+        self.label_7.setGeometry(QtCore.QRect(1000, 600, 121, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(False)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
         self.tabWidget.addTab(self.EditKeywords, "")
 
         self.retranslateUi(HSIWebScraper)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(HSIWebScraper)
 
     def retranslateUi(self, HSIWebScraper):
         _translate = QtCore.QCoreApplication.translate
-        HSIWebScraper.setWindowTitle(_translate("HSIWebScraper", "HSI Web Scraper"))
+        HSIWebScraper.setWindowTitle(_translate("HSIWebScraper", "NetSpider"))
         self.setFileSelectionButton.setText(_translate("HSIWebScraper", "Select keyword_sets.txt"))
         self.keywordfileSelectionButton.setText(_translate("HSIWebScraper", "Select keywords.txt"))
         self.selectKeywordFilesLabel.setText(_translate("HSIWebScraper", "Select keyword file:"))
@@ -2001,13 +2023,14 @@ class Ui_HSIWebScraper(object):
         self.storagePathOutput.setPlaceholderText(_translate("HSIWebScraper", "No folder chosen"))
         self.label_3.setText(_translate("HSIWebScraper", "Choose file settings for scraper."))
         self.selectKeywordFilesLabel_2.setText(_translate("HSIWebScraper", "Select keyword sets file:"))
+        self.label_5.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("HSIWebScraper", "Settings"))
         self.setSelectionLabel.setText(_translate("HSIWebScraper", "  Select set of keywords (optional):"))
         self.keywordListLabel.setText(_translate("HSIWebScraper", "List of keywords:"))
         self.searchButton.setText(_translate("HSIWebScraper", "Search"))
         self.keywordInclusivecheckBox.setText(_translate("HSIWebScraper", "Keyword inclusive search (AND)."))
         self.textSearchLabel.setText(_translate("HSIWebScraper", "   Type text to scrape (optional):"))
-        self.HSIScraperlabel.setText(_translate("HSIWebScraper", "HSI Web Scraper"))
+        self.HSIScraperlabel.setText(_translate("HSIWebScraper", "Web Scraper"))
         self.websiteSelectionDropdown.setItemText(1, _translate("HSIWebScraper", "escortalligator"))
         self.websiteSelectionDropdown.setItemText(2, _translate("HSIWebScraper", "megapersonals"))
         self.websiteSelectionDropdown.setItemText(3, _translate("HSIWebScraper", "skipthegames"))
@@ -2018,6 +2041,7 @@ class Ui_HSIWebScraper(object):
         self.selectAllKeywordscheckBox.setText(_translate("HSIWebScraper", "Select all keywords from list."))
         self.paymentMethodcheckBox.setText(_translate("HSIWebScraper", "Find only posts with payment methods."))
         self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location (optional):"))
+        self.label_6.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.MainScraper), _translate("HSIWebScraper", "Scraper"))
         self.newSetTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type new set name."))
         self.addKeywordButton.setText(_translate("HSIWebScraper", "Add keyword"))
@@ -2030,6 +2054,7 @@ class Ui_HSIWebScraper(object):
         self.newSetLabel_2.setText(_translate("HSIWebScraper", "Select keywords from list on the left."))
         self.label_2.setText(_translate("HSIWebScraper", "Warning: Remove only one keyword at a time."))
         self.label_4.setText(_translate("HSIWebScraper", "Edit keywords and sets for scraper."))
+        self.label_7.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
@@ -2042,6 +2067,7 @@ python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
 
 '''
 
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -2051,10 +2077,8 @@ class MainWindow(QMainWindow):
         self.keywords_instance = Keywords()
         self.facade = Facade()
 
-        # TODO - center widgets when screen is maximized
         self.central_widget = self.ui.tabWidget
         self.setCentralWidget(self.ui.tabWidget)
-        # self.showMaximized()
 
         # attributes used to handle events
         self.website_selection = ''
@@ -2070,9 +2094,7 @@ class MainWindow(QMainWindow):
         self.keywords = ''
         self.keyword_sets = ''
 
-        # TODO set dark mode?
-        # dark mode
-        # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
+        self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
 
         ''' Bind GUI components to functions: '''
         # bind websiteSelectionDropdown to website_selection_dropdown function
@@ -2134,6 +2156,7 @@ class MainWindow(QMainWindow):
         self.ui.tabWidget.setTabEnabled(2, False)
 
     ''' Functions used to handle events: '''
+
     def enable_tabs(self):
         if self.keyword_file_path != '' and self.keyword_sets_file_path != '' and self.file_storage_path != '':
             self.ui.tabWidget.setTabEnabled(1, True)

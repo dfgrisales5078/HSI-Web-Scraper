@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>HSI Web Scraper</string>
+   <string>NetSpider</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
@@ -34,7 +34,7 @@
     <bool>false</bool>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -96,7 +96,7 @@
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>430</y>
+       <y>420</y>
        <width>511</width>
        <height>41</height>
       </rect>
@@ -227,7 +227,7 @@
      <property name="geometry">
       <rect>
        <x>410</x>
-       <y>270</y>
+       <y>260</y>
        <width>291</width>
        <height>41</height>
       </rect>
@@ -302,6 +302,25 @@
       <bool>false</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>1000</x>
+       <y>600</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>NetSpider v1.0.0</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="MainScraper">
     <property name="toolTipDuration">
@@ -332,14 +351,14 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>360</y>
-       <width>191</width>
+       <y>370</y>
+       <width>231</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -355,9 +374,9 @@
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>320</y>
+       <y>330</y>
        <width>361</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -428,7 +447,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>410</y>
+       <y>420</y>
        <width>331</width>
        <height>41</height>
       </rect>
@@ -458,7 +477,7 @@
       </font>
      </property>
      <property name="text">
-      <string>HSI Web Scraper</string>
+      <string>Web Scraper</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -469,13 +488,13 @@
       <rect>
        <x>200</x>
        <y>190</y>
-       <width>191</width>
+       <width>231</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -534,7 +553,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>450</y>
+       <y>460</y>
        <width>231</width>
        <height>41</height>
       </rect>
@@ -591,14 +610,14 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>270</y>
-       <width>191</width>
+       <y>280</y>
+       <width>231</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="currentText">
@@ -623,6 +642,25 @@
       <string>  Select location (optional):</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>1000</x>
+       <y>600</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>NetSpider v1.0.0</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="EditKeywords">
     <attribute name="title">
@@ -633,7 +671,7 @@
       <rect>
        <x>660</x>
        <y>230</y>
-       <width>271</width>
+       <width>311</width>
        <height>181</height>
       </rect>
      </property>
@@ -651,7 +689,7 @@
       <rect>
        <x>660</x>
        <y>189</y>
-       <width>161</width>
+       <width>191</width>
        <height>31</height>
       </rect>
      </property>
@@ -722,9 +760,9 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>419</y>
-       <width>211</width>
-       <height>32</height>
+       <y>420</y>
+       <width>221</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -765,7 +803,7 @@
     <widget class="QPushButton" name="addSetButton">
      <property name="geometry">
       <rect>
-       <x>830</x>
+       <x>870</x>
        <y>189</y>
        <width>101</width>
        <height>32</height>
@@ -783,7 +821,7 @@
     <widget class="QPushButton" name="removeSetButton">
      <property name="geometry">
       <rect>
-       <x>690</x>
+       <x>720</x>
        <y>419</y>
        <width>191</width>
        <height>32</height>
@@ -815,7 +853,7 @@
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>440</y>
+       <y>470</y>
        <width>451</width>
        <height>61</height>
       </rect>
@@ -850,6 +888,25 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>1000</x>
+       <y>600</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>NetSpider v1.0.0</string>
      </property>
     </widget>
    </widget>
