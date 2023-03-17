@@ -322,7 +322,7 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.addTab(self.EditKeywords, "")
 
         self.retranslateUi(HSIWebScraper)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(HSIWebScraper)
 
     def retranslateUi(self, HSIWebScraper):

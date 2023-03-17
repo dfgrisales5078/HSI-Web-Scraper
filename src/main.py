@@ -1,5 +1,6 @@
 import json
 import qdarkstyle as qdarkstyle
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget
 from abc import ABC, abstractmethod
 import time
@@ -2007,7 +2008,7 @@ class Ui_HSIWebScraper(object):
         self.tabWidget.addTab(self.EditKeywords, "")
 
         self.retranslateUi(HSIWebScraper)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(HSIWebScraper)
 
     def retranslateUi(self, HSIWebScraper):
@@ -2150,6 +2151,9 @@ class MainWindow(QMainWindow):
         self.file_storage_path = ''
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
+
+        from PyQt6.QtWidgets import QComboBox
+        self.ui.setList.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         # disable QtabWidget indices 1 and 2 until file paths are selected
         self.ui.tabWidget.setTabEnabled(1, True)
