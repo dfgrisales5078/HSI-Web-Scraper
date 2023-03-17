@@ -1228,7 +1228,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_in_post += 1
 
 
-# ---------------------------- Eros ----------------------------
+# ----------------------------- Eros ----------------------------
 
 class ErosScraper(ScraperPrototype):
     def __init__(self):
