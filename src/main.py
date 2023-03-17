@@ -2073,6 +2073,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
         self.ui = Ui_HSIWebScraper()
         self.ui.setupUi(self)
         self.keywords_instance = Keywords()
@@ -2089,6 +2090,7 @@ class MainWindow(QMainWindow):
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
         self.manual_keyword_selection = set()
+        self.keywords_of_selected_set = set()
         self.set_keyword_selection = set()
         self.locations = []
         self.location = ''
@@ -2388,12 +2390,14 @@ class MainWindow(QMainWindow):
     # handle list of keywords to be searched
     def keyword_list_widget(self):
         for item in self.ui.keywordlistWidget.selectedItems():
-            self.manual_keyword_selection.add(item.text())
+            if item.text() not in self.keywords_of_selected_set:
+                self.manual_keyword_selection.add(item.text())
 
         # if a keyword is unselected, remove it from the set
-        for i in range(self.ui.keywordlistWidget.count()):
-            if not self.ui.keywordlistWidget.item(i).isSelected():
-                self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(i).text())
+        for item in range(self.ui.keywordlistWidget.count()):
+            if not self.ui.keywordlistWidget.item(item).isSelected():
+                if item not in self.keywords_of_selected_set:
+                    self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(item).text())
 
     # handle dropdown menu for keyword sets
     def set_selection_dropdown(self):
@@ -2404,25 +2408,19 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                     self.ui.keywordlistWidget.item(i).setSelected(False)
-
+                    self.keywords_of_selected_set = set()
             return
 
         # get keywords from selected set from keywords class
-        keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
+        self.keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
 
         # select keywords_of_selected_set in keywordlistWidget
         for i in range(self.ui.keywordlistWidget.count()):
-            if self.ui.keywordlistWidget.item(i).text() in keywords_of_selected_set:
+            if self.ui.keywordlistWidget.item(i).text() in self.keywords_of_selected_set:
                 self.ui.keywordlistWidget.item(i).setSelected(True)
 
             elif self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                 self.ui.keywordlistWidget.item(i).setSelected(False)
-
-        # unselect keywords that are not in selected set
-        if not keywords_of_selected_set:
-            for i in range(self.ui.keywordlistWidget.count()):
-                if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
-                    self.ui.keywordlistWidget.item(i).setSelected(False)
 
     # scrape using text box input
     def search_text_box(self):
