@@ -2152,8 +2152,8 @@ class MainWindow(QMainWindow):
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
         # disable QtabWidget indices 1 and 2 until file paths are selected
-        self.ui.tabWidget.setTabEnabled(1, False)
-        self.ui.tabWidget.setTabEnabled(2, False)
+        self.ui.tabWidget.setTabEnabled(1, True)
+        self.ui.tabWidget.setTabEnabled(2, True)
 
     ''' Functions used to handle events: '''
 
@@ -2232,7 +2232,10 @@ class MainWindow(QMainWindow):
     # remove set when button is clicked
     def remove_set_button_clicked(self):
         # get name of set to remove
-        set_to_remove = self.ui.setList.currentItem().text()
+        if self.ui.setList.currentItem() is not None:
+            set_to_remove = self.ui.setList.currentItem().text()
+        else:
+            return
 
         confirmation = self.remove_set_popup_window(set_to_remove)
         if not confirmation:
@@ -2246,6 +2249,8 @@ class MainWindow(QMainWindow):
 
         # update list of sets
         self.ui.setSelectionDropdown.clear()
+        self.ui.setSelectionDropdown.addItem('')
+        self.keyword_sets = self.keywords_instance.get_set()
         self.ui.setSelectionDropdown.addItems(self.keyword_sets)
 
     # set location based on selection from the dropdown
@@ -2318,7 +2323,10 @@ class MainWindow(QMainWindow):
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
-        keyword = self.ui.keywordList.currentItem().text()
+        if self.ui.keywordList.currentItem() is not None:
+            keyword = self.ui.keywordList.currentItem().text()
+        else:
+            return
 
         # confirm keyword removal
         confirmation = self.remove_keyword_popup_window(keyword)
@@ -2326,13 +2334,12 @@ class MainWindow(QMainWindow):
         if not confirmation:
             return
 
-        if keyword != '':
-            self.remove_keyword(keyword)
+        self.remove_keyword(keyword)
 
-            # loop through sets and remove keyword from each set
-            for set_name in self.keyword_sets:
-                if keyword in self.keywords_instance.get_set_values(set_name):
-                    self.keywords_instance.remove_keyword_from_set(keyword, set_name)
+        # loop through sets and remove keyword from each set
+        for set_name in self.keyword_sets:
+            if keyword in self.keywords_instance.get_set_values(set_name):
+                self.keywords_instance.remove_keyword_from_set(keyword, set_name)
 
     # add new keyword
     def add_keyword_button_clicked(self):
