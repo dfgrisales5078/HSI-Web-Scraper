@@ -2285,7 +2285,10 @@ class MainWindow(QMainWindow):
     # add new set when button is clicked
     def add_set_button_clicked(self):
         # get name of new set
-        new_set_name = self.ui.newSetTextBox.text()
+        if self.ui.newSetTextBox.text() != '':
+            new_set_name = self.ui.newSetTextBox.text()
+        else:
+            return
 
         # get text from list
         for item in self.ui.keywordList.selectedItems():
@@ -2462,8 +2465,14 @@ class MainWindow(QMainWindow):
 
     # handle dropdown menu for payment method
     def website_selection_dropdown(self):
+
         self.website_selection = self.ui.websiteSelectionDropdown.currentText()
-        self.ui.searchButton.setEnabled(True)
+
+        if self.website_selection != '':
+            self.ui.searchButton.setEnabled(True)
+        else:
+            self.ui.searchButton.setEnabled(False)
+            self.ui.setlocationDropdown.clear()
 
         if self.website_selection == 'eros':
             self.locations = self.facade.get_eros_cities()
