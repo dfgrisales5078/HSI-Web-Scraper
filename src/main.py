@@ -2287,29 +2287,35 @@ class MainWindow(QMainWindow):
     # add new set when button is clicked
     def add_set_button_clicked(self):
         # get name of new set
+        sets = self.keywords_instance.get_set()
+
         if self.ui.newSetTextBox.text() != '':
             new_set_name = self.ui.newSetTextBox.text()
         else:
             return
 
-        # get text from list
-        for item in self.ui.keywordList.selectedItems():
-            self.keys_to_add_to_new_set.append(item.text())
+        if self.ui.newSetTextBox.text() not in sets:
+            # get text from list
+            for item in self.ui.keywordList.selectedItems():
+                self.keys_to_add_to_new_set.append(item.text())
 
-        # call create_set function from keywords class
-        self.keywords_instance.create_set(new_set_name, self.keys_to_add_to_new_set)
+            # call create_set function from keywords class
+            self.keywords_instance.create_set(new_set_name, self.keys_to_add_to_new_set)
 
-        # update list of sets
-        self.ui.setList.addItem(new_set_name)
+            # update list of sets
+            self.ui.setList.addItem(new_set_name)
 
-        # make self.keys_to_add_to_new_set of an empty list
-        self.keys_to_add_to_new_set = []
+            # make self.keys_to_add_to_new_set of an empty list
+            self.keys_to_add_to_new_set = []
 
-        # add new set to setSelectionDropdown
-        self.ui.setSelectionDropdown.addItem(new_set_name)
+            # add new set to setSelectionDropdown
+            self.ui.setSelectionDropdown.addItem(new_set_name)
 
-        # clear new set text box
-        self.ui.newSetTextBox.clear()
+            # clear new set text box
+            self.ui.newSetTextBox.clear()
+
+        else:
+            QMessageBox.warning(self, "Error", "Set name already exists.")
 
     # popup to confirm keyword removal
     @staticmethod
