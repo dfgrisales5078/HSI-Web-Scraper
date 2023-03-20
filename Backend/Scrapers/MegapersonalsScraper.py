@@ -109,8 +109,8 @@ class MegapersonalsScraper(ScraperPrototype):
 
         self.get_data(links)
         self.format_data_to_csv()
-        self.reset_variables()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -213,6 +213,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 elif self.only_posts_with_payment_methods:
                     print("elif only_payment_method l213")
                     if len(self.keywords) > 0:
+                        print('line 216')
                         if self.check_keywords(description) or self.check_keywords(name) \
                                 or self.check_keywords(phone_number) or self.check_keywords(city) \
                                 or self.check_keywords(location):
@@ -222,10 +223,12 @@ class MegapersonalsScraper(ScraperPrototype):
                             print("l221")
                             self.keywords_found_in_post.append("N/A")
 
-                        counter = self.payment_methods_only(city, counter, description, link, location, name,
+                    counter = self.payment_methods_only(city, counter, description, link, location, name,
                                                             phone_number)
             else:
+                print('line 229')
                 if len(self.keywords) > 0:
+                    print('line 231')
                     if self.check_keywords(description) or self.check_keywords(name) \
                             or self.check_keywords(phone_number) or self.check_keywords(city) \
                             or self.check_keywords(location):
@@ -263,6 +266,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.check_and_append_keywords(phone_number)
 
     def append_data(self, city, counter, description, link, location, name, phone_number):
+        print('Appending Data')
         self.post_identifier.append(counter)
         self.name.append(name)
         self.phoneNumber.append(phone_number)
@@ -319,7 +323,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 return True
         return False
 
-    def check_and_append_payment_methods(self, description) -> None:
+    def check_and_append_payment_methods(self, description):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
@@ -357,10 +361,11 @@ class MegapersonalsScraper(ScraperPrototype):
             return counter + 1
         return counter
 
-    def payment_methods_only(self, city, counter, description, link, location, name, phone_number) -> int:
-
+    def payment_methods_only(self, city, counter, description, link, location, name,
+                             phone_number) -> int:
+        print('payment only')
         if self.check_for_payment_methods(description):
-            print('l382 if')
+            print('l367 if')
             self.append_data(city, counter, description, link, location, name, phone_number)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
