@@ -2346,7 +2346,6 @@ class MainWindow(QMainWindow):
         else:
             return False
 
-    # TODO BUG - last item clicked on is deleted even if not selected
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
