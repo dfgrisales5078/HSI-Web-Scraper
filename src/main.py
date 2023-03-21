@@ -1,7 +1,8 @@
 import json
 import qdarkstyle as qdarkstyle
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget, QDialog, \
+    QProgressBar, QVBoxLayout, QLabel
 from abc import ABC, abstractmethod
 import time
 from selenium.common import NoSuchElementException
@@ -2067,7 +2068,25 @@ OR
 python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
 
 '''
+class LoadingDialog(QDialog):
+    def __init__(self, website_selection):
+        super().__init__()
+        self.setWindowTitle('Scraper running')
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setRange(0, 100)
+        layout = QVBoxLayout()
+        processing_scraper_label = QLabel(f"Scraping {website_selection} in progress...")
+        layout.addWidget(processing_scraper_label)
+        layout.addWidget(self.progress_bar)
+        self.setLayout(layout)
+        self.setFixedSize(300, 100)
 
+    def run(self):
+        self.show()
+        for i in range(101):
+            self.progress_bar.setValue(i)
+            QApplication.processEvents()
+        self.close()
 
 class MainWindow(QMainWindow):
 
@@ -2503,16 +2522,6 @@ class MainWindow(QMainWindow):
             self.set_location()
             self.initialize_location_dropdown()
 
-    # TODO - pop up when search button is clicked - show progress bar, status? & cancel button
-    @staticmethod
-    def search_popup_window(website_selection):
-        popup = QtWidgets.QMessageBox()
-        popup.setWindowTitle("Scraping in Progress")
-        popup.setText(f"Scraping {website_selection} in progress...")
-        popup.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel)
-
-        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Cancel:
-            popup.close()
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
@@ -2540,6 +2549,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_escortalligator_join_keywords()
+
+                dialog = LoadingDialog('escortalligator')
+                dialog.run()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2550,6 +2562,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_megapersonals_join_keywords()
+
+                dialog = LoadingDialog('megapersonals')
+                dialog.run()
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2560,6 +2575,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_skipthegames_join_keywords()
+
+                dialog = LoadingDialog('skipthegames')
+                dialog.run()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2570,6 +2588,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
+
+                dialog = LoadingDialog('yesbackpage')
+                dialog.run()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2578,10 +2599,11 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'eros':
             try:
-                # self.run_threads(self.search_popup_window(self.website_selection),
-                #                  self.facade.initialize_eros_scraper(self.keywords_selected))
                 if self.inclusive_search:
                     self.facade.set_eros_join_keywords()
+
+                dialog = LoadingDialog('eros')
+                dialog.run()
                 self.facade.initialize_eros_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2589,16 +2611,6 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
-
-    # TODO - function two run threads simultaneously
-    # function to run two threads at once
-    # @staticmethod
-    # def run_threads(function1, function2):
-    #     thread1 = threading.Thread(target=function1)
-    #     thread2 = threading.Thread(target=function2)
-    #     thread1.start()
-    #     thread2.start()
-    #     thread2.join()
 
 
 # ---------------------------- GUI Main ----------------------------
