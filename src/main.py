@@ -175,7 +175,6 @@ class YesbackpageScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -316,7 +315,7 @@ class YesbackpageScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
@@ -488,7 +487,6 @@ class SkipthegamesScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -593,7 +591,7 @@ class SkipthegamesScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, about_info, counter, description, link, services):
@@ -756,7 +754,6 @@ class MegapersonalsScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -882,7 +879,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, city, counter, description, link, location, name, phone_number):
@@ -1054,7 +1051,6 @@ class EscortalligatorScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.format_data_to_csv()
         self.reset_variables()
 
     def open_webpage(self) -> None:
@@ -1167,7 +1163,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
@@ -1319,7 +1315,6 @@ class ErosScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.format_data_to_csv()
         self.reset_variables()
 
     def open_webpage(self) -> None:
@@ -1447,9 +1442,7 @@ class ErosScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            if counter == 3:
-                break
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
@@ -2521,7 +2514,6 @@ class MainWindow(QMainWindow):
             self.locations = self.facade.get_skipthegames_cities()
             self.set_location()
             self.initialize_location_dropdown()
-
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
