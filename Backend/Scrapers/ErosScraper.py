@@ -258,6 +258,8 @@ class ErosScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.keywords_found = []
         self.number_of_keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
         print('Append the dam data --->>>>')

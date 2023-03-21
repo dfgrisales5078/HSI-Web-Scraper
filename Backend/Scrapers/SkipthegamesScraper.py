@@ -246,6 +246,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.keywords_found = []
         self.number_of_keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
     def append_data(self, about_info, counter, description, link, services):
         print(f"append_data {counter}")
