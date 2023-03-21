@@ -1,7 +1,7 @@
 import json
 import qdarkstyle as qdarkstyle
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget, QDialog, \
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QDialog, \
     QProgressBar, QVBoxLayout, QLabel
 from abc import ABC, abstractmethod
 import time
