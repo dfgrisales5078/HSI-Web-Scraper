@@ -1,9 +1,8 @@
 import os
 from datetime import datetime
 import pandas as pd
-from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
-from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
 
@@ -12,6 +11,7 @@ class YesbackpageScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "florida": 'https://www.yesbackpage.com/-10/posts/8-Adult/',
@@ -39,7 +39,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.scraper_directory = None
@@ -66,8 +67,6 @@ class YesbackpageScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO other info needs to be pulled using regex?
-
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -76,6 +75,9 @@ class YesbackpageScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_path(self, path) -> None:
+        self.path = path
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -87,10 +89,10 @@ class YesbackpageScraper(ScraperPrototype):
         # Format website URL based on state and city
         self.get_formatted_url()
 
-        options = webdriver.ChromeOptions()
+        options = uc.ChromeOptions()
         # TODO - uncomment this line to run headless
-        # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(options=options)
+        options.add_argument('--headless')
+        self.driver = uc.Chrome(subprocress=True, options=options)
 
         # Open Webpage with URL
         self.open_webpage()
@@ -99,7 +101,7 @@ class YesbackpageScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'yesbackpage_{self.date_time}'
+        self.scraper_directory = f'{self.path}/yesbackpage_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -109,6 +111,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -123,12 +126,10 @@ class YesbackpageScraper(ScraperPrototype):
         posts = self.driver.find_elements(
             By.CLASS_NAME, 'posttitle')
         links = [post.get_attribute('href') for post in posts]
-        print(links)
         return links[2:]
 
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         links = links
@@ -136,8 +137,6 @@ class YesbackpageScraper(ScraperPrototype):
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -146,7 +145,6 @@ class YesbackpageScraper(ScraperPrototype):
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/table[2]/tbody/'
                               'tr/td/div/p[2]').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
@@ -154,7 +152,6 @@ class YesbackpageScraper(ScraperPrototype):
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[1]/td[2]').text[2:]
-                print(name)
             except NoSuchElementException:
                 name = 'N/A'
 
@@ -162,7 +159,6 @@ class YesbackpageScraper(ScraperPrototype):
                 sex = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[2]/td[2]').text[2:]
-                print(sex)
             except NoSuchElementException:
                 sex = 'N/A'
 
@@ -170,7 +166,6 @@ class YesbackpageScraper(ScraperPrototype):
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[6]/td[2]').text[2:]
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'NA'
 
@@ -178,7 +173,6 @@ class YesbackpageScraper(ScraperPrototype):
                 email = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[8]/td[2]').text[2:]
-                print(email)
             except NoSuchElementException:
                 email = 'N/A'
 
@@ -186,7 +180,6 @@ class YesbackpageScraper(ScraperPrototype):
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
                               'tbody/tr[9]/td[2]').text[2:]
-                print(location)
             except NoSuchElementException:
                 location = 'N/A'
 
@@ -194,7 +187,6 @@ class YesbackpageScraper(ScraperPrototype):
                 services = self.driver.find_element(
                     By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
                               'tbody/tr[5]/td[2]').text[2:]
-                print(services)
             except NoSuchElementException:
                 services = 'N/A'
 
@@ -258,10 +250,8 @@ class YesbackpageScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print("\n")
 
         self.join_keywords = False
-
 
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
         self.description.append(description)
@@ -294,18 +284,30 @@ class YesbackpageScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/yesbackpage-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.phone_number = []
+        self.link = []
+        self.name = []
+        self.sex = []
+        self.email = []
+        self.location = []
+        self.description = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.services = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -320,5 +322,4 @@ class YesbackpageScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
