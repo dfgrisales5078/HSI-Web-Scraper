@@ -5,73 +5,91 @@ class Keywords:
     def __init__(self):
         self.keywords = []
         self.sets = {}
+        self.keywords_path = ''
+        self.keywords_set_path = ''
 
-    @staticmethod
-    def add_keywords(keyword):
-        with open("../keywords.txt", "r+") as filename:
-            content_set = filename.read().splitlines()
-            if keyword not in content_set:
-                filename.write("\n" + keyword.lower())
-            else:
-                print("Keyword already in file")
+    def set_keywords_path(self, keyword_file_path):
+        self.keywords_path = keyword_file_path
 
-    @staticmethod
-    def remove_keywords(keyword):
-        with open("../keywords.txt", "r") as filename:
-            content_set = filename.read().splitlines()
-            index = content_set.index(keyword.lower())
+    def set_keywords_sets_path(self, keyword_sets_file_path):
+        self.keywords_set_path = keyword_sets_file_path
 
-            content_set.remove(content_set[index])
+    def add_keywords(self, keyword):
+        # self.keywords.append(keyword)
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r+") as filename:
+                content_set = filename.read().splitlines()
+                if keyword not in content_set:
+                    filename.write("\n" + keyword.lower())
 
-        with open("../keywords.txt", "w") as filename:
-            filename.write("\n".join(content_set))
+    def remove_keywords(self, keyword):
+        # self.keywords.remove(keyword)
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r") as filename:
+                content_set = filename.read().splitlines()
+                index = content_set.index(keyword.lower())
+
+                content_set.remove(content_set[index])
+
+            with open(self.keywords_path, "w") as filename:
+                filename.write("\n".join(content_set))
 
     def create_set(self, set_name, keywords_list):
-        # keywords_list = keywords_list.split(', ')
+        # self.sets[set_name.lower()] = keywords_list
 
-        with open("../keyword_sets.txt", "r") as readfile:
-            read = readfile.read()
-            if read != '':
-                self.sets = json.loads(read)
-        self.sets[set_name.lower()] = keywords_list
-        with open("../keyword_sets.txt", "w") as writefile:
-            json.dump(self.sets, writefile)
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                read = readfile.read()
+                if read != '':
+                    self.sets = json.loads(read)
+            self.sets[set_name.lower()] = keywords_list
+            with open(self.keywords_set_path, "w") as writefile:
+                json.dump(self.sets, writefile)
 
     def remove_set(self, set_name):
-        with open("../keyword_sets.txt", "r") as readfile:
-            self.sets = json.loads(readfile.read())
+        # del self.sets[set_name.lower()]
 
-        del self.sets[set_name.lower()]
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
 
-        with open('../keyword_sets.txt', 'w') as writefile:
-            json.dump(self.sets, writefile)
+            del self.sets[set_name.lower()]
+
+            with open(self.keywords_set_path, 'w') as writefile:
+                json.dump(self.sets, writefile)
 
     def get_set_values(self, set_name):
-        with open("../keyword_sets.txt", "r") as readfile:
-            self.sets = json.loads(readfile.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
 
-        return self.sets[set_name.lower()]
+            return self.sets[set_name.lower()]
 
     def get_keywords(self):
-        with open("../keywords.txt", "r") as filename:
-            self.keywords = filename.read().splitlines()
-        return self.keywords
+        if self.keywords_path != '':
+            with open(self.keywords_path, "r") as filename:
+                self.keywords = filename.read().splitlines()
+
+            return self.keywords
 
     def get_set(self):
-        with open("../keyword_sets.txt", "r") as filename:
-            self.sets = json.loads(filename.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as filename:
+                self.sets = json.loads(filename.read())
 
-        return self.sets
-    
+            return self.sets
+
     def remove_keyword_from_set(self, keyword, set_name):
-        with open("../keyword_sets.txt", "r") as readfile:
-            self.sets = json.loads(readfile.read())
+        if self.keywords_set_path != '':
+            with open(self.keywords_set_path, "r") as readfile:
+                self.sets = json.loads(readfile.read())
 
-        list_value = list(self.sets[set_name])
-        list_value.remove(keyword)
-        self.sets[set_name] = list_value
-        with open("../keyword_sets.txt", "w") as writefile:
-            json.dump(self.sets, writefile)
+            list_value = list(self.sets[set_name])
+            list_value.remove(keyword)
+            self.sets[set_name] = list_value
+
+            with open(self.keywords_set_path, "w") as writefile:
+                json.dump(self.sets, writefile)
 
 
 # code to test if the keywords class is working

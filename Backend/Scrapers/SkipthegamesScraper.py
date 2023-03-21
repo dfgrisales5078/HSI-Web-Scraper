@@ -10,6 +10,7 @@ from Backend.ScraperPrototype import ScraperPrototype
 class SkipthegamesScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "bonita springs": 'https://skipthegames.com/posts/bonita-springs-fl',
@@ -37,7 +38,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.url = ''
 
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'credit card', 'card', 'applepay', 'donation', 'cash']
+                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', 'mc', 'mastercard']
 
         self.date_time = None
         self.main_page_path = None
@@ -59,14 +61,6 @@ class SkipthegamesScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO these need to be pulled from about_info, description, or activities using regex?
-        # self.phone_number = []
-        # self.name = []
-        # self.sex = []
-        # self.email = []
-        # self.payment_method = []
-        # self.location = []
-
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -75,6 +69,9 @@ class SkipthegamesScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_path(self, path) -> None:
+        self.path = path
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -89,7 +86,7 @@ class SkipthegamesScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -99,7 +96,7 @@ class SkipthegamesScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'skipthegames_{self.date_time}'
+        self.main_page_path = f'{self.path}/skipthegames_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
@@ -107,6 +104,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.get_data(links)
         self.format_data_to_csv()
         self.close_webpage()
+        self.reset_variables()
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -126,43 +124,33 @@ class SkipthegamesScraper(ScraperPrototype):
 
         # remove sponsored links
         links = [link for link in links if link.startswith('https://skipthegames.com/posts/')]
-
-        print([link for link in set(links)])
-        print('# of links:', len(set(links)))
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 about_info = self.driver.find_element(
                     By.XPATH, '/html/body/div[7]/div/div[2]/div/table/tbody').text
-                print(about_info)
             except NoSuchElementException:
                 about_info = 'N/A'
 
             try:
                 services = self.driver.find_element(
                     By.XPATH, '//*[@id="post-services"]').text
-                print(services)
             except NoSuchElementException:
                 services = 'N/A'
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div[7]/div/div[2]/div/div[1]/div').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
@@ -219,7 +207,6 @@ class SkipthegamesScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            print('\n')
 
         self.join_keywords = False
 
@@ -246,18 +233,26 @@ class SkipthegamesScraper(ScraperPrototype):
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.main_page_path}/skipthegames-{self.date_time}.csv', index=False, sep="\t")
 
+    def reset_variables(self) -> None:
+        self.link = []
+        self.about_info = []
+        self.description = []
+        self.services = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+
     def check_for_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + ' '
 
         if payments != '':
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -272,5 +267,4 @@ class SkipthegamesScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
