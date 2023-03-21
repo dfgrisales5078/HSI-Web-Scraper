@@ -315,6 +315,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.keywords_found = []
         self.number_of_keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:

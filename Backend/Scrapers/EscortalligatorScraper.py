@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
+import undetected_chromedriver as uc
 
 
 class EscortalligatorScraper(ScraperPrototype):
@@ -79,7 +80,6 @@ class EscortalligatorScraper(ScraperPrototype):
     def set_only_posts_with_payment_methods(self) -> None:
         self.only_posts_with_payment_methods = True
 
-
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -90,11 +90,12 @@ class EscortalligatorScraper(ScraperPrototype):
         self.get_formatted_url()
 
         # Selenium Web Driver setup
-        options = webdriver.ChromeOptions()
+        # options = webdriver.ChromeOptions()
+        options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
         # options.add_argument('--headless')
-        self.driver = webdriver.Chrome(options=options)
-
+        # self.driver = webdriver.Chrome(options=options)
+        self.driver = uc.Chrome(use_subprocess=True, options=options)
         # Open Webpage with URL
         self.open_webpage()
 
@@ -251,6 +252,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.keywords_found = []
         self.number_of_keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
@@ -294,7 +297,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 return True
         return False
 
-    def  check_and_append_payment_methods(self, description):
+    def check_and_append_payment_methods(self, description):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
