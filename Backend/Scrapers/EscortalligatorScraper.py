@@ -113,8 +113,9 @@ class EscortalligatorScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.reset_variables()
         self.format_data_to_csv()
+        self.reset_variables()
+
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
