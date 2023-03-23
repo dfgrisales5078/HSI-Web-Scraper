@@ -2246,8 +2246,8 @@ class MainWindow(QMainWindow):
         self.ui.setList.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         # disable QtabWidget indices 1 and 2 until file paths are selected
-        self.ui.tabWidget.setTabEnabled(1, True)
-        self.ui.tabWidget.setTabEnabled(2, True)
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(2, False)
 
     ''' Functions used to handle events: '''
 
