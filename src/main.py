@@ -2064,11 +2064,11 @@ python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
 class LoadingDialog(QDialog):
     def __init__(self, website_selection):
         super().__init__()
-        self.setWindowTitle('Scraper running')
+        self.setWindowTitle('Running Search')
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setRange(0, 100)
         layout = QVBoxLayout()
-        processing_scraper_label = QLabel(f"Scraping {website_selection} in progress...")
+        processing_scraper_label = QLabel(f"Scraping {website_selection} website in progress...")
         layout.addWidget(processing_scraper_label)
         layout.addWidget(self.progress_bar)
         self.setLayout(layout)
@@ -2080,6 +2080,7 @@ class LoadingDialog(QDialog):
             self.progress_bar.setValue(i)
             QApplication.processEvents()
         self.close()
+
 
 class MainWindow(QMainWindow):
 
