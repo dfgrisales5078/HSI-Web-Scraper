@@ -709,6 +709,10 @@ class MegapersonalsScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', 'ig', 'insta', 'snapchat', 'sc', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', 'fb', 'whatsapp', 'telegram',
+                                   'tg', 'app', 'tiktok', 'tik tok']
+
         # set date variables and path
         self.date_time = None
         self.main_page_path = None
@@ -731,6 +735,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -909,6 +914,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.location.append(location)
         self.description.append(description)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
         self.link.append(link)
 
     def format_data_to_csv(self) -> None:
@@ -922,7 +928,8 @@ class MegapersonalsScraper(ScraperPrototype):
             'description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -939,6 +946,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -950,6 +958,17 @@ class MegapersonalsScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
