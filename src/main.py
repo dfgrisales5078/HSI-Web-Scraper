@@ -1350,6 +1350,7 @@ class ErosScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
