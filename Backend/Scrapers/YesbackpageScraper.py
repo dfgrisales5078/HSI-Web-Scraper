@@ -254,16 +254,15 @@ class YesbackpageScraper(ScraperPrototype):
                         self.check_keywords_found(description, name, sex, phone_number, email, location, services)
                         self.append_data(counter, description, email, link, location, name, phone_number, services,
                                          sex)
+                        screenshot_name = str(counter) + ".png"
+                        self.capture_screenshot(screenshot_name)
+                        counter += 1
                 else:
                     print("else l249")
                     self.append_data(counter, description, email, link, location, name, phone_number, services,
                                      sex)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
-
-                    self.keywords_found.append("N/A")
-                    self.number_of_keywords_found.append("N/A")
-
                     counter += 1
 
             # if counter == 15:
@@ -280,11 +279,6 @@ class YesbackpageScraper(ScraperPrototype):
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
 
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
             return counter + 1
         return counter
 
@@ -298,7 +292,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.check_and_append_keywords(services)
 
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex) -> None:
-        print(f"append_data {counter}")
+        self.post_identifier.append(counter)
+        self.link.append(link)
         self.description.append(description)
         self.name.append(name)
         self.sex.append(sex)
@@ -306,11 +301,23 @@ class YesbackpageScraper(ScraperPrototype):
         self.email.append(email)
         self.location.append(location)
         self.check_and_append_payment_methods(description)
-        self.link.append(link)
-        self.post_identifier.append(counter)
         self.services.append(services)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
+        print(len(self.post_identifier))
+        print(len(self.phone_number))
+        print(len(self.link))
+        print(len(self.location))
+        print(len(self.name))
+        print(len(self.sex))
+        print(len(self.email))
+        print(len(self.services))
+        print(len(self.description))
+        print(len(self.payment_methods_found))
+        print(len(self.keywords_found))
+        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Phone-Number': self.phone_number,
@@ -389,12 +396,6 @@ class YesbackpageScraper(ScraperPrototype):
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
 
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
             return counter + 1
         return counter
 
@@ -407,12 +408,6 @@ class YesbackpageScraper(ScraperPrototype):
                              sex)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
-
-            # strip elements from keywords_found_in_post list using comma
-            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-            # self.keywords_found.append(self.keywords_found_in_post)
-            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
 
             return counter + 1
         return counter
