@@ -108,9 +108,9 @@ class YesbackpageScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
-        self.known_social_media = ['instagram', 'ig', 'insta', 'snapchat', 'sc', 'snap', 'onlyfans', 'only fans',
-                                   'twitter', 'kik', 'skype', 'facebook', 'fb', 'whatsapp', 'telegram',
-                                   'tg', 'app', 'tiktok', 'tik tok']
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         self.date_time = None
         self.scraper_directory = None
@@ -445,6 +445,10 @@ class SkipthegamesScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
@@ -709,9 +713,9 @@ class MegapersonalsScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
-        self.known_social_media = ['instagram', 'ig', 'insta', 'snapchat', 'sc', 'snap', 'onlyfans', 'only fans',
-                                   'twitter', 'kik', 'skype', 'facebook', 'fb', 'whatsapp', 'telegram',
-                                   'tg', 'app', 'tiktok', 'tik tok']
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         # set date variables and path
         self.date_time = None
@@ -1025,9 +1029,9 @@ class EscortalligatorScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
-        self.known_social_media = ['instagram', 'ig', 'insta', 'snapchat', 'sc', 'snap', 'onlyfans', 'only fans',
-                                   'twitter', 'kik', 'skype', 'facebook', 'fb', 'whatsapp', 'telegram',
-                                   'tg', 'app', 'tiktok', 'tik tok']
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         self.date_time = None
         self.scraper_directory = None
@@ -1305,9 +1309,9 @@ class ErosScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
-        self.known_social_media = ['instagram', 'ig', 'insta', 'snapchat', 'sc', 'snap', 'onlyfans', 'only fans',
-                                   'twitter', 'kik', 'skype', 'facebook', 'fb', 'whatsapp', 'telegram',
-                                   'tg', 'app', 'tiktok', 'tik tok']
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         self.date_time = None
         self.scraper_directory = None
