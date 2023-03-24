@@ -24,7 +24,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>17</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="layoutDirection">
@@ -381,7 +381,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">
@@ -399,7 +399,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">
@@ -454,7 +454,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">
@@ -472,7 +472,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>36</pointsize>
+       <pointsize>17</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -542,7 +542,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">
@@ -635,7 +635,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">
@@ -783,6 +783,11 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string> Enter new keyword:</string>
      </property>
@@ -795,6 +800,11 @@
        <width>261</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Enter new set name:</string>
@@ -844,6 +854,11 @@
        <width>411</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Select keywords from list on the left.</string>

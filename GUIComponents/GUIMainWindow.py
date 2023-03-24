@@ -8,6 +8,7 @@ from Backend.Facade import Facade
 from Backend.Keywords import Keywords
 from Scraper import Ui_HSIWebScraper
 
+
 # ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
 
 basedir = os.path.dirname(__file__)
@@ -50,6 +51,7 @@ class MainWindow(QMainWindow):
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
         self.manual_keyword_selection = set()
+
         self.keywords_of_selected_set = set()
         self.set_keyword_selection = set()
         self.locations = []
@@ -81,6 +83,7 @@ class MainWindow(QMainWindow):
         self.ui.keywordlistWidget.itemClicked.connect(self.keyword_list_widget)
 
         # bind keywordInclusivecheckBox to keyword_inclusive_check_box function
+        self.ui.keywordInclusivecheckBox.setEnabled(False)
         self.ui.keywordInclusivecheckBox.stateChanged.connect(self.keyword_inclusive_check_box)
 
         # bind setSelectionDropdown to set_selection_dropdown function
@@ -277,6 +280,7 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "Set name already exists.")
 
+
     # popup to confirm keyword removal
     @staticmethod
     def remove_keyword_popup_window(keyword_to_remove):
@@ -294,7 +298,6 @@ class MainWindow(QMainWindow):
         else:
             return False
 
-    # TODO BUG - last item clicked on is deleted even if not selected
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
@@ -359,13 +362,19 @@ class MainWindow(QMainWindow):
             if item.text() not in self.keywords_of_selected_set:
                 self.manual_keyword_selection.add(item.text())
 
+        # if keywords are selected, enable inclusive checkbox
+        if self.manual_keyword_selection:
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+
         # if a keyword is unselected, remove it from the set
+
         for item in range(self.ui.keywordlistWidget.count()):
             if not self.ui.keywordlistWidget.item(item).isSelected():
                 if item not in self.keywords_of_selected_set:
                     self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(item).text())
-
+                    
     # handle dropdown menu for keyword sets
+    # TODO - when selecting empty set, unselect all keywords (sometimes does not work)
     def set_selection_dropdown(self):
         selected_set = self.ui.setSelectionDropdown.currentText()
 
@@ -388,11 +397,13 @@ class MainWindow(QMainWindow):
             elif self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
+
     # scrape using text box input
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
 
     def keyword_inclusive_check_box(self):
+        # disable checkbox if no keywords are selected
         if self.ui.keywordInclusivecheckBox.isChecked():
             self.inclusive_search = True
         else:
@@ -406,6 +417,9 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
                 self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
+
+            # enable keyword inclusive checkbox
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
             self.keywords_selected = set()
@@ -413,19 +427,17 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
 
+            # disable keyword inclusive checkbox
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
+
         # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
 
     def payment_method_check_box(self):
         if self.ui.paymentMethodcheckBox.isChecked():
-            self.ui.paymentMethodcheckBox.setEnabled(True)
             self.include_payment_method = True
         else:
-            self.ui.paymentMethodcheckBox.setEnabled(False)
             self.include_payment_method = False
-
-        # enable checkbox after it's unchecked
-        self.ui.paymentMethodcheckBox.setEnabled(True)
 
     # handle dropdown menu for payment method
     def website_selection_dropdown(self):
@@ -500,6 +512,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_escortalligator_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_escortalligator_only_posts_with_payment_methods()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -510,6 +525,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_megapersonals_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_megapersonal_only_posts_with_payment_methods()
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -520,6 +538,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_skipthegames_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_skipthegames_only_posts_with_payment_methods()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -530,6 +551,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
+                    
+                if self.include_payment_method:
+                    self.facade.set_yesbackpage_only_posts_with_payment_methods()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -542,6 +566,10 @@ class MainWindow(QMainWindow):
                 #                  self.facade.initialize_eros_scraper(self.keywords_selected))
                 if self.inclusive_search:
                     self.facade.set_eros_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_eros_only_posts_with_payment_methods()
+
                 self.facade.initialize_eros_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -549,6 +577,7 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
+        self.ui.paymentMethodcheckBox.setChecked(False)
 
     # TODO - function two run threads simultaneously
     # function to run two threads at once
