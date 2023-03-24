@@ -314,7 +314,6 @@ class YesbackpageScraper(ScraperPrototype):
                     self.capture_screenshot(screenshot_name)
                     counter += 1
             self.format_data_to_csv()
-            self.join_keywords = False
 
     def join_with_payment_methods(self, counter, description, email, link, location, name, phone_number,
                                   services, sex) -> int:
@@ -649,7 +648,6 @@ class SkipthegamesScraper(ScraperPrototype):
                     counter += 1
 
             self.format_data_to_csv()
-        self.join_keywords = False
 
     def append_data(self, about_info, counter, description, link, services):
         self.post_identifier.append(counter)
@@ -992,7 +990,6 @@ class MegapersonalsScraper(ScraperPrototype):
                     self.capture_screenshot(screenshot_name)
                     counter += 1
             self.format_data_to_csv()
-        self.join_keywords = False
 
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
@@ -1327,7 +1324,6 @@ class EscortalligatorScraper(ScraperPrototype):
                     counter += 1
 
             self.format_data_to_csv()
-        self.join_keywords = False
 
     def join_with_payment_methods(self, counter, description, link, location_and_age, phone_number):
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
@@ -1659,7 +1655,6 @@ class ErosScraper(ScraperPrototype):
                     counter += 1
 
             self.format_data_to_csv()
-        self.join_keywords = False
 
     def join_with_payment_methods(self, contact_details, counter, description, info_details, link, profile_header):
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
