@@ -177,32 +177,25 @@ class EscortalligatorScraper(ScraperPrototype):
             self.keywords_found_in_post = []
 
             if self.join_keywords and self.only_posts_with_payment_methods:
-                print('line 186')
                 if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
                         self.check_keywords(description):
                     counter = self.join_with_payment_methods(counter, description, link, location_and_age, phone_number)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print('line 192')
                 if self.join_keywords:
-                    print('line 194')
                     if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
                             self.check_keywords(description):
                         self.check_keywords_found(description, location_and_age, phone_number)
                         counter = self.join_inclusive(counter, description, link, location_and_age, phone_number)
 
                 elif self.only_posts_with_payment_methods:
-                    print('only payment method')
                     if len(self.keywords) > 0:
-                        print('line 203')
                         if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
                                 self.check_keywords(description):
                             self.check_keywords_found(description, location_and_age, phone_number)
-                    else:
-                        print('line 208')
+
                     counter = self.payment_methods_only(counter, description, link, location_and_age, phone_number)
             else:
-                print('line 211')
                 if len(self.keywords) > 0:
                     if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
                             self.check_keywords(description):
@@ -212,13 +205,10 @@ class EscortalligatorScraper(ScraperPrototype):
                         self.capture_screenshot(screenshot_name)
                         counter += 1
                 else:
-                    print('line 221')
                     self.append_data(counter, description, link, location_and_age, phone_number)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
                     counter += 1
-
-            print('\n')
 
         self.join_keywords = False
 
@@ -250,8 +240,6 @@ class EscortalligatorScraper(ScraperPrototype):
 
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
-        print(f"append_data {counter}")
-
         self.post_identifier.append(counter)
         self.phone_number.append(phone_number)
         self.links.append(link)
@@ -262,13 +250,6 @@ class EscortalligatorScraper(ScraperPrototype):
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
-        print(len(self.post_identifier))
-        print(len(self.phone_number))
-        print(len(self.location_and_age))
-        print(len(self.description))
-        print(len(self.payment_methods_found))
-        print(len(self.keywords_found))
-        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Phone-Number': self.phone_number,
@@ -286,7 +267,6 @@ class EscortalligatorScraper(ScraperPrototype):
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 return True
         return False
 
@@ -294,7 +274,6 @@ class EscortalligatorScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
@@ -328,7 +307,6 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def payment_methods_only(self, counter, description, link, location_and_age, phone_number):
         if self.check_for_payment_methods(description):
-            print('line 337')
             self.append_data(counter, description, link, location_and_age, phone_number)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)

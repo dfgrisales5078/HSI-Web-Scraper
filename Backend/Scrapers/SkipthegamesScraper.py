@@ -164,33 +164,24 @@ class SkipthegamesScraper(ScraperPrototype):
             self.keywords_found_in_post = []
 
             if self.join_keywords and self.only_posts_with_payment_methods:
-                print("if l179")
                 if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(description):
                     self.check_keywords_found(about_info, services, description)
                     counter = self.join_with_payment_methods(about_info, counter, description, link, services)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print("elif l185")
                 if self.join_keywords:
-                    print("if join_keywords l187")
                     if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
                             description):
                         self.check_keywords_found(about_info, services, description)
                         counter = self.join_inclusive(about_info, counter, description, link, services)
 
                 elif self.only_posts_with_payment_methods:
-                    print("elif only_payment_methods l194")
                     if len(self.keywords) > 0:
-                        print('l195')
                         if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
                                 description):
                             self.check_keywords_found(about_info, services, description)
-                    else:
-                        print('l200')
-
                     counter = self.payment_methods_only(about_info, counter, description, link, services)
             else:
-                print("else l204")
                 if len(self.keywords) > 0:
                     if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
                             description):
@@ -200,13 +191,10 @@ class SkipthegamesScraper(ScraperPrototype):
                         self.capture_screenshot(screenshot_name)
                         counter += 1
                 else:
-                    print("else l211")
                     self.append_data(about_info, counter, description, link, services)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
                     counter += 1
-
-            print('\n')
 
         self.join_keywords = False
 
@@ -237,8 +225,6 @@ class SkipthegamesScraper(ScraperPrototype):
         self.join_keywords = False
 
     def append_data(self, about_info, counter, description, link, services):
-        print(f"append_data {counter}")
-
         self.post_identifier.append(counter)
         self.link.append(link)
         self.about_info.append(about_info)
@@ -249,13 +235,6 @@ class SkipthegamesScraper(ScraperPrototype):
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
-        print(len(self.post_identifier))
-        print(len(self.about_info))
-        print(len(self.services))
-        print(len(self.description))
-        print(len(self.payment_methods_found))
-        print(len(self.keywords_found))
-        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Link': self.link,
@@ -273,7 +252,6 @@ class SkipthegamesScraper(ScraperPrototype):
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 return True
         return False
 
@@ -281,7 +259,6 @@ class SkipthegamesScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
@@ -317,7 +294,6 @@ class SkipthegamesScraper(ScraperPrototype):
     def payment_methods_only(self, about_info, counter, description, link, services) -> int:
 
         if self.check_for_payment_methods(description):
-            print('l382 if')
             self.append_data(about_info, counter, description, link, services)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)

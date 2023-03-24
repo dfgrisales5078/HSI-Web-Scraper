@@ -202,7 +202,6 @@ class YesbackpageScraper(ScraperPrototype):
             self.keywords_found_in_post = []
 
             if self.join_keywords and self.only_posts_with_payment_methods:
-                print("if l212")
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                         or self.check_keywords(phone_number) or self.check_keywords(email) \
                         or self.check_keywords(location) or self.check_keywords(services):
@@ -211,9 +210,7 @@ class YesbackpageScraper(ScraperPrototype):
                                                              phone_number, services, sex)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print("elif l221")
                 if self.join_keywords:
-                    print("if join_keywords l223")
                     if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                             or self.check_keywords(phone_number) or self.check_keywords(email) \
                             or self.check_keywords(location) or self.check_keywords(services):
@@ -222,24 +219,17 @@ class YesbackpageScraper(ScraperPrototype):
                                                       services, sex)
 
                 elif self.only_posts_with_payment_methods:
-                    print("elif only_payment_methods l232")
                     if len(self.keywords) > 0:
-                        print('l234')
                         if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                                 or self.check_keywords(phone_number) or self.check_keywords(email) \
                                 or self.check_keywords(location) or self.check_keywords(services):
                             self.check_keywords_found(description, name, sex, phone_number, email, location, services)
-
-                    else:
-                        print('l245')
-                        self.keywords_found_in_post.append("N/A")
 
                     counter = self.payment_methods_only(counter, description, email, link, location, name,
                                                         phone_number, services, sex)
             else:
                 # run if keywords
                 if len(self.keywords) > 0:
-                    print(f"if l241")
                     if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                             or self.check_keywords(phone_number) or self.check_keywords(email) \
                             or self.check_keywords(location) or self.check_keywords(services):
@@ -251,16 +241,11 @@ class YesbackpageScraper(ScraperPrototype):
                         self.capture_screenshot(screenshot_name)
                         counter += 1
                 else:
-                    print("else l249")
                     self.append_data(counter, description, email, link, location, name, phone_number, services,
                                      sex)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
                     counter += 1
-
-            # if counter == 15:
-            #     break
-            print("\n")
 
         self.join_keywords = False
 
@@ -299,18 +284,6 @@ class YesbackpageScraper(ScraperPrototype):
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
-        print(len(self.post_identifier))
-        print(len(self.phone_number))
-        print(len(self.link))
-        print(len(self.location))
-        print(len(self.name))
-        print(len(self.sex))
-        print(len(self.email))
-        print(len(self.services))
-        print(len(self.description))
-        print(len(self.payment_methods_found))
-        print(len(self.keywords_found))
-        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Phone-Number': self.phone_number,
@@ -349,7 +322,6 @@ class YesbackpageScraper(ScraperPrototype):
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 return True
         return False
 
@@ -393,7 +365,6 @@ class YesbackpageScraper(ScraperPrototype):
                              services, sex) -> int:
 
         if self.check_for_payment_methods(description):
-            print('l382 if')
             self.append_data(counter, description, email, link, location, name, phone_number, services,
                              sex)
             screenshot_name = str(counter) + ".png"
