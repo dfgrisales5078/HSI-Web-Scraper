@@ -715,7 +715,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # set date variables and path
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
 
@@ -772,9 +772,10 @@ class MegapersonalsScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
-        os.mkdir(self.main_page_path)
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        self.scraper_directory = f'{self.path}/megapersonals_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
@@ -933,7 +934,7 @@ class MegapersonalsScraper(ScraperPrototype):
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
 
     def reset_variables(self) -> None:
         self.description = []
@@ -1707,7 +1708,7 @@ class Facade:
         self.megapersonals.set_join_keywords()
 
     def get_megapersonals_cities(self):
-        self.megapersonals = MegapersonalsScraper()
+        # self.megapersonals = MegapersonalsScraper()
         return self.megapersonals.get_cities()
 
     def initialize_skipthegames_scraper(self, keywords):
@@ -1745,9 +1746,6 @@ class Facade:
 
     def get_eros_cities(self):
         return self.eros.get_cities()
-
-    def format_data(self, data):
-        pass
 
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
@@ -2626,17 +2624,17 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            try:
-                if self.inclusive_search:
-                    self.facade.set_megapersonals_join_keywords()
+            # try:
+            if self.inclusive_search:
+                self.facade.set_megapersonals_join_keywords()
 
-                dialog = LoadingDialog('megapersonals')
-                dialog.run()
-                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-            except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-            time.sleep(2)
+            dialog = LoadingDialog('megapersonals')
+            dialog.run()
+            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+            QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+            # except:
+            #     QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+            # time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
