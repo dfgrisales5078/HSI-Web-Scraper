@@ -121,6 +121,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
 
+        self.only_posts_with_payment_methods = False
+
         # lists to store data and then send to csv file
 
         self.phone_number = []
@@ -146,6 +148,9 @@ class YesbackpageScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def set_path(self, path) -> None:
         self.path = path
@@ -264,77 +269,87 @@ class YesbackpageScraper(ScraperPrototype):
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
-            if len(self.keywords) > 0:
+            if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
                         or self.check_keywords(phone_number) or self.check_keywords(email) \
                         or self.check_keywords(location) or self.check_keywords(services):
+                    self.check_keywords_found(description, name, sex, phone_number, email, location, services)
+                    counter = self.join_with_payment_methods(counter, description, email, link, location, name,
+                                                             phone_number, services, sex)
 
-                    # check for keywords and append to lists
-                    self.check_and_append_keywords(description)
-                    self.check_and_append_keywords(name)
-                    self.check_and_append_keywords(sex)
-                    self.check_and_append_keywords(phone_number)
-                    self.check_and_append_keywords(email)
-                    self.check_and_append_keywords(location)
-                    self.check_and_append_keywords(services)
+            elif self.join_keywords or self.only_posts_with_payment_methods:
+                if self.join_keywords:
+                    if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
+                            or self.check_keywords(phone_number) or self.check_keywords(email) \
+                            or self.check_keywords(location) or self.check_keywords(services):
+                        self.check_keywords_found(description, name, sex, phone_number, email, location, services)
+                        counter = self.join_inclusive(counter, description, email, link, location, name, phone_number,
+                                                      services, sex)
 
-                    if self.join_keywords:
-                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
-                            self.append_data(counter, description, email, link, location, name, phone_number, services,
-                                             sex)
-                            screenshot_name = str(counter) + ".png"
-                            self.capture_screenshot(screenshot_name)
+                elif self.only_posts_with_payment_methods:
+                    if len(self.keywords) > 0:
+                        if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
+                                or self.check_keywords(phone_number) or self.check_keywords(email) \
+                                or self.check_keywords(location) or self.check_keywords(services):
+                            self.check_keywords_found(description, name, sex, phone_number, email, location, services)
 
-                            # strip elements from keywords_found_in_post list using comma
-                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                            # self.keywords_found.append(self.keywords_found_in_post)
-                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
-                            counter += 1
-                        else:
-                            continue
-                    else:
+                    counter = self.payment_methods_only(counter, description, email, link, location, name,
+                                                        phone_number, services, sex)
+            else:
+                # run if keywords
+                if len(self.keywords) > 0:
+                    if self.check_keywords(description) or self.check_keywords(name) or self.check_keywords(sex) \
+                            or self.check_keywords(phone_number) or self.check_keywords(email) \
+                            or self.check_keywords(location) or self.check_keywords(services):
+                        self.check_keywords_found(description, name, sex, phone_number, email, location, services)
                         self.append_data(counter, description, email, link, location, name, phone_number, services,
                                          sex)
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
-
-                        # strip elements from keywords_found_in_post list using comma
-                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                        # self.keywords_found.append(self.keywords_found_in_post)
-                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
                         counter += 1
                 else:
-                    continue
-            else:
-                self.append_data(counter, description, email, link, location, name, phone_number, services,
-                                 sex)
-                screenshot_name = str(counter) + ".png"
-                self.capture_screenshot(screenshot_name)
-
-                # append N/A if no keywords are found
-                self.keywords_found.append('N/A')
-                self.number_of_keywords_found.append('N/A')
-
-                counter += 1
+                    self.append_data(counter, description, email, link, location, name, phone_number, services,
+                                     sex)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
             self.format_data_to_csv()
-        self.join_keywords = False
+            self.join_keywords = False
+
+    def join_with_payment_methods(self, counter, description, email, link, location, name, phone_number,
+                                  services, sex) -> int:
+        if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(counter, description, email, link, location, name, phone_number, services,
+                             sex)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def check_keywords_found(self, description, name, sex, phone_number, email, location, services) -> None:
+        self.check_and_append_keywords(description)
+        self.check_and_append_keywords(name)
+        self.check_and_append_keywords(sex)
+        self.check_and_append_keywords(phone_number)
+        self.check_and_append_keywords(email)
+        self.check_and_append_keywords(location)
+        self.check_and_append_keywords(services)
 
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
+        self.post_identifier.append(counter)
+        self.link.append(link)
         self.description.append(description)
         self.name.append(name)
         self.sex.append(sex)
         self.phone_number.append(phone_number)
         self.email.append(email)
         self.location.append(location)
-        self.check_for_payment_methods(description)
-        self.check_for_social_media(description)
-        self.link.append(link)
-        self.post_identifier.append(counter)
+        self.check_and_append_payment_methods(description)
         self.services.append(services)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -368,10 +383,18 @@ class YesbackpageScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.services = []
         self.number_of_keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
         self.keywords_found = []
         self.social_media_found = []
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
@@ -407,6 +430,28 @@ class YesbackpageScraper(ScraperPrototype):
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
                 self.number_of_keywords_in_post += 1
+
+    def join_inclusive(self, counter, description, email, link, location, name, phone_number, services, sex) -> int:
+        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(counter, description, email, link, location, name, phone_number, services,
+                             sex)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, counter, description, email, link, location, name, phone_number,
+                             services, sex) -> int:
+
+        if self.check_for_payment_methods(description):
+            self.append_data(counter, description, email, link, location, name, phone_number, services,
+                             sex)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
 
 
 # ---------------------------- Skipthegames ----------------------------
@@ -465,6 +510,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.services = []
         self.post_identifier = []
         self.payment_methods_found = []
+        self.only_posts_with_payment_methods = False
 
         self.number_of_keywords_found = []
         self.keywords_found = []
@@ -478,6 +524,9 @@ class SkipthegamesScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def set_path(self, path) -> None:
         self.path = path
@@ -566,55 +615,39 @@ class SkipthegamesScraper(ScraperPrototype):
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
-            if len(self.keywords) > 0:
+            if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(description):
+                    self.check_keywords_found(about_info, services, description)
+                    counter = self.join_with_payment_methods(about_info, counter, description, link, services)
 
-                    self.check_and_append_keywords(about_info)
-                    self.check_and_append_keywords(services)
-                    self.check_and_append_keywords(description)
+            elif self.join_keywords or self.only_posts_with_payment_methods:
+                if self.join_keywords:
+                    if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
+                            description):
+                        self.check_keywords_found(about_info, services, description)
+                        counter = self.join_inclusive(about_info, counter, description, link, services)
 
-                    if self.join_keywords:
-                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
-                            self.append_data(about_info, counter, description, link, services)
-
-                            screenshot_name = str(counter) + ".png"
-                            self.capture_screenshot(screenshot_name)
-
-                            # strip elements from keywords_found_in_post list using comma
-                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                            # self.keywords_found.append(self.keywords_found_in_post)
-                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
-                            counter += 1
-                        else:
-                            continue
-                    else:
+                elif self.only_posts_with_payment_methods:
+                    if len(self.keywords) > 0:
+                        if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
+                                description):
+                            self.check_keywords_found(about_info, services, description)
+                    counter = self.payment_methods_only(about_info, counter, description, link, services)
+            else:
+                if len(self.keywords) > 0:
+                    if self.check_keywords(about_info) or self.check_keywords(services) or self.check_keywords(
+                            description):
+                        self.check_keywords_found(about_info, services, description)
                         self.append_data(about_info, counter, description, link, services)
-
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
-
-                        # strip elements from keywords_found_in_post list using comma
-                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                        # self.keywords_found.append(self.keywords_found_in_post)
-                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
                         counter += 1
                 else:
-                    continue
-            else:
-                self.append_data(about_info, counter, description, link, services)
+                    self.append_data(about_info, counter, description, link, services)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
 
-                screenshot_name = str(counter) + ".png"
-                self.capture_screenshot(screenshot_name)
-
-                # append N/A if no keywords are found
-                self.keywords_found.append('N/A')
-                self.number_of_keywords_found.append('N/A')
-
-                counter += 1
             self.format_data_to_csv()
         self.join_keywords = False
 
@@ -626,6 +659,20 @@ class SkipthegamesScraper(ScraperPrototype):
         self.description.append(description)
         self.check_for_payment_methods(description)
         self.check_for_social_media(description)
+
+    def join_with_payment_methods(self, about_info, counter, description, link, services) -> int:
+        if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(about_info, counter, description, link, services)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def check_keywords_found(self, about_info, services, description) -> None:
+        self.check_and_append_keywords(about_info)
+        self.check_and_append_keywords(services)
+        self.check_and_append_keywords(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -652,13 +699,21 @@ class SkipthegamesScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
         self.social_media_found = []
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description) -> None:
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                payments += payment + ' '
+                payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -690,6 +745,26 @@ class SkipthegamesScraper(ScraperPrototype):
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
                 self.number_of_keywords_in_post += 1
+
+    def join_inclusive(self, about_info, counter, description, link, services) -> int:
+        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(about_info, counter, description, link, services)
+
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, about_info, counter, description, link, services) -> int:
+
+        if self.check_for_payment_methods(description):
+            self.append_data(about_info, counter, description, link, services)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
 
 
 # ---------------------------- Megapersonals ----------------------------
@@ -723,7 +798,7 @@ class MegapersonalsScraper(ScraperPrototype):
             "west palm beach": 'https://megapersonals.eu/public/post_list/115/1/1'
         }
         self.city = ''
-        self.url = ''
+        self.url = "https://megapersonals.eu/"
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
@@ -737,6 +812,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
+
+        self.only_posts_with_payment_methods = False
 
         self.join_keywords = False
         self.number_of_keywords_in_post = 0
@@ -765,6 +842,9 @@ class MegapersonalsScraper(ScraperPrototype):
     def set_join_keywords(self) -> None:
         self.join_keywords = True
 
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
+
     def set_path(self, path) -> None:
         self.path = path
 
@@ -775,9 +855,6 @@ class MegapersonalsScraper(ScraperPrototype):
         # format date
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
-        # Format website URL based on state and city
-        self.get_formatted_url()
-
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
@@ -786,6 +863,10 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # Open Webpage with URL
         self.open_webpage()
+
+        # Format website URL based on state and city
+        self.get_formatted_url()
+        self.driver.get(self.url)
 
         # Find links of posts
         links = self.get_links()
@@ -869,62 +950,65 @@ class MegapersonalsScraper(ScraperPrototype):
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
-            if len(self.keywords) > 0:
+            if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(description) or self.check_keywords(name) \
                         or self.check_keywords(phone_number) or self.check_keywords(city) \
                         or self.check_keywords(location):
+                    self.check_keywords_found(city, description, location, name, phone_number)
+                    counter = self.join_with_payment_methods(city, counter, description, link, location, name,
+                                                             phone_number)
 
-                    # check for keywords and append to lists
-                    self.check_and_append_keywords(description)
-                    self.check_and_append_keywords(name)
-                    self.check_and_append_keywords(phone_number)
-                    self.check_and_append_keywords(city)
-                    self.check_and_append_keywords(location)
+            elif self.join_keywords or self.only_posts_with_payment_methods:
+                if self.join_keywords:
+                    if self.check_keywords(description) or self.check_keywords(name) \
+                            or self.check_keywords(phone_number) or self.check_keywords(city) \
+                            or self.check_keywords(location):
+                        self.check_keywords_found(city, description, location, name, phone_number)
+                        counter = self.join_inclusive(city, counter, description, link, location, name,
+                                                      phone_number)
 
-                    if self.join_keywords:
-                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
-                            self.append_data(city, counter, description, link, location, name, phone_number)
+                elif self.only_posts_with_payment_methods:
+                    if len(self.keywords) > 0:
+                        if self.check_keywords(description) or self.check_keywords(name) \
+                                or self.check_keywords(phone_number) or self.check_keywords(city) \
+                                or self.check_keywords(location):
+                            self.check_keywords_found(city, description, location, name, phone_number)
 
-                            screenshot_name = str(counter) + ".png"
-                            self.capture_screenshot(screenshot_name)
-
-                            # strip elements from keywords_found_in_post list using comma
-                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                            # self.keywords_found.append(self.keywords_found_in_post)
-                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
-                            counter += 1
-                        else:
-                            continue
-                    else:
+                    counter = self.payment_methods_only(city, counter, description, link, location, name,
+                                                        phone_number)
+            else:
+                if len(self.keywords) > 0:
+                    if self.check_keywords(description) or self.check_keywords(name) \
+                            or self.check_keywords(phone_number) or self.check_keywords(city) \
+                            or self.check_keywords(location):
+                        self.check_keywords_found(city, description, location, name, phone_number)
                         self.append_data(city, counter, description, link, location, name, phone_number)
-
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
-
-                        # strip elements from keywords_found_in_post list using comma
-                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                        # self.keywords_found.append(self.keywords_found_in_post)
-                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
                         counter += 1
                 else:
-                    continue
-            else:
-                self.append_data(city, counter, description, link, location, name, phone_number)
-
-                screenshot_name = str(counter) + ".png"
-                self.capture_screenshot(screenshot_name)
-
-                # append N/A if no keywords are found
-                self.keywords_found.append('N/A')
-                self.number_of_keywords_found.append('N/A')
-
-                counter += 1
+                    self.append_data(city, counter, description, link, location, name, phone_number)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
             self.format_data_to_csv()
         self.join_keywords = False
+
+    def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
+        if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(city, counter, description, link, location, name, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def check_keywords_found(self, city, description, location, name, phone_number) -> None:
+        self.check_and_append_keywords(city)
+        self.check_and_append_keywords(description)
+        self.check_and_append_keywords(location)
+        self.check_and_append_keywords(name)
+        self.check_and_append_keywords(phone_number)
 
     def append_data(self, city, counter, description, link, location, name, phone_number):
         self.post_identifier.append(counter)
@@ -933,9 +1017,11 @@ class MegapersonalsScraper(ScraperPrototype):
         self.contentCity.append(city)
         self.location.append(location)
         self.description.append(description)
-        self.check_for_payment_methods(description)
-        self.check_for_social_media(description)
+        self.check_and_append_payment_methods(description)
         self.link.append(link)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -967,12 +1053,20 @@ class MegapersonalsScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
         self.social_media_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                payments += payment + ' '
+                payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -1004,6 +1098,25 @@ class MegapersonalsScraper(ScraperPrototype):
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
                 self.number_of_keywords_in_post += 1
+
+    def join_inclusive(self, city, counter, description, link, location, name, phone_number) -> int:
+        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(city, counter, description, link, location, name, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, city, counter, description, link, location, name,
+                             phone_number) -> int:
+        if self.check_for_payment_methods(description):
+            self.append_data(city, counter, description, link, location, name, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
 
 
 # ---------------------------- Escort Alligator ----------------------------
@@ -1052,6 +1165,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
+        self.only_posts_with_payment_methods = False
 
         self.join_keywords = False
 
@@ -1078,6 +1192,9 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def set_path(self, path) -> None:
         self.path = path
@@ -1175,59 +1292,56 @@ class EscortalligatorScraper(ScraperPrototype):
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
-            if len(self.keywords) > 0:
+            if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
                         self.check_keywords(description):
+                    counter = self.join_with_payment_methods(counter, description, link, location_and_age, phone_number)
 
-                    # check for keywords and append to lists
-                    self.check_and_append_keywords(phone_number)
-                    self.check_and_append_keywords(location_and_age)
-                    self.check_and_append_keywords(description)
+            elif self.join_keywords or self.only_posts_with_payment_methods:
+                if self.join_keywords:
+                    if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
+                            self.check_keywords(description):
+                        self.check_keywords_found(description, location_and_age, phone_number)
+                        counter = self.join_inclusive(counter, description, link, location_and_age, phone_number)
 
-                    if self.join_keywords:
-                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+                elif self.only_posts_with_payment_methods:
+                    if len(self.keywords) > 0:
+                        if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
+                                self.check_keywords(description):
+                            self.check_keywords_found(description, location_and_age, phone_number)
 
-                            self.append_data(counter, description, link, location_and_age, phone_number)
-
-                            screenshot_name = str(counter) + ".png"
-                            self.capture_screenshot(screenshot_name)
-
-                            # strip elements from keywords_found_in_post list using comma
-                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                            # self.keywords_found.append(self.keywords_found_in_post)
-                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
-                            counter += 1
-                        else:
-                            continue
-                    else:
+                    counter = self.payment_methods_only(counter, description, link, location_and_age, phone_number)
+            else:
+                if len(self.keywords) > 0:
+                    if self.check_keywords(phone_number) or self.check_keywords(location_and_age) or \
+                            self.check_keywords(description):
+                        self.check_keywords_found(description, location_and_age, phone_number)
                         self.append_data(counter, description, link, location_and_age, phone_number)
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
-
-                        # strip elements from keywords_found_in_post list using comma
-                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-
-                        # self.keywords_found.append(self.keywords_found_in_post)
-                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
                         counter += 1
                 else:
-                    continue
-            else:
-                self.append_data(counter, description, link, location_and_age, phone_number)
+                    self.append_data(counter, description, link, location_and_age, phone_number)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
 
-                screenshot_name = str(counter) + ".png"
-                self.capture_screenshot(screenshot_name)
-
-                # append N/A if no keywords are found
-                self.keywords_found.append('N/A')
-                self.number_of_keywords_found.append('N/A')
-
-                counter += 1
             self.format_data_to_csv()
         self.join_keywords = False
+
+    def join_with_payment_methods(self, counter, description, link, location_and_age, phone_number):
+        if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(counter, description, link, location_and_age, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def check_keywords_found(self, description, location_and_age, phone_number):
+        self.check_and_append_keywords(description)
+        self.check_and_append_keywords(location_and_age)
+        self.check_and_append_keywords(phone_number)
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
         self.post_identifier.append(counter)
@@ -1235,7 +1349,9 @@ class EscortalligatorScraper(ScraperPrototype):
         self.links.append(link)
         self.location_and_age.append(location_and_age)
         self.description.append(description)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
         self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
@@ -1263,13 +1379,21 @@ class EscortalligatorScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
         self.social_media_found = []
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                payments += payment + ' '
+                payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -1301,6 +1425,24 @@ class EscortalligatorScraper(ScraperPrototype):
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
                 self.number_of_keywords_in_post += 1
+
+    def join_inclusive(self, counter, description, link, location_and_age, phone_number):
+        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(counter, description, link, location_and_age, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, counter, description, link, location_and_age, phone_number):
+        if self.check_for_payment_methods(description):
+            self.append_data(counter, description, link, location_and_age, phone_number)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
 
 
 # ----------------------------- Eros ----------------------------
@@ -1337,6 +1479,7 @@ class ErosScraper(ScraperPrototype):
 
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
+        self.only_posts_with_payment_methods = False
         self.social_media_found = []
 
         # lists to store data and then send to csv file
@@ -1359,6 +1502,9 @@ class ErosScraper(ScraperPrototype):
 
     def set_join_keywords(self) -> None:
         self.join_keywords = True
+
+    def set_only_posts_with_payment_methods(self) -> None:
+        self.only_posts_with_payment_methods = True
 
     def set_path(self, path) -> None:
         self.path = path
@@ -1473,59 +1619,62 @@ class ErosScraper(ScraperPrototype):
             self.number_of_keywords_in_post = 0
             self.keywords_found_in_post = []
 
-            if len(self.keywords) > 0:
+            if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(profile_header) or self.check_keywords(description) \
                         or self.check_keywords(info_details) or self.check_keywords(contact_details):
+                    counter = self.join_with_payment_methods(contact_details, counter, description, info_details, link,
+                                                             profile_header)
 
-                    # check for keywords and append to lists
-                    self.check_and_append_keywords(profile_header)
-                    self.check_and_append_keywords(description)
-                    self.check_and_append_keywords(info_details)
-                    self.check_and_append_keywords(contact_details)
+            elif self.join_keywords or self.only_posts_with_payment_methods:
+                if self.join_keywords:
+                    if self.check_keywords(profile_header) or self.check_keywords(description) \
+                            or self.check_keywords(info_details) or self.check_keywords(contact_details):
+                        self.check_keywords_found(contact_details, description, info_details, profile_header)
+                        counter = self.join_inclusive(contact_details, counter, description, info_details, link,
+                                                      profile_header)
 
-                    if self.join_keywords:
-                        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+                elif self.only_posts_with_payment_methods:
+                    if len(self.keywords) > 0:
+                        if self.check_keywords(profile_header) or self.check_keywords(description) \
+                                or self.check_keywords(info_details) or self.check_keywords(contact_details):
+                            self.check_keywords_found(contact_details, description, info_details, profile_header)
 
-                            self.append_data(contact_details, counter, description, info_details, link, profile_header)
+                    counter = self.payment_methods_only(contact_details, counter, description, info_details, link,
+                                                        profile_header)
 
-                            screenshot_name = str(counter) + ".png"
-                            self.capture_screenshot(screenshot_name)
-
-                            # strip elements from keywords_found_in_post list using comma
-                            self.keywords_found.append(', '.join(self.keywords_found_in_post))
-                            # self.keywords_found.append(self.keywords_found_in_post)
-                            self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
-                            counter += 1
-                        else:
-                            continue
-                    else:
+            else:
+                if len(self.keywords) > 0:
+                    if self.check_keywords(profile_header) or self.check_keywords(description) \
+                            or self.check_keywords(info_details) or self.check_keywords(contact_details):
+                        self.check_keywords_found(contact_details, description, info_details, profile_header)
                         self.append_data(contact_details, counter, description, info_details, link, profile_header)
-
                         screenshot_name = str(counter) + ".png"
                         self.capture_screenshot(screenshot_name)
-
-                        # strip elements from keywords_found_in_post list using comma
-                        self.keywords_found.append(', '.join(self.keywords_found_in_post))
-                        # self.keywords_found.append(self.keywords_found_in_post)
-                        self.number_of_keywords_found.append(self.number_of_keywords_in_post)
-
                         counter += 1
+
                 else:
-                    continue
-            else:
-                self.append_data(contact_details, counter, description, info_details, link, profile_header)
+                    self.append_data(contact_details, counter, description, info_details, link, profile_header)
+                    screenshot_name = str(counter) + ".png"
+                    self.capture_screenshot(screenshot_name)
+                    counter += 1
 
-                screenshot_name = str(counter) + ".png"
-                self.capture_screenshot(screenshot_name)
-
-                # append N/A if no keywords are found
-                self.keywords_found.append('N/A')
-                self.number_of_keywords_found.append('N/A')
-
-                counter += 1
             self.format_data_to_csv()
         self.join_keywords = False
+
+    def join_with_payment_methods(self, contact_details, counter, description, info_details, link, profile_header):
+        if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(contact_details, counter, description, info_details, link, profile_header)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def check_keywords_found(self, contact_details, description, info_details, profile_header):
+        self.check_and_append_keywords(contact_details)
+        self.check_and_append_keywords(description)
+        self.check_and_append_keywords(info_details)
+        self.check_and_append_keywords(profile_header)
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
         self.post_identifier.append(counter)
@@ -1536,6 +1685,8 @@ class ErosScraper(ScraperPrototype):
         self.contact_details.append(contact_details)
         self.check_for_payment_methods(description)
         self.check_for_social_media(description)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -1565,12 +1716,20 @@ class ErosScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
         self.social_media_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
-    def check_for_payment_methods(self, description) -> None:
+    def check_for_payment_methods(self, description) -> bool:
+        for payment in self.known_payment_methods:
+            if payment in description.lower():
+                return True
+        return False
+
+    def check_and_append_payment_methods(self, description):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                payments += payment + ' '
+                payments += payment + '\n'
 
         if payments != '':
             self.payment_methods_found.append(payments)
@@ -1602,6 +1761,25 @@ class ErosScraper(ScraperPrototype):
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
                 self.number_of_keywords_in_post += 1
+
+    def join_inclusive(self, contact_details, counter, description, info_details, link, profile_header):
+        if len(self.keywords) == len(set(self.keywords_found_in_post)):
+            self.append_data(contact_details, counter, description, info_details, link, profile_header)
+
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
+
+    def payment_methods_only(self, about_info, counter, description, link, services, profile_header) -> int:
+        if self.check_for_payment_methods(description):
+            self.append_data(about_info, counter, description, link, services, profile_header)
+            screenshot_name = str(counter) + ".png"
+            self.capture_screenshot(screenshot_name)
+
+            return counter + 1
+        return counter
 
 
 # ---------------------------- Keywords ----------------------------
@@ -1717,6 +1895,9 @@ class Facade:
     def get_escortalligator_cities(self):
         return self.escortalligator.get_cities()
 
+    def set_escortalligator_only_posts_with_payment_methods(self):
+        self.escortalligator.set_only_posts_with_payment_methods()
+
     def initialize_megapersonals_scraper(self, keywords):
         self.megapersonals.initialize(keywords)
 
@@ -1728,6 +1909,9 @@ class Facade:
 
     def get_megapersonals_cities(self):
         return self.megapersonals.get_cities()
+
+    def set_megapersonal_only_posts_with_payment_methods(self):
+        self.megapersonals.set_only_posts_with_payment_methods()
 
     def initialize_skipthegames_scraper(self, keywords):
         self.skipthegames.initialize(keywords)
@@ -1741,6 +1925,9 @@ class Facade:
     def get_skipthegames_cities(self):
         return self.skipthegames.get_cities()
 
+    def set_skipthegames_only_posts_with_payment_methods(self):
+        self.skipthegames.set_only_posts_with_payment_methods()
+
     def initialize_yesbackpage_scraper(self, keywords):
         self.yesbackpage.initialize(keywords)
 
@@ -1753,6 +1940,9 @@ class Facade:
     def get_yesbackpage_cities(self):
         return self.yesbackpage.get_cities()
 
+    def set_yesbackpage_only_posts_with_payment_methods(self):
+        self.yesbackpage.set_only_posts_with_payment_methods()
+
     def initialize_eros_scraper(self, keywords):
         self.eros.initialize(keywords)
 
@@ -1764,6 +1954,9 @@ class Facade:
 
     def get_eros_cities(self):
         return self.eros.get_cities()
+
+    def set_eros_only_posts_with_payment_methods(self):
+        self.eros.set_only_posts_with_payment_methods()
 
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
@@ -2634,6 +2827,9 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_escortalligator_join_keywords()
 
+                if self.include_payment_method:
+                    self.facade.set_escortalligator_only_posts_with_payment_methods()
+
                 dialog = LoadingDialog('escortalligator')
                 dialog.run()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
@@ -2643,22 +2839,28 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            # try:
-            if self.inclusive_search:
-                self.facade.set_megapersonals_join_keywords()
+            try:
+                if self.inclusive_search:
+                    self.facade.set_megapersonals_join_keywords()
 
-            dialog = LoadingDialog('megapersonals')
-            dialog.run()
-            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-            QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-            # except:
-            #     QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-            # time.sleep(2)
+                if self.include_payment_method:
+                    self.facade.set_megapersonal_only_posts_with_payment_methods()
+
+                dialog = LoadingDialog('megapersonals')
+                dialog.run()
+                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+            except:
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+            time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
                 if self.inclusive_search:
                     self.facade.set_skipthegames_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_skipthegames_only_posts_with_payment_methods()
 
                 dialog = LoadingDialog('skipthegames')
                 dialog.run()
@@ -2673,6 +2875,9 @@ class MainWindow(QMainWindow):
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
 
+                if self.include_payment_method:
+                    self.facade.set_yesbackpage_only_posts_with_payment_methods()
+
                 dialog = LoadingDialog('yesbackpage')
                 dialog.run()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
@@ -2685,6 +2890,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_eros_join_keywords()
+
+                if self.include_payment_method:
+                    self.facade.set_eros_only_posts_with_payment_methods()
 
                 dialog = LoadingDialog('eros')
                 dialog.run()
