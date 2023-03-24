@@ -35,7 +35,7 @@ class MegapersonalsScraper(ScraperPrototype):
             "west palm beach": 'https://megapersonals.eu/public/post_list/115/1/1'
         }
         self.city = ''
-        self.url = ''
+        self.url = "https://megapersonals.eu/"
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
@@ -86,9 +86,6 @@ class MegapersonalsScraper(ScraperPrototype):
         # format date
         self.date_time = str(datetime.today())[0:19].replace(' ', '_').replace(':', '-')
 
-        # Format website URL based on state and city
-        self.get_formatted_url()
-
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
@@ -97,6 +94,10 @@ class MegapersonalsScraper(ScraperPrototype):
 
         # Open Webpage with URL
         self.open_webpage()
+
+        # Format website URL based on state and city
+        self.get_formatted_url()
+        self.driver.get(self.url)
 
         # Find links of posts
         links = self.get_links()
@@ -219,9 +220,9 @@ class MegapersonalsScraper(ScraperPrototype):
                                 or self.check_keywords(location):
                             self.check_keywords_found(city, description, location, name, phone_number)
 
-                        else:
-                            print("l221")
-                            self.keywords_found_in_post.append("N/A")
+                    else:
+                        print("l221")
+                        self.keywords_found_in_post.append("N/A")
 
                     counter = self.payment_methods_only(city, counter, description, link, location, name,
                                                             phone_number)
@@ -266,7 +267,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.check_and_append_keywords(phone_number)
 
     def append_data(self, city, counter, description, link, location, name, phone_number):
-        print('Appending Data')
         self.post_identifier.append(counter)
         self.name.append(name)
         self.phoneNumber.append(phone_number)
