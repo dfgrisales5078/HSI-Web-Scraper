@@ -91,3 +91,11 @@ class Facade:
 
     def format_data(self, data):
         pass
+
+    def set_storage_path(self, file_storage_path):
+        if file_storage_path != '':
+            self.yesbackpage.set_path(file_storage_path)
+            self.skipthegames.set_path(file_storage_path)
+            self.megapersonals.set_path(file_storage_path)
+            self.escortalligator.set_path(file_storage_path)
+            self.eros.set_path(file_storage_path)

@@ -11,6 +11,7 @@ import os
 class ErosScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
 
         self.cities = {
@@ -49,7 +50,6 @@ class ErosScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO other info needs to be pulled using regex?
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -61,6 +61,9 @@ class ErosScraper(ScraperPrototype):
 
     def set_only_posts_with_payment_methods(self) -> None:
         self.only_posts_with_payment_methods = True
+
+    def set_path(self, path) -> None:
+        self.path = path
 
     def initialize(self, keywords) -> None:
         # set keywords value
@@ -75,7 +78,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -86,7 +89,7 @@ class ErosScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'eros_{self.date_time}'
+        self.scraper_directory = f'{self.path}/eros_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -98,7 +101,6 @@ class ErosScraper(ScraperPrototype):
         self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
-
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -118,7 +120,6 @@ class ErosScraper(ScraperPrototype):
             self.driver.find_element(
                 By.XPATH, '// *[ @ id = "ageModal"] / div / div / div[2] / button').click()
         except NoSuchElementException:
-            print("There was a problem with finding the website.")
             exit(1)
 
         try:
@@ -126,28 +127,22 @@ class ErosScraper(ScraperPrototype):
             posts = self.driver.find_elements(
                 By.CSS_SELECTOR, '#listing > div.grid.fourPerRow.mobile.switchable [href]')
         except NoSuchElementException:
-            print("There was a problem finding posts.")
             exit(1)
 
         if posts:
             links = [post.get_attribute('href') for post in posts]
-            print(set(links))
         else:
-            print("No posts found.")
             exit(1)
 
         return set(links)
 
     def get_formatted_url(self) -> None:
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.implicitly_wait(10)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
@@ -155,28 +150,24 @@ class ErosScraper(ScraperPrototype):
             try:
                 profile_header = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[1]').text
-                print(profile_header)
             except NoSuchElementException:
                 profile_header = 'N/A'
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '// *[ @ id = "pageone"] / div[3] / div / div[1] / div[2]').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 info_details = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[1]/div').text
-                print(info_details)
             except NoSuchElementException:
                 info_details = 'N/A'
 
             try:
                 contact_details = self.driver.find_element(
                     By.XPATH, '//*[@id="pageone"]/div[3]/div/div[2]/div[2]').text
-                print(contact_details)
             except NoSuchElementException:
                 contact_details = 'N/A'
 
@@ -318,10 +309,8 @@ class ErosScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
-        print(f'{self.screenshot_directory}/{screenshot_name}')
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
 
     def check_keywords(self, data) -> bool:
@@ -334,7 +323,6 @@ class ErosScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
     def join_inclusive(self, contact_details, counter, description, info_details, link, profile_header):

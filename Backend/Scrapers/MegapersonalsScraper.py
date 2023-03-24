@@ -11,6 +11,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
         self.cities = {
             "daytona": 'https://megapersonals.eu/public/post_list/109/1/1',
@@ -65,8 +66,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO other info needs to be pulled using regex?
-
     def get_cities(self) -> list:
         return list(self.cities.keys())
 
@@ -79,6 +78,9 @@ class MegapersonalsScraper(ScraperPrototype):
     def set_only_posts_with_payment_methods(self) -> None:
         self.only_posts_with_payment_methods = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -89,7 +91,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -103,7 +105,7 @@ class MegapersonalsScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'megapersonals_{self.date_time}'
+        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
         os.mkdir(self.main_page_path)
         self.screenshot_directory = f'{self.main_page_path}/screenshots'
         os.mkdir(self.screenshot_directory)
@@ -118,7 +120,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.driver.get(self.url)
         self.driver.maximize_window()
         assert "Page not found" not in self.driver.page_source
-        # To get the first five - a simple loop. You could add that threading here
         self.driver.find_element(By.CLASS_NAME, 'btn').click()
         self.driver.find_element(By.XPATH, '//*[@id="choseCityContainer"]/div[3]/label').click()
         self.driver.find_element(By.XPATH, '//*[@id="choseCityContainer"]/div[3]/article/div[10]/label').click()
@@ -138,52 +139,43 @@ class MegapersonalsScraper(ScraperPrototype):
             links.append(person.find_element(By.TAG_NAME, "a").get_attribute("href"))
         return set(links)
 
-    # TODO - change if location changes?
     def get_formatted_url(self):
         self.url = self.cities.get(self.city)
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         counter = 0
 
         for link in links:
-            print(link)
-
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 description = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/span').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/div[1]/span').text
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'N/A'
 
             try:
                 name = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[2]').text[5:]
-                print(name)
             except NoSuchElementException:
                 name = 'N/A'
 
             try:
                 city = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[1]/span[1]').text[5:]
-                print(city)
             except NoSuchElementException:
                 city = 'N/A'
 
             try:
                 location = self.driver.find_element(
                     By.XPATH, '/html/body/div/div[6]/p[2]').text[9:]
-                print(location)
             except NoSuchElementException:
                 location = 'N/A'
 
@@ -246,7 +238,6 @@ class MegapersonalsScraper(ScraperPrototype):
                     counter += 1
 
             print('\n')
-
         self.join_keywords = False
 
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
@@ -336,7 +327,6 @@ class MegapersonalsScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -351,7 +341,6 @@ class MegapersonalsScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
     def join_inclusive(self, city, counter, description, link, location, name, phone_number) -> int:

@@ -2,7 +2,7 @@ import os
 import time
 from datetime import datetime
 import pandas as pd
-from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
@@ -12,6 +12,7 @@ import undetected_chromedriver as uc
 class EscortalligatorScraper(ScraperPrototype):
     def __init__(self):
         super().__init__()
+        self.path = None
         self.driver = None
 
         self.cities = [
@@ -66,8 +67,6 @@ class EscortalligatorScraper(ScraperPrototype):
         self.number_of_keywords_found = []
         self.keywords_found = []
 
-        # TODO other info needs to be pulled using regex?
-
     def get_cities(self) -> list:
         return self.cities
 
@@ -80,6 +79,9 @@ class EscortalligatorScraper(ScraperPrototype):
     def set_only_posts_with_payment_methods(self) -> None:
         self.only_posts_with_payment_methods = True
 
+    def set_path(self, path) -> None:
+        self.path = path
+
     def initialize(self, keywords) -> None:
         # set keywords value
         self.keywords = keywords
@@ -90,12 +92,11 @@ class EscortalligatorScraper(ScraperPrototype):
         self.get_formatted_url()
 
         # Selenium Web Driver setup
-        # options = webdriver.ChromeOptions()
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
-        # self.driver = webdriver.Chrome(options=options)
-        self.driver = uc.Chrome(use_subprocess=True, options=options)
+        options.add_argument('--headless')
+        self.driver = uc.Chrome(subprocess=True, options=options)
+
         # Open Webpage with URL
         self.open_webpage()
 
@@ -103,7 +104,7 @@ class EscortalligatorScraper(ScraperPrototype):
         links = self.get_links()
 
         # Create directory for search data
-        self.scraper_directory = f'escortalligator_{self.date_time}'
+        self.scraper_directory = f'{self.path}/escortalligator_{self.date_time}'
         os.mkdir(self.scraper_directory)
 
         # Create directory for search screenshots
@@ -115,7 +116,6 @@ class EscortalligatorScraper(ScraperPrototype):
         self.close_webpage()
         self.format_data_to_csv()
         self.reset_variables()
-
 
     def open_webpage(self) -> None:
         self.driver.implicitly_wait(10)
@@ -145,38 +145,30 @@ class EscortalligatorScraper(ScraperPrototype):
 
     def get_formatted_url(self) -> None:
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
-        print(f"link: {self.url}")
 
     def get_data(self, links) -> None:
         links = set(links)
         counter = 0
 
         for link in links:
-            print(link)
-
-            # self.driver.implicitly_wait(10)
-            # time.sleep(3)
             self.driver.get(link)
             assert "Page not found" not in self.driver.page_source
 
             try:
                 description = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostbody').text
-                print(description)
             except NoSuchElementException:
                 description = 'N/A'
 
             try:
                 phone_number = self.driver.find_element(
                     By.CLASS_NAME, 'userInfoContainer').text
-                print(phone_number)
             except NoSuchElementException:
                 phone_number = 'N/A'
 
             try:
                 location_and_age = self.driver.find_element(
                     By.CLASS_NAME, 'viewpostlocationIconBabylon').text
-                print(location_and_age)
             except NoSuchElementException:
                 location_and_age = 'N/A'
 
@@ -309,7 +301,6 @@ class EscortalligatorScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
-            print('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -324,7 +315,6 @@ class EscortalligatorScraper(ScraperPrototype):
         for key in self.keywords:
             if key in data.lower():
                 self.keywords_found_in_post.append(key)
-                print('keyword found: ', key)
                 self.number_of_keywords_in_post += 1
 
     def join_inclusive(self, counter, description, link, location_and_age, phone_number):
