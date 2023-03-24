@@ -162,7 +162,7 @@ class YesbackpageScraper(ScraperPrototype):
 
         options = uc.ChromeOptions()
         # TODO - uncomment this line to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocress=True, options=options)
 
         # Open Webpage with URL
@@ -495,7 +495,7 @@ class SkipthegamesScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -781,7 +781,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1094,7 +1094,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1376,7 +1376,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -2619,8 +2619,6 @@ class MainWindow(QMainWindow):
 
         self.keywords_selected = set()
 
-        # add input text to self.keywords_selected set
-
         # find keywords selected in keyword list widget
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).isSelected():
@@ -2643,17 +2641,17 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            # try:
-            if self.inclusive_search:
-                self.facade.set_megapersonals_join_keywords()
+            try:
+                if self.inclusive_search:
+                    self.facade.set_megapersonals_join_keywords()
 
-            dialog = LoadingDialog('megapersonals')
-            dialog.run()
-            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-            QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-            # except:
-            #     QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-            # time.sleep(2)
+                dialog = LoadingDialog('megapersonals')
+                dialog.run()
+                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+            except:
+                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+            time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
