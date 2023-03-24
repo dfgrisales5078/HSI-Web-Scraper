@@ -177,6 +177,7 @@ class MainWindow(QMainWindow):
         # clear new set text box
         self.ui.newSetTextBox.clear()
 
+
     # popup to confirm keyword removal
     @staticmethod
     def remove_keyword_popup_window(keyword_to_remove):
