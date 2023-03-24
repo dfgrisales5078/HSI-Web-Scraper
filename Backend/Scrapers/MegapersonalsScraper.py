@@ -184,7 +184,6 @@ class MegapersonalsScraper(ScraperPrototype):
             self.keywords_found_in_post = []
 
             if self.join_keywords and self.only_posts_with_payment_methods:
-                print("if l193")
                 if self.check_keywords(description) or self.check_keywords(name) \
                         or self.check_keywords(phone_number) or self.check_keywords(city) \
                         or self.check_keywords(location):
@@ -193,9 +192,7 @@ class MegapersonalsScraper(ScraperPrototype):
                                                              phone_number)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print("if l202")
                 if self.join_keywords:
-                    print("if join keywords l204")
                     if self.check_keywords(description) or self.check_keywords(name) \
                             or self.check_keywords(phone_number) or self.check_keywords(city) \
                             or self.check_keywords(location):
@@ -204,24 +201,19 @@ class MegapersonalsScraper(ScraperPrototype):
                                                       phone_number)
 
                 elif self.only_posts_with_payment_methods:
-                    print("elif only_payment_method l213")
                     if len(self.keywords) > 0:
-                        print('line 216')
                         if self.check_keywords(description) or self.check_keywords(name) \
                                 or self.check_keywords(phone_number) or self.check_keywords(city) \
                                 or self.check_keywords(location):
                             self.check_keywords_found(city, description, location, name, phone_number)
 
                     else:
-                        print("l221")
                         self.keywords_found_in_post.append("N/A")
 
                     counter = self.payment_methods_only(city, counter, description, link, location, name,
                                                             phone_number)
             else:
-                print('line 229')
                 if len(self.keywords) > 0:
-                    print('line 231')
                     if self.check_keywords(description) or self.check_keywords(name) \
                             or self.check_keywords(phone_number) or self.check_keywords(city) \
                             or self.check_keywords(location):
@@ -231,7 +223,6 @@ class MegapersonalsScraper(ScraperPrototype):
                         self.capture_screenshot(screenshot_name)
                         counter += 1
                 else:
-                    print("else l249")
                     self.append_data(city, counter, description, link, location, name, phone_number)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
@@ -242,7 +233,6 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
-            print("are you in here")
             self.append_data(city, counter, description, link, location, name, phone_number)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
@@ -270,15 +260,6 @@ class MegapersonalsScraper(ScraperPrototype):
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
 
     def format_data_to_csv(self) -> None:
-        print(len(self.post_identifier))
-        print(len(self.name))
-        print(len(self.phoneNumber))
-        print(len(self.contentCity))
-        print(len(self.location))
-        print(len(self.description))
-        print(len(self.payment_methods_found))
-        print(len(self.keywords_found))
-        print(len(self.number_of_keywords_found))
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'Link': self.link,
@@ -354,9 +335,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
     def payment_methods_only(self, city, counter, description, link, location, name,
                              phone_number) -> int:
-        print('payment only')
         if self.check_for_payment_methods(description):
-            print('l367 if')
             self.append_data(city, counter, description, link, location, name, phone_number)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)
