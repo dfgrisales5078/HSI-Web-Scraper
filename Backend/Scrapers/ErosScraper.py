@@ -176,36 +176,27 @@ class ErosScraper(ScraperPrototype):
             self.keywords_found_in_post = []
 
             if self.join_keywords and self.only_posts_with_payment_methods:
-                print("if l187")
                 if self.check_keywords(profile_header) or self.check_keywords(description) \
                         or self.check_keywords(info_details) or self.check_keywords(contact_details):
                     counter = self.join_with_payment_methods(contact_details, counter, description, info_details, link, profile_header)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
-                print(' line 193')
                 if self.join_keywords:
-                    print('line 195')
                     if self.check_keywords(profile_header) or self.check_keywords(description) \
                             or self.check_keywords(info_details) or self.check_keywords(contact_details):
                         self.check_keywords_found(contact_details, description, info_details, profile_header)
                         counter = self.join_inclusive(contact_details, counter, description, info_details, link, profile_header)
 
                 elif self.only_posts_with_payment_methods:
-                    print('line 202')
                     if len(self.keywords) > 0:
-                        print('line 204')
                         if self.check_keywords(profile_header) or self.check_keywords(description) \
                                 or self.check_keywords(info_details) or self.check_keywords(contact_details):
                             self.check_keywords_found(contact_details, description, info_details, profile_header)
 
-                    else:
-                        print('210')
                     counter = self.payment_methods_only(contact_details, counter, description, info_details, link, profile_header)
 
             else:
-                print('214')
                 if len(self.keywords) > 0:
-                    print('line 216')
                     if self.check_keywords(profile_header) or self.check_keywords(description) \
                             or self.check_keywords(info_details) or self.check_keywords(contact_details):
                         self.check_keywords_found(contact_details, description, info_details, profile_header)
@@ -215,12 +206,10 @@ class ErosScraper(ScraperPrototype):
                         counter += 1
 
                 else:
-                    print('225')
                     self.append_data(contact_details, counter, description, info_details, link, profile_header)
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
                     counter += 1
-            print('\n')
 
         self.join_keywords = False
 
@@ -253,8 +242,6 @@ class ErosScraper(ScraperPrototype):
         self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
-        print('Append the dam data --->>>>')
-
         self.post_identifier.append(counter)
         self.link.append(link)
         self.profile_header.append(profile_header)
@@ -267,15 +254,6 @@ class ErosScraper(ScraperPrototype):
 
 
     def format_data_to_csv(self) -> None:
-        print(len(self.post_identifier))
-        print(len(self.profile_header))
-        print(len(self.about_info))
-        print(len(self.info_details))
-        print(len(self.contact_details))
-        print(len(self.payment_methods_found))
-        print(len(self.keywords_found))
-        print(len(self.number_of_keywords_found))
-
         titled_columns = {
             'Post-identifier': self.post_identifier,
             'link': self.link,
@@ -294,7 +272,6 @@ class ErosScraper(ScraperPrototype):
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 return True
         return False
 
@@ -302,7 +279,6 @@ class ErosScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
@@ -337,7 +313,6 @@ class ErosScraper(ScraperPrototype):
 
     def payment_methods_only(self, about_info, counter, description, link, services, profile_header) -> int:
         if self.check_for_payment_methods(description):
-            print('l382 if')
             self.append_data(about_info, counter, description, link, services, profile_header)
             screenshot_name = str(counter) + ".png"
             self.capture_screenshot(screenshot_name)

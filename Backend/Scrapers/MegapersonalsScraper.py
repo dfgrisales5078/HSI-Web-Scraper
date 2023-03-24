@@ -207,9 +207,6 @@ class MegapersonalsScraper(ScraperPrototype):
                                 or self.check_keywords(location):
                             self.check_keywords_found(city, description, location, name, phone_number)
 
-                    else:
-                        self.keywords_found_in_post.append("N/A")
-
                     counter = self.payment_methods_only(city, counter, description, link, location, name,
                                                             phone_number)
             else:
@@ -228,7 +225,6 @@ class MegapersonalsScraper(ScraperPrototype):
                     self.capture_screenshot(screenshot_name)
                     counter += 1
 
-            print('\n')
         self.join_keywords = False
 
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
@@ -293,7 +289,6 @@ class MegapersonalsScraper(ScraperPrototype):
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 return True
         return False
 
@@ -301,7 +296,6 @@ class MegapersonalsScraper(ScraperPrototype):
         payments = ''
         for payment in self.known_payment_methods:
             if payment in description.lower():
-                print('payment method: ', payment)
                 payments += payment + '\n'
 
         if payments != '':
