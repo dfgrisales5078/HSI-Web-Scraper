@@ -355,7 +355,7 @@ class Ui_HSIWebScraper(object):
         self.searchTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type text to search here. "))
         self.selectAllKeywordscheckBox.setText(_translate("HSIWebScraper", "Select all keywords from list."))
         self.paymentMethodcheckBox.setText(_translate("HSIWebScraper", "Find only posts with payment methods."))
-        self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location (optional):"))
+        self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location:"))
         self.label_6.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.MainScraper), _translate("HSIWebScraper", "Scraper"))
         self.newSetTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type new set name."))

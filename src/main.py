@@ -1,6 +1,8 @@
 import json
 import qdarkstyle as qdarkstyle
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QTabWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QDialog, \
+    QProgressBar, QVBoxLayout, QLabel
 from abc import ABC, abstractmethod
 import time
 from selenium.common import NoSuchElementException
@@ -106,6 +108,10 @@ class YesbackpageScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
@@ -130,6 +136,7 @@ class YesbackpageScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -173,7 +180,6 @@ class YesbackpageScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -314,7 +320,7 @@ class YesbackpageScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, counter, description, email, link, location, name, phone_number, services, sex):
@@ -325,6 +331,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.email.append(email)
         self.location.append(location)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
         self.link.append(link)
         self.post_identifier.append(counter)
         self.services.append(services)
@@ -342,7 +349,8 @@ class YesbackpageScraper(ScraperPrototype):
             'Description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -361,6 +369,7 @@ class YesbackpageScraper(ScraperPrototype):
         self.services = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -372,6 +381,17 @@ class YesbackpageScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -425,6 +445,10 @@ class SkipthegamesScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         self.date_time = None
         self.main_page_path = None
         self.screenshot_directory = None
@@ -444,6 +468,7 @@ class SkipthegamesScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -470,7 +495,7 @@ class SkipthegamesScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -486,7 +511,6 @@ class SkipthegamesScraper(ScraperPrototype):
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -591,7 +615,7 @@ class SkipthegamesScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, about_info, counter, description, link, services):
@@ -601,6 +625,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.services.append(services)
         self.description.append(description)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -611,7 +636,8 @@ class SkipthegamesScraper(ScraperPrototype):
             'Description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -626,6 +652,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -637,6 +664,17 @@ class SkipthegamesScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -690,9 +728,13 @@ class MegapersonalsScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         # set date variables and path
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
 
@@ -712,6 +754,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -738,7 +781,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -748,13 +791,13 @@ class MegapersonalsScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
-        os.mkdir(self.main_page_path)
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        self.scraper_directory = f'{self.path}/megapersonals_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -880,7 +923,7 @@ class MegapersonalsScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, city, counter, description, link, location, name, phone_number):
@@ -891,6 +934,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.location.append(location)
         self.description.append(description)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
         self.link.append(link)
 
     def format_data_to_csv(self) -> None:
@@ -904,11 +948,12 @@ class MegapersonalsScraper(ScraperPrototype):
             'description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
 
     def reset_variables(self) -> None:
         self.description = []
@@ -921,6 +966,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -932,6 +978,17 @@ class MegapersonalsScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -987,6 +1044,10 @@ class EscortalligatorScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
@@ -1007,6 +1068,7 @@ class EscortalligatorScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return self.cities
@@ -1032,7 +1094,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1052,7 +1114,6 @@ class EscortalligatorScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.format_data_to_csv()
         self.reset_variables()
 
     def open_webpage(self) -> None:
@@ -1165,7 +1226,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
@@ -1175,6 +1236,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.location_and_age.append(location_and_age)
         self.description.append(description)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -1185,7 +1247,8 @@ class EscortalligatorScraper(ScraperPrototype):
             'Description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -1200,6 +1263,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -1211,6 +1275,17 @@ class EscortalligatorScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -1228,7 +1303,7 @@ class EscortalligatorScraper(ScraperPrototype):
                 self.number_of_keywords_in_post += 1
 
 
-# ---------------------------- Eros ----------------------------
+# ----------------------------- Eros ----------------------------
 
 class ErosScraper(ScraperPrototype):
     def __init__(self):
@@ -1249,6 +1324,10 @@ class ErosScraper(ScraperPrototype):
                                       'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
                                       'paypal', 'mc', 'mastercard']
 
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
+
         self.date_time = None
         self.scraper_directory = None
         self.screenshot_directory = None
@@ -1258,6 +1337,7 @@ class ErosScraper(ScraperPrototype):
 
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
+        self.social_media_found = []
 
         # lists to store data and then send to csv file
         self.post_identifier = []
@@ -1296,7 +1376,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1317,7 +1397,6 @@ class ErosScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.format_data_to_csv()
         self.reset_variables()
 
     def open_webpage(self) -> None:
@@ -1445,9 +1524,7 @@ class ErosScraper(ScraperPrototype):
                 self.number_of_keywords_found.append('N/A')
 
                 counter += 1
-            if counter == 3:
-                break
-
+            self.format_data_to_csv()
         self.join_keywords = False
 
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
@@ -1458,6 +1535,7 @@ class ErosScraper(ScraperPrototype):
         self.info_details.append(info_details)
         self.contact_details.append(contact_details)
         self.check_for_payment_methods(description)
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -1469,7 +1547,8 @@ class ErosScraper(ScraperPrototype):
             'contact-details': self.contact_details,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
@@ -1485,6 +1564,7 @@ class ErosScraper(ScraperPrototype):
         self.payment_methods_found = []
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> None:
         payments = ''
@@ -1496,6 +1576,17 @@ class ErosScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -1636,7 +1727,6 @@ class Facade:
         self.megapersonals.set_join_keywords()
 
     def get_megapersonals_cities(self):
-        self.megapersonals = MegapersonalsScraper()
         return self.megapersonals.get_cities()
 
     def initialize_skipthegames_scraper(self, keywords):
@@ -1674,9 +1764,6 @@ class Facade:
 
     def get_eros_cities(self):
         return self.eros.get_cities()
-
-    def format_data(self, data):
-        pass
 
     def set_storage_path(self, file_storage_path):
         if file_storage_path != '':
@@ -2040,7 +2127,7 @@ class Ui_HSIWebScraper(object):
         self.searchTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type text to search here. "))
         self.selectAllKeywordscheckBox.setText(_translate("HSIWebScraper", "Select all keywords from list."))
         self.paymentMethodcheckBox.setText(_translate("HSIWebScraper", "Find only posts with payment methods."))
-        self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location (optional):"))
+        self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location:"))
         self.label_6.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.MainScraper), _translate("HSIWebScraper", "Scraper"))
         self.newSetTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type new set name."))
@@ -2066,12 +2153,32 @@ OR
 python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
 
 '''
+class LoadingDialog(QDialog):
+    def __init__(self, website_selection):
+        super().__init__()
+        self.setWindowTitle('Running Search')
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setRange(0, 100)
+        layout = QVBoxLayout()
+        processing_scraper_label = QLabel(f"Scraping {website_selection} website in progress...")
+        layout.addWidget(processing_scraper_label)
+        layout.addWidget(self.progress_bar)
+        self.setLayout(layout)
+        self.setFixedSize(300, 100)
+
+    def run(self):
+        self.show()
+        for i in range(101):
+            self.progress_bar.setValue(i)
+            QApplication.processEvents()
+        self.close()
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
         self.ui = Ui_HSIWebScraper()
         self.ui.setupUi(self)
         self.keywords_instance = Keywords()
@@ -2088,6 +2195,7 @@ class MainWindow(QMainWindow):
         self.keywords_selected = set()
         self.keys_to_add_to_new_set = []
         self.manual_keyword_selection = set()
+        self.keywords_of_selected_set = set()
         self.set_keyword_selection = set()
         self.locations = []
         self.location = ''
@@ -2151,9 +2259,12 @@ class MainWindow(QMainWindow):
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
+        from PyQt6.QtWidgets import QComboBox
+        self.ui.setList.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
         # disable QtabWidget indices 1 and 2 until file paths are selected
-        self.ui.tabWidget.setTabEnabled(1, True)
-        self.ui.tabWidget.setTabEnabled(2, True)
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(2, False)
 
     ''' Functions used to handle events: '''
 
@@ -2281,26 +2392,35 @@ class MainWindow(QMainWindow):
     # add new set when button is clicked
     def add_set_button_clicked(self):
         # get name of new set
-        new_set_name = self.ui.newSetTextBox.text()
+        sets = self.keywords_instance.get_set()
 
-        # get text from list
-        for item in self.ui.keywordList.selectedItems():
-            self.keys_to_add_to_new_set.append(item.text())
+        if self.ui.newSetTextBox.text() != '':
+            new_set_name = self.ui.newSetTextBox.text()
+        else:
+            return
 
-        # call create_set function from keywords class
-        self.keywords_instance.create_set(new_set_name, self.keys_to_add_to_new_set)
+        if self.ui.newSetTextBox.text() not in sets:
+            # get text from list
+            for item in self.ui.keywordList.selectedItems():
+                self.keys_to_add_to_new_set.append(item.text())
 
-        # update list of sets
-        self.ui.setList.addItem(new_set_name)
+            # call create_set function from keywords class
+            self.keywords_instance.create_set(new_set_name, self.keys_to_add_to_new_set)
 
-        # make self.keys_to_add_to_new_set of an empty list
-        self.keys_to_add_to_new_set = []
+            # update list of sets
+            self.ui.setList.addItem(new_set_name)
 
-        # add new set to setSelectionDropdown
-        self.ui.setSelectionDropdown.addItem(new_set_name)
+            # make self.keys_to_add_to_new_set of an empty list
+            self.keys_to_add_to_new_set = []
 
-        # clear new set text box
-        self.ui.newSetTextBox.clear()
+            # add new set to setSelectionDropdown
+            self.ui.setSelectionDropdown.addItem(new_set_name)
+
+            # clear new set text box
+            self.ui.newSetTextBox.clear()
+
+        else:
+            QMessageBox.warning(self, "Error", "Set name already exists.")
 
     # popup to confirm keyword removal
     @staticmethod
@@ -2319,7 +2439,6 @@ class MainWindow(QMainWindow):
         else:
             return False
 
-    # TODO BUG - last item clicked on is deleted even if not selected
     # remove new keyword
     def remove_keyword_button_clicked(self):
         # find text of selected item
@@ -2381,12 +2500,14 @@ class MainWindow(QMainWindow):
     # handle list of keywords to be searched
     def keyword_list_widget(self):
         for item in self.ui.keywordlistWidget.selectedItems():
-            self.manual_keyword_selection.add(item.text())
+            if item.text() not in self.keywords_of_selected_set:
+                self.manual_keyword_selection.add(item.text())
 
         # if a keyword is unselected, remove it from the set
-        for i in range(self.ui.keywordlistWidget.count()):
-            if not self.ui.keywordlistWidget.item(i).isSelected():
-                self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(i).text())
+        for item in range(self.ui.keywordlistWidget.count()):
+            if not self.ui.keywordlistWidget.item(item).isSelected():
+                if item not in self.keywords_of_selected_set:
+                    self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(item).text())
 
     # handle dropdown menu for keyword sets
     def set_selection_dropdown(self):
@@ -2397,25 +2518,19 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                     self.ui.keywordlistWidget.item(i).setSelected(False)
-
+                    self.keywords_of_selected_set = set()
             return
 
         # get keywords from selected set from keywords class
-        keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
+        self.keywords_of_selected_set = set(self.keywords_instance.get_set_values(selected_set))
 
         # select keywords_of_selected_set in keywordlistWidget
         for i in range(self.ui.keywordlistWidget.count()):
-            if self.ui.keywordlistWidget.item(i).text() in keywords_of_selected_set:
+            if self.ui.keywordlistWidget.item(i).text() in self.keywords_of_selected_set:
                 self.ui.keywordlistWidget.item(i).setSelected(True)
 
             elif self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                 self.ui.keywordlistWidget.item(i).setSelected(False)
-
-        # unselect keywords that are not in selected set
-        if not keywords_of_selected_set:
-            for i in range(self.ui.keywordlistWidget.count()):
-                if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
-                    self.ui.keywordlistWidget.item(i).setSelected(False)
 
     # scrape using text box input
     def search_text_box(self):
@@ -2458,8 +2573,14 @@ class MainWindow(QMainWindow):
 
     # handle dropdown menu for payment method
     def website_selection_dropdown(self):
+
         self.website_selection = self.ui.websiteSelectionDropdown.currentText()
-        self.ui.searchButton.setEnabled(True)
+
+        if self.website_selection != '':
+            self.ui.searchButton.setEnabled(True)
+        else:
+            self.ui.searchButton.setEnabled(False)
+            self.ui.setlocationDropdown.clear()
 
         if self.website_selection == 'eros':
             self.locations = self.facade.get_eros_cities()
@@ -2485,17 +2606,6 @@ class MainWindow(QMainWindow):
             self.locations = self.facade.get_skipthegames_cities()
             self.set_location()
             self.initialize_location_dropdown()
-
-    # TODO - pop up when search button is clicked - show progress bar, status? & cancel button
-    @staticmethod
-    def search_popup_window(website_selection):
-        popup = QtWidgets.QMessageBox()
-        popup.setWindowTitle("Scraping in Progress")
-        popup.setText(f"Scraping {website_selection} in progress...")
-        popup.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Cancel)
-
-        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Cancel:
-            popup.close()
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
@@ -2523,6 +2633,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_escortalligator_join_keywords()
+
+                dialog = LoadingDialog('escortalligator')
+                dialog.run()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2530,19 +2643,25 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
-            try:
-                if self.inclusive_search:
-                    self.facade.set_megapersonals_join_keywords()
-                self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-            except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-            time.sleep(2)
+            # try:
+            if self.inclusive_search:
+                self.facade.set_megapersonals_join_keywords()
+
+            dialog = LoadingDialog('megapersonals')
+            dialog.run()
+            self.facade.initialize_megapersonals_scraper(self.keywords_selected)
+            QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+            # except:
+            #     QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+            # time.sleep(2)
 
         if self.website_selection == 'skipthegames':
             try:
                 if self.inclusive_search:
                     self.facade.set_skipthegames_join_keywords()
+
+                dialog = LoadingDialog('skipthegames')
+                dialog.run()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2553,6 +2672,9 @@ class MainWindow(QMainWindow):
             try:
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
+
+                dialog = LoadingDialog('yesbackpage')
+                dialog.run()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2561,10 +2683,11 @@ class MainWindow(QMainWindow):
 
         if self.website_selection == 'eros':
             try:
-                # self.run_threads(self.search_popup_window(self.website_selection),
-                #                  self.facade.initialize_eros_scraper(self.keywords_selected))
                 if self.inclusive_search:
                     self.facade.set_eros_join_keywords()
+
+                dialog = LoadingDialog('eros')
+                dialog.run()
                 self.facade.initialize_eros_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2572,16 +2695,6 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
-
-    # TODO - function two run threads simultaneously
-    # function to run two threads at once
-    # @staticmethod
-    # def run_threads(function1, function2):
-    #     thread1 = threading.Thread(target=function1)
-    #     thread2 = threading.Thread(target=function2)
-    #     thread1.start()
-    #     thread2.start()
-    #     thread2.join()
 
 
 # ---------------------------- GUI Main ----------------------------
