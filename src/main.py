@@ -1712,7 +1712,6 @@ class Facade:
         self.megapersonals.set_join_keywords()
 
     def get_megapersonals_cities(self):
-        # self.megapersonals = MegapersonalsScraper()
         return self.megapersonals.get_cities()
 
     def initialize_skipthegames_scraper(self, keywords):
