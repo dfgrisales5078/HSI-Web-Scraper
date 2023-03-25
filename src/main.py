@@ -2415,6 +2415,7 @@ class MainWindow(QMainWindow):
 
         # bind keywordInclusivecheckBox to keyword_inclusive_check_box function
         self.ui.keywordInclusivecheckBox.stateChanged.connect(self.keyword_inclusive_check_box)
+        self.ui.keywordInclusivecheckBox.setEnabled(False)
 
         # bind setSelectionDropdown to set_selection_dropdown function
         self.ui.setSelectionDropdown.currentIndexChanged.connect(self.set_selection_dropdown)
@@ -2691,15 +2692,25 @@ class MainWindow(QMainWindow):
             if item.text() not in self.keywords_of_selected_set:
                 self.manual_keyword_selection.add(item.text())
 
+        if len(self.manual_keyword_selection) > 1:
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+
         # if a keyword is unselected, remove it from the set
         for item in range(self.ui.keywordlistWidget.count()):
             if not self.ui.keywordlistWidget.item(item).isSelected():
                 if item not in self.keywords_of_selected_set:
                     self.manual_keyword_selection.discard(self.ui.keywordlistWidget.item(item).text())
 
+        if not self.manual_keyword_selection and not self.search_text and not self.set_keyword_selection:
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
+
     # handle dropdown menu for keyword sets
     def set_selection_dropdown(self):
         selected_set = self.ui.setSelectionDropdown.currentText()
+
+        if selected_set:
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+            self.set_keyword_selection = True
 
         # if empty set, unselect all keywords
         if selected_set == '':
@@ -2707,6 +2718,11 @@ class MainWindow(QMainWindow):
                 if self.ui.keywordlistWidget.item(i).text() not in self.manual_keyword_selection:
                     self.ui.keywordlistWidget.item(i).setSelected(False)
                     self.keywords_of_selected_set = set()
+
+            if not self.manual_keyword_selection and not self.search_text:
+                self.ui.keywordInclusivecheckBox.setEnabled(False)
+                self.set_keyword_selection = False
+
             return
 
         # get keywords from selected set from keywords class
@@ -2723,6 +2739,11 @@ class MainWindow(QMainWindow):
     # scrape using text box input
     def search_text_box(self):
         self.search_text = self.ui.searchTextBox.text()
+        if self.search_text != '':
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
+        else:
+            if not self.manual_keyword_selection and not self.set_keyword_selection:
+                self.ui.keywordInclusivecheckBox.setEnabled(False)
 
     def keyword_inclusive_check_box(self):
         if self.ui.keywordInclusivecheckBox.isChecked():
@@ -2738,12 +2759,16 @@ class MainWindow(QMainWindow):
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(True)
                 self.keywords_selected.add(self.ui.keywordlistWidget.item(i).text())
+
+            self.ui.keywordInclusivecheckBox.setEnabled(True)
         else:
             self.ui.selectAllKeywordscheckBox.setEnabled(False)
             self.keywords_selected = set()
             # deselect all items in list widget
             for i in range(self.ui.keywordlistWidget.count()):
                 self.ui.keywordlistWidget.item(i).setSelected(False)
+
+            self.ui.keywordInclusivecheckBox.setEnabled(False)
 
         # enable checkbox after it's unchecked
         self.ui.selectAllKeywordscheckBox.setEnabled(True)
