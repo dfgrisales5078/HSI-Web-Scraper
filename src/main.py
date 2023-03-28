@@ -2343,25 +2343,6 @@ OR
 python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
 
 '''
-class LoadingDialog(QDialog):
-    def __init__(self, website_selection):
-        super().__init__()
-        self.setWindowTitle('Running Search')
-        self.progress_bar = QProgressBar(self)
-        self.progress_bar.setRange(0, 100)
-        layout = QVBoxLayout()
-        processing_scraper_label = QLabel(f"Scraping {website_selection} website in progress...")
-        layout.addWidget(processing_scraper_label)
-        layout.addWidget(self.progress_bar)
-        self.setLayout(layout)
-        self.setFixedSize(300, 100)
-
-    def run(self):
-        self.show()
-        for i in range(101):
-            self.progress_bar.setValue(i)
-            QApplication.processEvents()
-        self.close()
 
 
 class MainWindow(QMainWindow):
@@ -2850,8 +2831,6 @@ class MainWindow(QMainWindow):
                 if self.include_payment_method:
                     self.facade.set_escortalligator_only_posts_with_payment_methods()
 
-                dialog = LoadingDialog('escortalligator')
-                dialog.run()
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2866,8 +2845,6 @@ class MainWindow(QMainWindow):
                 if self.include_payment_method:
                     self.facade.set_megapersonal_only_posts_with_payment_methods()
 
-                dialog = LoadingDialog('megapersonals')
-                dialog.run()
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2882,8 +2859,6 @@ class MainWindow(QMainWindow):
                 if self.include_payment_method:
                     self.facade.set_skipthegames_only_posts_with_payment_methods()
 
-                dialog = LoadingDialog('skipthegames')
-                dialog.run()
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2898,8 +2873,6 @@ class MainWindow(QMainWindow):
                 if self.include_payment_method:
                     self.facade.set_yesbackpage_only_posts_with_payment_methods()
 
-                dialog = LoadingDialog('yesbackpage')
-                dialog.run()
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
@@ -2914,8 +2887,6 @@ class MainWindow(QMainWindow):
                 if self.include_payment_method:
                     self.facade.set_eros_only_posts_with_payment_methods()
 
-                dialog = LoadingDialog('eros')
-                dialog.run()
                 self.facade.initialize_eros_scraper(self.keywords_selected)
                 QMessageBox.information(parent, "Success", "Scrape completed successfully.")
             except:
