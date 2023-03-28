@@ -105,8 +105,8 @@ class YesbackpageScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
 
         self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
                                    'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
@@ -486,8 +486,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.url = ''
 
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
 
         self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
                                    'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
@@ -655,7 +655,7 @@ class SkipthegamesScraper(ScraperPrototype):
         self.about_info.append(about_info)
         self.services.append(services)
         self.description.append(description)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
         self.check_for_social_media(description)
 
     def join_with_payment_methods(self, about_info, counter, description, link, services) -> int:
@@ -798,8 +798,8 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = ''
         self.url = "https://megapersonals.eu/"
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
 
         self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
                                    'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
@@ -1151,8 +1151,8 @@ class EscortalligatorScraper(ScraperPrototype):
         self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
 
         self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
                                    'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
@@ -1459,8 +1459,8 @@ class ErosScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
 
         self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
                                    'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
@@ -1678,7 +1678,7 @@ class ErosScraper(ScraperPrototype):
         self.about_info.append(description)
         self.info_details.append(info_details)
         self.contact_details.append(contact_details)
-        self.check_for_payment_methods(description)
+        self.check_and_append_payment_methods(description)
         self.check_for_social_media(description)
         self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
