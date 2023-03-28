@@ -2834,8 +2834,6 @@ class MainWindow(QMainWindow):
 
         self.keywords_selected = set()
 
-        # add input text to self.keywords_selected set
-
         # find keywords selected in keyword list widget
         for i in range(self.ui.keywordlistWidget.count()):
             if self.ui.keywordlistWidget.item(i).isSelected():
