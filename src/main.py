@@ -167,7 +167,7 @@ class YesbackpageScraper(ScraperPrototype):
 
         options = uc.ChromeOptions()
         # TODO - uncomment this line to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocress=True, options=options)
 
         # Open Webpage with URL
@@ -543,7 +543,7 @@ class SkipthegamesScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -656,6 +656,8 @@ class SkipthegamesScraper(ScraperPrototype):
         self.services.append(services)
         self.description.append(description)
         self.check_and_append_payment_methods(description)
+        self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
+        self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
         self.check_for_social_media(description)
 
     def join_with_payment_methods(self, about_info, counter, description, link, services) -> int:
@@ -856,7 +858,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1208,7 +1210,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -1518,7 +1520,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
