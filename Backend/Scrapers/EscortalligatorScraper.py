@@ -2,7 +2,6 @@ import os
 import time
 from datetime import datetime
 import pandas as pd
-import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from Backend.ScraperPrototype import ScraperPrototype
@@ -42,8 +41,12 @@ class EscortalligatorScraper(ScraperPrototype):
         self.state = 'florida'
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
+
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         self.date_time = None
         self.scraper_directory = None
@@ -66,6 +69,7 @@ class EscortalligatorScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return self.cities
@@ -94,7 +98,7 @@ class EscortalligatorScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -114,7 +118,6 @@ class EscortalligatorScraper(ScraperPrototype):
         # Get data from posts
         self.get_data(links)
         self.close_webpage()
-        self.format_data_to_csv()
         self.reset_variables()
 
     def open_webpage(self) -> None:
@@ -210,7 +213,7 @@ class EscortalligatorScraper(ScraperPrototype):
                     self.capture_screenshot(screenshot_name)
                     counter += 1
 
-        self.join_keywords = False
+            self.format_data_to_csv()
 
     def join_with_payment_methods(self, counter, description, link, location_and_age, phone_number):
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
@@ -226,19 +229,6 @@ class EscortalligatorScraper(ScraperPrototype):
         self.check_and_append_keywords(location_and_age)
         self.check_and_append_keywords(phone_number)
 
-    def reset_variables(self) -> None:
-        self.post_identifier = []
-        self.phone_number = []
-        self.links = []
-        self.location_and_age = []
-        self.description = []
-        self.payment_methods_found = []
-        self.keywords_found = []
-        self.number_of_keywords_found = []
-        self.only_posts_with_payment_methods = False
-        self.join_keywords = False
-
-
     def append_data(self, counter, description, link, location_and_age, phone_number) -> None:
         self.post_identifier.append(counter)
         self.phone_number.append(phone_number)
@@ -248,6 +238,7 @@ class EscortalligatorScraper(ScraperPrototype):
         self.check_and_append_payment_methods(description)
         self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -258,11 +249,25 @@ class EscortalligatorScraper(ScraperPrototype):
             'Description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/escortalligator-{self.date_time}.csv', index=False, sep="\t")
+
+    def reset_variables(self) -> None:
+        self.phone_number = []
+        self.description = []
+        self.location_and_age = []
+        self.links = []
+        self.post_identifier = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
+        self.social_media_found = []
 
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
@@ -280,6 +285,17 @@ class EscortalligatorScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -313,3 +329,4 @@ class EscortalligatorScraper(ScraperPrototype):
 
             return counter + 1
         return counter
+

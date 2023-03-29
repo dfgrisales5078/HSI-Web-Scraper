@@ -46,3 +46,4 @@ class ScraperPrototype(ABC):
     @abstractmethod
     def check_and_append_keywords(self, text):
         pass
+

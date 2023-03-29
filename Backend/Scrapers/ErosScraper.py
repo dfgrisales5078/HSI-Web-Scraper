@@ -24,8 +24,12 @@ class ErosScraper(ScraperPrototype):
         self.city = ''
         self.url = ''
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
+
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         self.date_time = None
         self.scraper_directory = None
@@ -37,6 +41,7 @@ class ErosScraper(ScraperPrototype):
         self.number_of_keywords_in_post = 0
         self.keywords_found_in_post = []
         self.only_posts_with_payment_methods = False
+        self.social_media_found = []
 
         # lists to store data and then send to csv file
         self.post_identifier = []
@@ -78,7 +83,7 @@ class ErosScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -98,7 +103,6 @@ class ErosScraper(ScraperPrototype):
 
         # Get data from posts
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -140,6 +144,7 @@ class ErosScraper(ScraperPrototype):
         self.url = self.cities.get(self.city)
 
     def get_data(self, links) -> None:
+        description = ''
         counter = 0
 
         for link in links:
@@ -178,14 +183,16 @@ class ErosScraper(ScraperPrototype):
             if self.join_keywords and self.only_posts_with_payment_methods:
                 if self.check_keywords(profile_header) or self.check_keywords(description) \
                         or self.check_keywords(info_details) or self.check_keywords(contact_details):
-                    counter = self.join_with_payment_methods(contact_details, counter, description, info_details, link, profile_header)
+                    counter = self.join_with_payment_methods(contact_details, counter, description, info_details, link,
+                                                             profile_header)
 
             elif self.join_keywords or self.only_posts_with_payment_methods:
                 if self.join_keywords:
                     if self.check_keywords(profile_header) or self.check_keywords(description) \
                             or self.check_keywords(info_details) or self.check_keywords(contact_details):
                         self.check_keywords_found(contact_details, description, info_details, profile_header)
-                        counter = self.join_inclusive(contact_details, counter, description, info_details, link, profile_header)
+                        counter = self.join_inclusive(contact_details, counter, description, info_details, link,
+                                                      profile_header)
 
                 elif self.only_posts_with_payment_methods:
                     if len(self.keywords) > 0:
@@ -193,7 +200,8 @@ class ErosScraper(ScraperPrototype):
                                 or self.check_keywords(info_details) or self.check_keywords(contact_details):
                             self.check_keywords_found(contact_details, description, info_details, profile_header)
 
-                    counter = self.payment_methods_only(contact_details, counter, description, info_details, link, profile_header)
+                    counter = self.payment_methods_only(contact_details, counter, description, info_details, link,
+                                                        profile_header)
 
             else:
                 if len(self.keywords) > 0:
@@ -211,7 +219,7 @@ class ErosScraper(ScraperPrototype):
                     self.capture_screenshot(screenshot_name)
                     counter += 1
 
-        self.join_keywords = False
+            self.format_data_to_csv()
 
     def join_with_payment_methods(self, contact_details, counter, description, info_details, link, profile_header):
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
@@ -228,19 +236,6 @@ class ErosScraper(ScraperPrototype):
         self.check_and_append_keywords(info_details)
         self.check_and_append_keywords(profile_header)
 
-    def reset_variables(self):
-        self.post_identifier = []
-        self.link = []
-        self.profile_header = []
-        self.about_info = []
-        self.info_details = []
-        self.contact_details = []
-        self.payment_methods_found = []
-        self.keywords_found = []
-        self.number_of_keywords_found = []
-        self.only_posts_with_payment_methods = False
-        self.join_keywords = False
-
     def append_data(self, contact_details, counter, description, info_details, link, profile_header) -> None:
         self.post_identifier.append(counter)
         self.link.append(link)
@@ -249,9 +244,9 @@ class ErosScraper(ScraperPrototype):
         self.info_details.append(info_details)
         self.contact_details.append(contact_details)
         self.check_and_append_payment_methods(description)
+        self.check_for_social_media(description)
         self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
-
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -263,11 +258,26 @@ class ErosScraper(ScraperPrototype):
             'contact-details': self.contact_details,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
         data.to_csv(f'{self.scraper_directory}/eros-{self.date_time}.csv', index=False, sep='\t')
+
+    def reset_variables(self) -> None:
+        self.post_identifier = []
+        self.link = []
+        self.profile_header = []
+        self.about_info = []
+        self.info_details = []
+        self.contact_details = []
+        self.payment_methods_found = []
+        self.number_of_keywords_found = []
+        self.keywords_found = []
+        self.social_media_found = []
+        self.only_posts_with_payment_methods = False
+        self.join_keywords = False
 
     def check_for_payment_methods(self, description) -> bool:
         for payment in self.known_payment_methods:
@@ -285,6 +295,17 @@ class ErosScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -319,3 +340,4 @@ class ErosScraper(ScraperPrototype):
 
             return counter + 1
         return counter
+

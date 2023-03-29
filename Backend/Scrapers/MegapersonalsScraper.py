@@ -38,12 +38,16 @@ class MegapersonalsScraper(ScraperPrototype):
         self.city = ''
         self.url = "https://megapersonals.eu/"
         self.known_payment_methods = ['cashapp', 'venmo', 'zelle', 'crypto', 'western union', 'no deposit',
-                                      'deposit', 'cc', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
-                                      'paypal', 'mc', 'mastercard']
+                                      'deposit', ' cc ', 'card', 'credit card', 'applepay', 'donation', 'cash', 'visa',
+                                      'paypal', ' mc ', 'mastercard']
+
+        self.known_social_media = ['instagram', ' ig ', 'insta', 'snapchat', ' sc ', 'snap', 'onlyfans', 'only fans',
+                                   'twitter', 'kik', 'skype', 'facebook', ' fb ', 'whatsapp', 'telegram',
+                                   ' tg ', 'tiktok', 'tik tok']
 
         # set date variables and path
         self.date_time = None
-        self.main_page_path = None
+        self.scraper_directory = None
         self.screenshot_directory = None
         self.keywords = None
 
@@ -65,6 +69,7 @@ class MegapersonalsScraper(ScraperPrototype):
 
         self.number_of_keywords_found = []
         self.keywords_found = []
+        self.social_media_found = []
 
     def get_cities(self) -> list:
         return list(self.cities.keys())
@@ -91,7 +96,7 @@ class MegapersonalsScraper(ScraperPrototype):
         # Selenium Web Driver setup
         options = uc.ChromeOptions()
         # TODO - uncomment this to run headless
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         self.driver = uc.Chrome(use_subprocess=True, options=options)
 
         # Open Webpage with URL
@@ -105,13 +110,13 @@ class MegapersonalsScraper(ScraperPrototype):
         links = self.get_links()
 
         # create directories for screenshot and csv
-        self.main_page_path = f'{self.path}/megapersonals_{self.date_time}'
-        os.mkdir(self.main_page_path)
-        self.screenshot_directory = f'{self.main_page_path}/screenshots'
+        self.scraper_directory = f'{self.path}/megapersonals_{self.date_time}'
+        os.mkdir(self.scraper_directory)
+
+        self.screenshot_directory = f'{self.scraper_directory}/screenshots'
         os.mkdir(self.screenshot_directory)
 
         self.get_data(links)
-        self.format_data_to_csv()
         self.close_webpage()
         self.reset_variables()
 
@@ -208,7 +213,7 @@ class MegapersonalsScraper(ScraperPrototype):
                             self.check_keywords_found(city, description, location, name, phone_number)
 
                     counter = self.payment_methods_only(city, counter, description, link, location, name,
-                                                            phone_number)
+                                                        phone_number)
             else:
                 if len(self.keywords) > 0:
                     if self.check_keywords(description) or self.check_keywords(name) \
@@ -224,8 +229,7 @@ class MegapersonalsScraper(ScraperPrototype):
                     screenshot_name = str(counter) + ".png"
                     self.capture_screenshot(screenshot_name)
                     counter += 1
-
-        self.join_keywords = False
+            self.format_data_to_csv()
 
     def join_with_payment_methods(self, city, counter, description, link, location, name, phone_number) -> int:
         if self.check_for_payment_methods(description) and len(self.keywords) == len(set(self.keywords_found_in_post)):
@@ -254,6 +258,7 @@ class MegapersonalsScraper(ScraperPrototype):
         self.link.append(link)
         self.keywords_found.append(', '.join(self.keywords_found_in_post) or 'N/A')
         self.number_of_keywords_found.append(self.number_of_keywords_in_post or 'N/A')
+        self.check_for_social_media(description)
 
     def format_data_to_csv(self) -> None:
         titled_columns = {
@@ -266,23 +271,25 @@ class MegapersonalsScraper(ScraperPrototype):
             'description': self.description,
             'payment-methods': self.payment_methods_found,
             'keywords-found': self.keywords_found,
-            'number-of-keywords-found': self.number_of_keywords_found
+            'number-of-keywords-found': self.number_of_keywords_found,
+            'social-media-found': self.social_media_found
         }
 
         data = pd.DataFrame(titled_columns)
-        data.to_csv(f'{self.main_page_path}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
+        data.to_csv(f'{self.scraper_directory}/megapersonals-{self.date_time}.csv', index=False, sep="\t")
 
     def reset_variables(self) -> None:
-        self.post_identifier = []
+        self.description = []
+        self.name = []
         self.phoneNumber = []
-        self.link = []
         self.contentCity = []
         self.location = []
-        self.name = []
-        self.description = []
+        self.link = []
+        self.post_identifier = []
         self.payment_methods_found = []
-        self.keywords_found = []
         self.number_of_keywords_found = []
+        self.keywords_found = []
+        self.social_media_found = []
         self.only_posts_with_payment_methods = False
         self.join_keywords = False
 
@@ -302,6 +309,17 @@ class MegapersonalsScraper(ScraperPrototype):
             self.payment_methods_found.append(payments)
         else:
             self.payment_methods_found.append('N/A')
+
+    def check_for_social_media(self, description) -> None:
+        social_media = ''
+        for social in self.known_social_media:
+            if social in description.lower():
+                social_media += social + '\n'
+
+        if social_media != '':
+            self.social_media_found.append(social_media)
+        else:
+            self.social_media_found.append('N/A')
 
     def capture_screenshot(self, screenshot_name) -> None:
         self.driver.save_screenshot(f'{self.screenshot_directory}/{screenshot_name}')
@@ -336,3 +354,4 @@ class MegapersonalsScraper(ScraperPrototype):
 
             return counter + 1
         return counter
+
