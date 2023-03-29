@@ -318,7 +318,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
@@ -658,7 +658,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
@@ -906,7 +906,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
