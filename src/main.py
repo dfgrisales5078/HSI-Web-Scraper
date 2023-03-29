@@ -2300,7 +2300,7 @@ class Ui_HSIWebScraper(object):
         self.storagePathOutput.setPlaceholderText(_translate("HSIWebScraper", "No folder chosen"))
         self.label_3.setText(_translate("HSIWebScraper", "Choose file settings for scraper."))
         self.selectKeywordFilesLabel_2.setText(_translate("HSIWebScraper", "Select keyword sets file:"))
-        self.label_5.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
+        self.label_5.setText(_translate("HSIWebScraper", "NetSpider v1.1.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("HSIWebScraper", "Settings"))
         self.setSelectionLabel.setText(_translate("HSIWebScraper", "  Select set of keywords (optional):"))
         self.keywordListLabel.setText(_translate("HSIWebScraper", "List of keywords:"))
@@ -2318,7 +2318,7 @@ class Ui_HSIWebScraper(object):
         self.selectAllKeywordscheckBox.setText(_translate("HSIWebScraper", "Select all keywords from list."))
         self.paymentMethodcheckBox.setText(_translate("HSIWebScraper", "Find only posts with payment methods."))
         self.setLocationLabel.setText(_translate("HSIWebScraper", "  Select location:"))
-        self.label_6.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
+        self.label_6.setText(_translate("HSIWebScraper", "NetSpider v1.1.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.MainScraper), _translate("HSIWebScraper", "Scraper"))
         self.newSetTextBox.setPlaceholderText(_translate("HSIWebScraper", " Type new set name."))
         self.addKeywordButton.setText(_translate("HSIWebScraper", "Add keyword"))
@@ -2331,7 +2331,7 @@ class Ui_HSIWebScraper(object):
         self.newSetLabel_2.setText(_translate("HSIWebScraper", "Select keywords from list on the left."))
         self.label_2.setText(_translate("HSIWebScraper", "Warning: Remove only one keyword at a time."))
         self.label_4.setText(_translate("HSIWebScraper", "Edit keywords and sets for scraper."))
-        self.label_7.setText(_translate("HSIWebScraper", "NetSpider v1.0.0"))
+        self.label_7.setText(_translate("HSIWebScraper", "NetSpider v1.1.0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.EditKeywords), _translate("HSIWebScraper", "Edit Keywords"))
 
 
@@ -2900,7 +2900,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "hsi.ico")))
+    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "ns.ico")))
     window = MainWindow()
     window.show()
     app.exec()
