@@ -1,8 +1,8 @@
-from Backend.Scrapers.EscortalligatorScraper import EscortalligatorScraper
-from Backend.Scrapers.MegapersonalsScraper import MegapersonalsScraper
-from Backend.Scrapers.SkipthegamesScraper import SkipthegamesScraper
-from Backend.Scrapers.YesbackpageScraper import YesbackpageScraper
-from Backend.Scrapers.ErosScraper import ErosScraper
+from Backend.Scraper.EscortalligatorScraper import EscortalligatorScraper
+from Backend.Scraper.MegapersonalsScraper import MegapersonalsScraper
+from Backend.Scraper.SkipthegamesScraper import SkipthegamesScraper
+from Backend.Scraper.YesbackpageScraper import YesbackpageScraper
+from Backend.Scraper.ErosScraper import ErosScraper
 
 
 class Facade:

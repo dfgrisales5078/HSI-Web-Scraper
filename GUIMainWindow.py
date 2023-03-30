@@ -1,4 +1,4 @@
-import qdarkstyle as qdarkstyle
+# import qdarkstyle as qdarkstyle
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 import time
@@ -6,7 +6,7 @@ import os
 from PyQt6 import QtGui, QtWidgets
 from Backend.Facade import Facade
 from Backend.Keywords import Keywords
-from Scraper import Ui_HSIWebScraper
+from GUI.Scraper import Ui_HSIWebScraper
 
 
 # ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         self.keywords = ''
         self.keyword_sets = ''
 
-        self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
+        # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
 
         ''' Bind GUI components to functions: '''
         # bind websiteSelectionDropdown to website_selection_dropdown function
@@ -115,7 +115,6 @@ class MainWindow(QMainWindow):
         self.ui.storagePathSelectionButton.clicked.connect(self.storage_path_selection_button_clicked)
         # self.keywords_instance.set_file_storage_path(self.file_storage_path)
 
-        from PyQt6.QtWidgets import QComboBox
         self.ui.setList.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         # disable QtabWidget indices 1 and 2 until file paths are selected
@@ -584,7 +583,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "ns.ico")))
+    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "GUI/ns.ico")))
     window = MainWindow()
     window.show()
     app.exec()
