@@ -583,7 +583,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "GUI/ns.ico")))
+    app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "ns.ico")))
     window = MainWindow()
     window.show()
     app.exec()
