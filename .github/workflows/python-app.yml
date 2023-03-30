@@ -2,9 +2,13 @@ name: HSI Web Scraper
 
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+     - main
+     - pyinstaller
   pull_request:
-    branches: [ "main" ]
+    branches: 
+     - main
+     - pyinstaller
 
 permissions:
   contents: read
