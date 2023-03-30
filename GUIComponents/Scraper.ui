@@ -24,7 +24,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>17</pointsize>
     </font>
    </property>
    <property name="layoutDirection">
@@ -318,7 +318,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
@@ -381,7 +381,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>17</pointsize>
       </font>
      </property>
      <property name="text">
@@ -399,7 +399,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>17</pointsize>
       </font>
      </property>
      <property name="text">
@@ -454,7 +454,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>17</pointsize>
       </font>
      </property>
      <property name="text">
@@ -472,7 +472,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>17</pointsize>
+       <pointsize>36</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -542,7 +542,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>17</pointsize>
       </font>
      </property>
      <property name="text">
@@ -635,7 +635,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>13</pointsize>
+       <pointsize>17</pointsize>
       </font>
      </property>
      <property name="text">
@@ -658,7 +658,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
@@ -783,11 +783,6 @@
        <height>31</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string> Enter new keyword:</string>
      </property>
@@ -800,11 +795,6 @@
        <width>261</width>
        <height>31</height>
       </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
      </property>
      <property name="text">
       <string>Enter new set name:</string>
@@ -854,11 +844,6 @@
        <width>411</width>
        <height>31</height>
       </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
      </property>
      <property name="text">
       <string>Select keywords from list on the left.</string>
@@ -921,7 +906,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NetSpider v1.0.0</string>
+      <string>NetSpider v1.1.0</string>
      </property>
     </widget>
    </widget>
