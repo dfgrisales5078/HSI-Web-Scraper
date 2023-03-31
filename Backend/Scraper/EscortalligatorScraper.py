@@ -147,6 +147,8 @@ class EscortalligatorScraper(ScraperPrototype):
         return links[::3]
 
     def get_formatted_url(self) -> None:
+        if self.city == 'fortlauderdale':
+            self.city = 'ftlauderdale'
         self.url = f'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/{self.state}/{self.city}/1'
 
     def get_data(self, links) -> None:

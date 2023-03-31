@@ -1,4 +1,4 @@
-# import qdarkstyle as qdarkstyle
+import qdarkstyle as qdarkstyle
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 import time
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         self.keywords = ''
         self.keyword_sets = ''
 
-        # self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
+        self.setStyleSheet(qdarkstyle.load_stylesheet('pyqt6'))
 
         ''' Bind GUI components to functions: '''
         # bind websiteSelectionDropdown to website_selection_dropdown function
@@ -488,6 +488,8 @@ class MainWindow(QMainWindow):
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
+        self.ui.searchButton.setEnabled(False)
+
         # success/fail message box
         parent = QWidget()
         parent_width = parent.frameGeometry().width()
@@ -577,6 +579,7 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
+        self.ui.searchButton.setEnabled(True)
 
 
 # ---------------------------- GUI Main ----------------------------
