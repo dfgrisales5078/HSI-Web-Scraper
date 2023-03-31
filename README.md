@@ -9,3 +9,10 @@ The project consists of an open-source desktop application that scrapes specific
 keywords that have been linked to human trafficking. Posts are categorized based on the number of keywords found within the post. 
 The goal of the software is to provide HSI agents with leads to human trafficking posts which will include all the information in 
 the post along with a screenshot.
+
+## User Manual & Quick User Guide for V1
+### User Manual: 
+https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_user_manual_v1.pdf
+
+### Quick User Guide
+https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_quick_guide_v1.pdf
