@@ -488,6 +488,8 @@ class MainWindow(QMainWindow):
 
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
+        self.ui.searchButton.setEnabled(False)
+
         # success/fail message box
         parent = QWidget()
         parent_width = parent.frameGeometry().width()
@@ -577,6 +579,7 @@ class MainWindow(QMainWindow):
             time.sleep(2)
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
+        self.ui.searchButton.setEnabled(True)
 
 
 # ---------------------------- GUI Main ----------------------------
