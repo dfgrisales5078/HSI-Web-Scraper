@@ -47,12 +47,12 @@ class MainBackgroundThread(QThread, QMainWindow):
     def run(self):
         print("Running thread with website selection: " + self.website_selection)
         # success/fail message box
-        parent = QWidget()
-        parent_width = parent.frameGeometry().width()
-        parent_height = parent.frameGeometry().height()
-        screen_width = QApplication.primaryScreen().availableGeometry().width()
-        screen_height = QApplication.primaryScreen().availableGeometry().height()
-        parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
+        # parent = QtWidgets.QMessageBox()
+        # parent_width = parent.frameGeometry().width()
+        # parent_height = parent.frameGeometry().height()
+        # screen_width = QApplication.primaryScreen().availableGeometry().width()
+        # screen_height = QApplication.primaryScreen().availableGeometry().height()
+        # parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
 
         self.keywords_selected = set()
 
@@ -73,9 +73,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_escortalligator_only_posts_with_payment_methods()
 
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                print("Scrape completed successfully.")
             except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                print("An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
@@ -87,9 +89,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_megapersonal_only_posts_with_payment_methods()
 
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                print("Scrape completed successfully.")
             except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                print("An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
@@ -101,9 +105,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_skipthegames_only_posts_with_payment_methods()
 
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                print("Scrape completed successfully.")
             except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                print("An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
@@ -116,9 +122,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_yesbackpage_only_posts_with_payment_methods()
 
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                print("Scrape completed successfully.")
             except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                print("An error occurred: Scrape failed.")
             time.sleep(2)
 
         if self.website_selection == 'eros':
@@ -130,9 +138,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_eros_only_posts_with_payment_methods()
 
                 self.facade.initialize_eros_scraper(self.keywords_selected)
-                QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
+                print("Scrape completed successfully.")
             except:
-                QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
+                print("An error occurred: Scrape failed.")
             time.sleep(2)
         print("Thread finished")
             
@@ -602,7 +612,7 @@ class MainWindow(QMainWindow):
         self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location, self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
                                            self.ui.keywordlistWidget)
-        self.worker.run()
+        self.worker.start()
 
         self.ui.keywordInclusivecheckBox.setChecked(False)
         self.ui.searchButton.setEnabled(True)
