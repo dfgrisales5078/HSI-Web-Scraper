@@ -145,7 +145,12 @@ class MainBackgroundThread(QThread, QMainWindow):
                 print("An error occurred: Scrape failed.")
             time.sleep(2)
         print("Thread finished")
-            
+
+        # enable search button & settings tab
+        self.ui.searchButton.setEnabled(True)
+        self.ui.tabWidget.setTabEnabled(0, True)
+        self.ui.keywordInclusivecheckBox.setChecked(False)
+
 
 class MainWindow(QMainWindow):
 
@@ -608,14 +613,13 @@ class MainWindow(QMainWindow):
     # scrape website selected when search button is clicked
     def search_button_clicked(self):
         self.ui.searchButton.setEnabled(False)
+        self.ui.tabWidget.setTabEnabled(0, False)
+
         print("website selection: ", self.website_selection)
         self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location, self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
                                            self.ui.keywordlistWidget)
         self.worker.start()
-
-        self.ui.keywordInclusivecheckBox.setChecked(False)
-        self.ui.searchButton.setEnabled(True)
 
 
 # ---------------------------- GUI Main ----------------------------
