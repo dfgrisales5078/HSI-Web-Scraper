@@ -3,7 +3,7 @@ import os
 import json
 from Backend.Keywords import Keywords
 
-class TestKeywords:
+class Test_Keywords:
     @pytest.fixture
     def keyword_object(self):
         key = Keywords()
