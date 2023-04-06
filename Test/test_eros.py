@@ -1,20 +1,20 @@
 import pytest
-from Backend.Scraper.YesbackpageScraper import YesbackpageScraper
+from Backend.Scraper.ErosScraper import ErosScraper
 
-class Test_Yesbackpage:
+class Test_Megapersonals:
     @pytest.fixture
     def scraper(self):
-        scraper = YesbackpageScraper()
+        scraper = ErosScraper()
         return scraper
 
     def test_get_cities(self, scraper):
         cities = scraper.get_cities()
-        assert len(cities) == 21
-        assert 'florida' in cities
+        assert len(cities) == 5
+        assert 'naples' in cities
 
     def test_set_city(self, scraper):
-        scraper.set_city('florida')
-        assert scraper.city == 'florida'
+        scraper.set_city('naples')
+        assert scraper.city == 'naples'
 
     def test_set_join_keywords(self, scraper):
         scraper.set_join_keywords()
@@ -25,6 +25,6 @@ class Test_Yesbackpage:
         assert scraper.only_posts_with_payment_methods == True
 
     def test_get_formatted_url(self, scraper):
-        scraper.set_city('florida')
+        scraper.set_city('naples')
         scraper.get_formatted_url()
-        assert scraper.url == 'https://www.yesbackpage.com/-10/posts/8-Adult/'
+        assert scraper.url == 'https://www.eros.com/florida/naples/sections/naples_escorts.htm'

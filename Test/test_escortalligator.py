@@ -1,20 +1,20 @@
 import pytest
-from Backend.Scraper.YesbackpageScraper import YesbackpageScraper
+from Backend.Scraper.EscortalligatorScraper import EscortalligatorScraper
 
-class Test_Yesbackpage:
+class Test_Megapersonals:
     @pytest.fixture
     def scraper(self):
-        scraper = YesbackpageScraper()
+        scraper = EscortalligatorScraper()
         return scraper
 
     def test_get_cities(self, scraper):
         cities = scraper.get_cities()
         assert len(cities) == 21
-        assert 'florida' in cities
+        assert 'orlando' in cities
 
     def test_set_city(self, scraper):
-        scraper.set_city('florida')
-        assert scraper.city == 'florida'
+        scraper.set_city('orlando')
+        assert scraper.city == 'orlando'
 
     def test_set_join_keywords(self, scraper):
         scraper.set_join_keywords()
@@ -25,6 +25,6 @@ class Test_Yesbackpage:
         assert scraper.only_posts_with_payment_methods == True
 
     def test_get_formatted_url(self, scraper):
-        scraper.set_city('florida')
+        scraper.set_city('orlando')
         scraper.get_formatted_url()
-        assert scraper.url == 'https://www.yesbackpage.com/-10/posts/8-Adult/'
+        assert scraper.url == 'https://escortalligator.com.listcrawler.eu/brief/escorts/usa/florida/orlando/1'
