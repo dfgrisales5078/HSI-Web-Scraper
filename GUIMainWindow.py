@@ -8,6 +8,7 @@ from Backend.Facade import Facade
 from Backend.Keywords import Keywords
 from GUI.Scraper import Ui_HSIWebScraper
 
+popup_message = None
 
 # ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
 
@@ -19,7 +20,6 @@ try:
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except:
     pass
-
 
 '''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
@@ -46,15 +46,9 @@ class MainBackgroundThread(QThread, QMainWindow):
 
     def run(self):
         print("Running thread with website selection: " + self.website_selection)
-        # success/fail message box
-        # parent = QtWidgets.QMessageBox()
-        # parent_width = parent.frameGeometry().width()
-        # parent_height = parent.frameGeometry().height()
-        # screen_width = QApplication.primaryScreen().availableGeometry().width()
-        # screen_height = QApplication.primaryScreen().availableGeometry().height()
-        # parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
-
         self.keywords_selected = set()
+
+        global popup_message
 
         # find keywords selected in keyword list widget
         for i in range(self.ui.keywordlistWidget.count()):
@@ -122,11 +116,11 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_yesbackpage_only_posts_with_payment_methods()
 
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
-                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
                 print("Scrape completed successfully.")
+                popup_message = "success"
             except:
-                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
                 print("An error occurred: Scrape failed.")
+                popup_message = "error"
             time.sleep(2)
 
         if self.website_selection == 'eros':
@@ -616,19 +610,36 @@ class MainWindow(QMainWindow):
         self.ui.tabWidget.setTabEnabled(0, False)
 
         print("website selection: ", self.website_selection)
-        self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location, self.search_text,
+        self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location,
+                                           self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
                                            self.ui.keywordlistWidget)
+        self.worker.finished.connect(self.worker_finished)
         self.worker.start()
+
+    @staticmethod
+    def worker_finished():
+        # success/fail message box
+        global popup_message
+        parent = QtWidgets.QMessageBox()
+        parent_width = parent.frameGeometry().width()
+        parent_height = parent.frameGeometry().height()
+        screen_width = QApplication.primaryScreen().availableGeometry().width()
+        screen_height = QApplication.primaryScreen().availableGeometry().height()
+        parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
+
+        if popup_message == "success":
+            QtWidgets.QMessageBox.information(parent, "Success", "Success: Scraping completed successfully!")
+        else:
+            QtWidgets.QMessageBox.critical(parent, "Error", "Error: Scraping not completed. Please try again.")
+
+        popup_message = ''
 
 
 # ---------------------------- GUI Main ----------------------------
-
 if __name__ == "__main__":
     app = QApplication([])
     app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "ns.ico")))
     window = MainWindow()
     window.show()
     app.exec()
-
-
