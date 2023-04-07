@@ -134,6 +134,8 @@ class MainBackgroundThread(QThread, QMainWindow):
         self.ui.searchButton.setEnabled(True)
         self.ui.tabWidget.setTabEnabled(0, True)
         self.ui.keywordInclusivecheckBox.setChecked(False)
+        self.ui.websiteSelectionDropdown.setEnabled(True)
+        self.ui.setlocationDropdown.setEnabled(True)
 
 
 class MainWindow(QMainWindow):
@@ -598,6 +600,10 @@ class MainWindow(QMainWindow):
     def search_button_clicked(self):
         self.ui.searchButton.setEnabled(False)
         self.ui.tabWidget.setTabEnabled(0, False)
+
+        self.ui.websiteSelectionDropdown.setEnabled(False)
+        self.ui.setlocationDropdown.setEnabled(False)
+
         self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location,
                                            self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
