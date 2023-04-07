@@ -609,12 +609,6 @@ class MainWindow(QMainWindow):
     def worker_finished(self):
         # success/fail message box
         global popup_message
-        # parent = QtWidgets.QMessageBox()
-        # parent_width = parent.frameGeometry().width()
-        # parent_height = parent.frameGeometry().height()
-        # screen_width = QApplication.primaryScreen().availableGeometry().width()
-        # screen_height = QApplication.primaryScreen().availableGeometry().height()
-        # parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
 
         if popup_message == "success":
             QtWidgets.QMessageBox.information(self, "Success", "Success: Scraping completed successfully!")
