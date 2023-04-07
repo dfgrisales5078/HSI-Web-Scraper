@@ -8,6 +8,8 @@ from Backend.Facade import Facade
 from Backend.Keywords import Keywords
 from GUI.Scraper import Ui_HSIWebScraper
 
+# ---------------------------- Global Variable ----------------------------
+# used to display popup message after scraping
 popup_message = None
 
 # ---------------------------- Code to Show Icon on Windows Taskbar ----------------------------
@@ -45,9 +47,9 @@ class MainBackgroundThread(QThread, QMainWindow):
         self.location = location
 
     def run(self):
-        print("Running thread with website selection: " + self.website_selection)
         self.keywords_selected = set()
 
+        # global variable used to display popup message after scraping
         global popup_message
 
         # find keywords selected in keyword list widget
@@ -67,11 +69,9 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_escortalligator_only_posts_with_payment_methods()
 
                 self.facade.initialize_escortalligator_scraper(self.keywords_selected)
-                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-                print("Scrape completed successfully.")
+                popup_message = "success"
             except:
-                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-                print("An error occurred: Scrape failed.")
+                popup_message = "error"
             time.sleep(2)
 
         if self.website_selection == 'megapersonals':
@@ -83,11 +83,9 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_megapersonal_only_posts_with_payment_methods()
 
                 self.facade.initialize_megapersonals_scraper(self.keywords_selected)
-                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-                print("Scrape completed successfully.")
+                popup_message = "success"
             except:
-                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-                print("An error occurred: Scrape failed.")
+                popup_message = "error"
             time.sleep(2)
 
         if self.website_selection == 'skipthegames':
@@ -99,16 +97,13 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_skipthegames_only_posts_with_payment_methods()
 
                 self.facade.initialize_skipthegames_scraper(self.keywords_selected)
-                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-                print("Scrape completed successfully.")
+                popup_message = "success"
             except:
-                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-                print("An error occurred: Scrape failed.")
+                popup_message = "error"
             time.sleep(2)
 
         if self.website_selection == 'yesbackpage':
             try:
-                print("yesbackpage")
                 if self.inclusive_search:
                     self.facade.set_yesbackpage_join_keywords()
 
@@ -116,10 +111,8 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_yesbackpage_only_posts_with_payment_methods()
 
                 self.facade.initialize_yesbackpage_scraper(self.keywords_selected)
-                print("Scrape completed successfully.")
                 popup_message = "success"
             except:
-                print("An error occurred: Scrape failed.")
                 popup_message = "error"
             time.sleep(2)
 
@@ -132,13 +125,10 @@ class MainBackgroundThread(QThread, QMainWindow):
                     self.facade.set_eros_only_posts_with_payment_methods()
 
                 self.facade.initialize_eros_scraper(self.keywords_selected)
-                # QMessageBox.information(parent, "Success", "Scrape completed successfully.")
-                print("Scrape completed successfully.")
+                popup_message = "success"
             except:
-                # QMessageBox.critical(parent, "Error", "An error occurred: Scrape failed.")
-                print("An error occurred: Scrape failed.")
+                popup_message = "error"
             time.sleep(2)
-        print("Thread finished")
 
         # enable search button & settings tab
         self.ui.searchButton.setEnabled(True)
@@ -608,8 +598,6 @@ class MainWindow(QMainWindow):
     def search_button_clicked(self):
         self.ui.searchButton.setEnabled(False)
         self.ui.tabWidget.setTabEnabled(0, False)
-
-        print("website selection: ", self.website_selection)
         self.worker = MainBackgroundThread(self.ui, self.facade, self.website_selection, self.location,
                                            self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
@@ -631,7 +619,8 @@ class MainWindow(QMainWindow):
         if popup_message == "success":
             QtWidgets.QMessageBox.information(parent, "Success", "Success: Scraping completed successfully!")
         else:
-            QtWidgets.QMessageBox.critical(parent, "Error", "Error: Scraping not completed. Please try again.")
+            QtWidgets.QMessageBox.critical(parent, "Error", "Error: Scraping not completed. Please try again.\n (Make "
+                                                            "sure the latest version of Chrome is installed.)")
 
         popup_message = ''
 
