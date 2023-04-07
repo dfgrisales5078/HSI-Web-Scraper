@@ -8,6 +8,7 @@ from Backend.Facade import Facade
 from Backend.Keywords import Keywords
 from GUI.Scraper import Ui_HSIWebScraper
 
+
 # ---------------------------- Global Variable ----------------------------
 # used to display popup message after scraping
 popup_message = None
@@ -22,6 +23,7 @@ try:
     windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except:
     pass
+
 
 '''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
@@ -603,7 +605,6 @@ class MainWindow(QMainWindow):
                                            self.search_text,
                                            self.keywords_selected, self.inclusive_search, self.include_payment_method,
                                            self.ui.keywordlistWidget)
-        self.worker.finished.connect(self.worker_finished)
         self.worker.start()
 
     def worker_finished(self):
@@ -617,12 +618,15 @@ class MainWindow(QMainWindow):
                                                           "sure the latest version of Chrome is installed.)")
 
         popup_message = ''
-
+        
 
 # ---------------------------- GUI Main ----------------------------
+
 if __name__ == "__main__":
     app = QApplication([])
     app.setWindowIcon(QtGui.QIcon(os.path.join(basedir, "ns.ico")))
     window = MainWindow()
     window.show()
     app.exec()
+
+
