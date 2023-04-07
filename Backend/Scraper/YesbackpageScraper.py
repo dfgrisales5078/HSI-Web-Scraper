@@ -157,46 +157,55 @@ class YesbackpageScraper(ScraperPrototype):
             except NoSuchElementException:
                 description = 'N/A'
 
-            try:
-                name = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[1]/td[2]').text[2:]
-            except NoSuchElementException:
+            # check if page contains "col-sm-6 offset-sm-3" which is the table that contains name, phone number, etc.
+            if self.driver.find_elements(By.XPATH, '//*[@id="mainCellWrapper"]/div[1]/table/tbody/tr[1]/td/div[1]/div'):
+                try:
+                    name = self.driver.find_element(
+                        By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                                  'tbody/tr[1]/td[2]').text[2:]
+                except NoSuchElementException:
+                    name = 'N/A'
+
+                try:
+                    sex = self.driver.find_element(
+                        By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                                  'tbody/tr[2]/td[2]').text[2:]
+                except NoSuchElementException:
+                    sex = 'N/A'
+
+                try:
+                    phone_number = self.driver.find_element(
+                        By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                                  'tbody/tr[6]/td[2]').text[2:]
+                except NoSuchElementException:
+                    phone_number = 'NA'
+
+                try:
+                    email = self.driver.find_element(
+                        By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                                  'tbody/tr[8]/td[2]').text[2:]
+                except NoSuchElementException:
+                    email = 'N/A'
+
+                try:
+                    location = self.driver.find_element(
+                        By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
+                                  'tbody/tr[9]/td[2]').text[2:]
+                except NoSuchElementException:
+                    location = 'N/A'
+
+                try:
+                    services = self.driver.find_element(
+                        By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
+                                  'tbody/tr[5]/td[2]').text[2:]
+                except NoSuchElementException:
+                    services = 'N/A'
+            else:
                 name = 'N/A'
-
-            try:
-                sex = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[2]/td[2]').text[2:]
-            except NoSuchElementException:
                 sex = 'N/A'
-
-            try:
-                phone_number = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[6]/td[2]').text[2:]
-            except NoSuchElementException:
-                phone_number = 'NA'
-
-            try:
-                email = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[8]/td[2]').text[2:]
-            except NoSuchElementException:
+                phone_number = 'N/A'
                 email = 'N/A'
-
-            try:
-                location = self.driver.find_element(
-                    By.XPATH, '/html/body/div[3]/div/div[1]/table/tbody/tr[1]/td/div[1]/div/table/'
-                              'tbody/tr[9]/td[2]').text[2:]
-            except NoSuchElementException:
                 location = 'N/A'
-
-            try:
-                services = self.driver.find_element(
-                    By.XPATH, '//*[@id="mainCellWrapper"]/div/table/tbody/tr/td/div[1]/div/table/'
-                              'tbody/tr[5]/td[2]').text[2:]
-            except NoSuchElementException:
                 services = 'N/A'
 
             # reassign variables for each post
