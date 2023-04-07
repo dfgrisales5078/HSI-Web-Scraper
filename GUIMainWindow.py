@@ -292,15 +292,14 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, "Error", "Please select 'keyword_sets.txt'.")
 
     # popup to confirm set removal
-    @staticmethod
-    def remove_set_popup_window(set_to_remove):
-        popup = QtWidgets.QMessageBox()
 
-        popup.setWindowTitle("Confirm Set Removal")
-        popup.setText(f"Are you sure you want to remove {set_to_remove} from the list of sets?")
-        popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+    def remove_set_popup_window(self, set_to_remove):
+        popup = QtWidgets.QMessageBox.information(self, "Confirm Set Removal",
+                                                  f"Are you sure you want to remove {set_to_remove} from the list of "
+                                                  f"sets?", QtWidgets.QMessageBox.StandardButton.Yes |
+                                                  QtWidgets.QMessageBox.StandardButton.No)
 
-        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
+        if popup == QtWidgets.QMessageBox.StandardButton.Yes:
             return True
         else:
             return False
@@ -388,18 +387,14 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Error", "Set name already exists.")
 
     # popup to confirm keyword removal
-    @staticmethod
-    def remove_keyword_popup_window(keyword_to_remove):
-        popup = QtWidgets.QMessageBox()
-        popup.setWindowTitle("Confirm Keyword Removal")
-        popup.setText(f"Are you sure you want to remove {keyword_to_remove} from the list of keywords? \n\nWarning: "
-                      f"{keyword_to_remove} will be removed from all sets.")
-        font = popup.font()
-        font.setBold(True)
-        popup.setFont(font)
-        popup.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+    def remove_keyword_popup_window(self, keyword_to_remove):
+        popup = QtWidgets.QMessageBox.information(self, "Confirm Keyword Removal",
+                                                  f"Are you sure you want to remove {keyword_to_remove} from the list "
+                                                  f"of keywords? \n\nWarning: {keyword_to_remove} will be removed "
+                                                  f"from all sets.", QtWidgets.QMessageBox.StandardButton.Yes |
+                                                  QtWidgets.QMessageBox.StandardButton.No)
 
-        if popup.exec() == QtWidgets.QMessageBox.StandardButton.Yes:
+        if popup == QtWidgets.QMessageBox.StandardButton.Yes:
             return True
         else:
             return False
@@ -611,22 +606,21 @@ class MainWindow(QMainWindow):
         self.worker.finished.connect(self.worker_finished)
         self.worker.start()
 
-    @staticmethod
-    def worker_finished():
+    def worker_finished(self):
         # success/fail message box
         global popup_message
-        parent = QtWidgets.QMessageBox()
-        parent_width = parent.frameGeometry().width()
-        parent_height = parent.frameGeometry().height()
-        screen_width = QApplication.primaryScreen().availableGeometry().width()
-        screen_height = QApplication.primaryScreen().availableGeometry().height()
-        parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
+        # parent = QtWidgets.QMessageBox()
+        # parent_width = parent.frameGeometry().width()
+        # parent_height = parent.frameGeometry().height()
+        # screen_width = QApplication.primaryScreen().availableGeometry().width()
+        # screen_height = QApplication.primaryScreen().availableGeometry().height()
+        # parent.move((screen_width - parent_width) // 2, (screen_height - parent_height) // 2)
 
         if popup_message == "success":
-            QtWidgets.QMessageBox.information(parent, "Success", "Success: Scraping completed successfully!")
+            QtWidgets.QMessageBox.information(self, "Success", "Success: Scraping completed successfully!")
         else:
-            QtWidgets.QMessageBox.critical(parent, "Error", "Error: Scraping not completed. Please try again.\n (Make "
-                                                            "sure the latest version of Chrome is installed.)")
+            QtWidgets.QMessageBox.critical(self, "Error", "Error: Scraping not completed. Please try again.\n (Make "
+                                                          "sure the latest version of Chrome is installed.)")
 
         popup_message = ''
 
