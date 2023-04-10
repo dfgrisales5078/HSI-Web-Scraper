@@ -10,9 +10,13 @@ keywords that have been linked to human trafficking. Posts are categorized based
 The goal of the software is to provide HSI agents with leads to human trafficking posts which will include all the information in 
 the post along with a screenshot.
 
+### User Interface Demo:
+https://user-images.githubusercontent.com/54412831/230813780-ae257104-8664-4291-ab56-b26c964b4d53.mov
+
 ## User Manual & Quick User Guide for V1
 ### User Manual: 
 https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_user_manual_v1.pdf
 
 ### Quick User Guide
 https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_quick_guide_v1.pdf
+
