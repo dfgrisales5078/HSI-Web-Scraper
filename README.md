@@ -11,7 +11,7 @@ The goal of the software is to provide HSI agents with leads to human traffickin
 the post along with a screenshot.
 
 ### User Interface Demo:
-https://user-images.githubusercontent.com/54412831/230813780-ae257104-8664-4291-ab56-b26c964b4d53.mov
+https://user-images.githubusercontent.com/54412831/230934578-45475667-87a2-42ed-b635-f9cef6a6764b.mp4
 
 ## User Manual & Quick User Guide for V1
 ### User Manual: 
