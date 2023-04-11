@@ -6,7 +6,7 @@ import os
 from PyQt6 import QtGui, QtWidgets
 from Backend.Facade import Facade
 from Backend.Keywords import Keywords
-from GUI.Scraper import Ui_HSIWebScraper
+from GUI.Ui_HSIWebScraper import Ui_HSIWebScraper
 
 # ---------------------------- Global Variable ----------------------------
 # used to display popup message after scraping
@@ -23,11 +23,11 @@ try:
 except:
     pass
 
-'''WARNING: To make changes to UI do NOT edit Scraper.py, instead make changes to UI using Qt Creator.
+'''WARNING: To make changes to UI do NOT edit Ui_HSIWebScraper.py, instead make changes to UI using Qt Creator.
 Then run the following command to convert the .ui file to .py:
-pyuic6 Scraper.ui -o Scraper.py
+pyuic6 Ui_HSIWebScraper.ui -o Ui_HSIWebScraper.py
 OR
-python -m PyQt6.uic.pyuic -o Scraper.py -x Scraper.ui
+python -m PyQt6.uic.pyuic -o Ui_HSIWebScraper.py -x Ui_HSIWebScraper.ui
 
 '''
 
