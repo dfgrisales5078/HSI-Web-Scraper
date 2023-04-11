@@ -15,7 +15,7 @@ https://user-images.githubusercontent.com/54412831/230934578-45475667-87a2-42ed-
 
 ## User Manual & Quick User Guide for V1
 ### User Manual: 
-https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_user_manual_v1.pdf
+https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_user_manual_v1.1.pdf
 
 ### Quick User Guide
 https://dfgrisales5078.github.io/HSI-Web-Scraper/NetSpider_quick_guide_v1.pdf
