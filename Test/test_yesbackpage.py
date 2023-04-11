@@ -1,7 +1,7 @@
 import pytest
 from Backend.Scraper.YesbackpageScraper import YesbackpageScraper
 
-class Test_Yesbackpage:
+class Test_YesbackpageScraper:
     @pytest.fixture
     def scraper(self):
         scraper = YesbackpageScraper()

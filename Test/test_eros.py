@@ -1,7 +1,8 @@
 import pytest
 from Backend.Scraper.ErosScraper import ErosScraper
 
-class Test_Megapersonals:
+
+class Test_ErosScraper:
     @pytest.fixture
     def scraper(self):
         scraper = ErosScraper()

@@ -1,7 +1,7 @@
 import pytest
 from Backend.Scraper.SkipthegamesScraper import SkipthegamesScraper
 
-class Test_Yesbackpage:
+class Test_SkipthegamesScraper:
     @pytest.fixture
     def scraper(self):
         scraper = SkipthegamesScraper()
