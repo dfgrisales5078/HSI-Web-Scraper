@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'Scraper.ui'
+# Form implementation generated from reading ui file 'Ui_HSIWebScraper.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
