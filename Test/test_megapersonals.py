@@ -1,6 +1,7 @@
 import pytest
 from Backend.Scraper.MegapersonalsScraper import MegapersonalsScraper
 
+
 class Test_Megapersonals:
     @pytest.fixture
     def scraper(self):

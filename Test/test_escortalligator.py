@@ -1,7 +1,7 @@
 import pytest
 from Backend.Scraper.EscortalligatorScraper import EscortalligatorScraper
 
-class Test_Megapersonals:
+class Test_EscortalligatorScraper:
     @pytest.fixture
     def scraper(self):
         scraper = EscortalligatorScraper()
