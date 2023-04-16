@@ -1,7 +1,7 @@
 import sys
 import unittest
-from unittest.mock import patch, MagicMock
-from PyQt6.QtWidgets import QFileDialog, QMessageBox, QApplication, QListWidgetItem
+from unittest.mock import MagicMock
+from PyQt6.QtWidgets import QApplication, QListWidgetItem
 
 from GUI.main import MainWindow
 
